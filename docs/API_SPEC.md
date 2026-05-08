@@ -39,8 +39,8 @@ GET /api/v1/rewards?status=unclaimed - get all unclaimed rewards
 ---
 GET /api/v1/tasks - get all tasks
 GET /api/v1/rewards/{id}/tasks - get all tasks for a reward
-POST /api/v1/rewards/{id}/tasks - create a new task for a reward
-GET /api/v1/rewards/{id}/tasks/{id} - get a specific task
-PUT /api/v1/rewards/{id}/tasks/{id} - update a specific task
-DELETE /api/v1/rewards/{id}/tasks/{id} - delete a specific task
-PATCH /api/v1/rewards/{id}/tasks/{id}/complete - complete a specific task
+POST /api/v1/rewards/{id}/task - create a new task for a reward
+GET /api/v1/rewards/{id}/task/{id} - get a specific task
+PUT /api/v1/rewards/{id}/task/{id} - update a specific task
+DELETE /api/v1/rewards/{id}/task/{id} - delete a specific task
+PATCH /api/v1/rewards/{id}/task/{id}/complete - complete a specific task
