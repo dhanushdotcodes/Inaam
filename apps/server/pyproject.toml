@@ -4,4 +4,8 @@ version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.136.1",
+    "sqlalchemy[asyncio]>=2.0.38",
+    "alembic>=1.14.1",
+    "psycopg[binary]>=3.2.4",
+    "pydantic-settings>=2.7.1",
 ]
