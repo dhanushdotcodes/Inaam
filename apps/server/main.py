@@ -1,6 +1,22 @@
 from fastapi import FastAPI
-app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
+from api.auth.routes import router as auth_router
+from core.config import settings
+
+app = FastAPI(title="Inaam API")
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, this should be specific origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth_router, prefix="/api/v1")
+
 
 @app.get("/")
 def main():
-    return {"message": "Hello World"}
+    return {"message": f"{settings.PROJECT_NAME} API is running"}

@@ -1,3 +1,7 @@
+---
+description: This workflow ensures that the project's `CHANGELOG.md` is consistently updated following significant commits or at the end of each work session, adhering to the "Keep a Changelog" format and project-specific rules.
+---
+
 # Workflow: Changelog Management
 
 ## Description

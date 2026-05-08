@@ -1,4 +1,4 @@
-.PHONY: commit add status up down db-migrate db-upgrade
+.PHONY: commit add status up down db-migrate db-upgrade dev-server test
 
 status:
 	git status
@@ -22,3 +22,9 @@ db-migrate:
 
 db-upgrade:
 	cd apps/server && PYTHONPATH=../..:.:$$PYTHONPATH uv run alembic upgrade head
+
+dev-server:
+	cd apps/server && PYTHONPATH=../..:.:$$PYTHONPATH uv run fastapi dev main.py
+
+test:
+	cd apps/server && PYTHONPATH=../..:.:$$PYTHONPATH uv run pytest
