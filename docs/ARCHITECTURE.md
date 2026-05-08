@@ -7,6 +7,45 @@
 - Dockerized setup for all components.
 - CI workflow for linting and typecheck.
 
+## Project Structure
+---
+```
+.
+├── .agents/
+│   ├── rules/
+│   │   └── rules.md
+│   ├── skills/
+│   │   └── example-skill/
+│   │       └── SKILL.md
+│   └── workflows/
+│       └── example-workflow/
+│           └── WORKFLOW.md
+├── .context/                   # Project context and knowledge base
+├── .github/
+│   └── workflows/              # CI/CD pipeline definitions
+│       └── example-ci.yml
+├── apps/
+│   ├── server/
+│   │   ├── alembic/            # Database migrations
+│   │   ├── api/                # API routes and controllers
+│   │   ├── core/               # Core configuration and database setup
+│   │   ├── models/             # SQLAlchemy database models
+│   │   ├── schemas/            # Pydantic validation schemas
+│   │   ├── services/           # Business logic and external integrations
+│   │   ├── tests/              # Backend test suite
+│   │   └── main.py             # FastAPI entry point
+│   └── web/
+│       ├── app/                # Next.js App Router (pages and layouts)
+│       ├── components/         # Reusable React components
+│       ├── lib/                # Utility functions and API clients
+│       ├── public/             # Static assets (images, fonts, etc.)
+│       └── types/              # TypeScript type definitions
+├── docs/                       # Project documentation
+├── infra/                      # Infrastructure and Docker configuration
+└── Makefile                    # Project automation commands
+```
+---
+
 ## Layering
 ---
 ```
