@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Plus, Gift, CheckCircle2, Circle, Loader2, AlertCircle } from "lucide-react";
+import { Plus, Gift, CheckCircle2, Circle, Loader2, AlertCircle, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 
-import { getRewards, createReward, getRewardTasks } from "@/lib/api";
+import { getRewards, createReward, getRewardTasks, createTask, completeTask } from "@/lib/api";
 import type { Reward, Task } from "@/types";
 
 /**
@@ -46,6 +46,13 @@ export default function RewardsPage() {
   const [formDescription, setFormDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  /* Task Dialog State */
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+  const [selectedReward, setSelectedReward] = useState<RewardWithTasks | null>(null);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [addingTask, setAddingTask] = useState(false);
+  const [taskError, setTaskError] = useState<string | null>(null);
 
   /**
    * Fetch all rewards and then fetch tasks for each reward.
@@ -125,6 +132,63 @@ export default function RewardsPage() {
       );
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  /**
+   * Handle adding a new task to the selected reward.
+   */
+  const handleAddTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedReward || !newTaskTitle.trim()) return;
+
+    try {
+      setAddingTask(true);
+      setTaskError(null);
+      const newTask = await createTask(selectedReward.id, {
+        title: newTaskTitle.trim(),
+      });
+
+      /* Update local state */
+      const updatedReward = {
+        ...selectedReward,
+        tasks: [...selectedReward.tasks, newTask],
+      };
+      setSelectedReward(updatedReward);
+      setRewards((prev) =>
+        prev.map((r) => (r.id === selectedReward.id ? updatedReward : r))
+      );
+      setNewTaskTitle("");
+    } catch (err) {
+      setTaskError(err instanceof Error ? err.message : "Failed to add task");
+    } finally {
+      setAddingTask(false);
+    }
+  };
+
+  /**
+   * Handle toggling task completion.
+   */
+  const handleToggleTask = async (rewardId: string, taskId: string) => {
+    try {
+      const updatedTask = await completeTask(rewardId, taskId);
+
+      /* Update local state */
+      setRewards((prev) =>
+        prev.map((r) => {
+          if (r.id !== rewardId) return r;
+          const updatedTasks = r.tasks.map((t) =>
+            t.id === taskId ? updatedTask : t
+          );
+          const updatedReward = { ...r, tasks: updatedTasks };
+          if (selectedReward?.id === rewardId) {
+            setSelectedReward(updatedReward);
+          }
+          return updatedReward;
+        })
+      );
+    } catch (err) {
+      console.error("Failed to toggle task:", err);
     }
   };
 
@@ -287,7 +351,14 @@ export default function RewardsPage() {
             const allDone = total > 0 && completed === total;
 
             return (
-              <Card key={reward.id} className="transition-shadow hover:shadow-md">
+              <Card
+                key={reward.id}
+                className="transition-all hover:shadow-md cursor-pointer hover:border-primary/50"
+                onClick={() => {
+                  setSelectedReward(reward);
+                  setTaskDialogOpen(true);
+                }}
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
@@ -315,60 +386,30 @@ export default function RewardsPage() {
                 </CardHeader>
 
                 <CardContent>
-                  {/* Task Progress */}
+                  {/* Task Progress Summary */}
                   {reward.tasksLoading ? (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Loader2 className="h-3 w-3 animate-spin" />
-                      Loading tasks...
+                      Loading...
                     </div>
-                  ) : total === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      No tasks added yet.
-                    </p>
                   ) : (
-                    <div className="space-y-3">
-                      {/* Progress bar */}
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>Progress</span>
-                          <span>
-                            {completed}/{total} tasks
-                          </span>
-                        </div>
-                        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                          <div
-                            className="h-full rounded-full bg-primary transition-all duration-300"
-                            style={{
-                              width: `${total > 0 ? (completed / total) * 100 : 0}%`,
-                            }}
-                          />
-                        </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span className="font-medium">
+                          {total === 0
+                            ? "No tasks"
+                            : `${completed}/${total} tasks`}
+                        </span>
+                        <span>{total > 0 ? Math.round((completed / total) * 100) : 0}%</span>
                       </div>
-
-                      {/* Task list */}
-                      <ul className="space-y-1.5">
-                        {reward.tasks.map((task) => (
-                          <li
-                            key={task.id}
-                            className="flex items-center gap-2 text-sm"
-                          >
-                            {task.completed ? (
-                              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-                            ) : (
-                              <Circle className="h-4 w-4 shrink-0 text-muted-foreground" />
-                            )}
-                            <span
-                              className={
-                                task.completed
-                                  ? "text-muted-foreground line-through"
-                                  : ""
-                              }
-                            >
-                              {task.title}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full bg-primary transition-all duration-500"
+                          style={{
+                            width: `${total > 0 ? (completed / total) * 100 : 0}%`,
+                          }}
+                        />
+                      </div>
                     </div>
                   )}
                 </CardContent>
@@ -377,6 +418,111 @@ export default function RewardsPage() {
           })}
         </div>
       )}
+      {/* Task Details Dialog */}
+      <Dialog open={taskDialogOpen} onOpenChange={setTaskDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          {selectedReward && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center justify-between pr-6">
+                  <div>
+                    <DialogTitle>{selectedReward.title}</DialogTitle>
+                    <DialogDescription className="mt-1">
+                      {selectedReward.description || "Manage tasks for this reward."}
+                    </DialogDescription>
+                  </div>
+                  {selectedReward.claimed && (
+                    <Badge variant="secondary">Claimed</Badge>
+                  )}
+                </div>
+              </DialogHeader>
+
+              <div className="mt-4 space-y-4">
+                {/* Add Task Form */}
+                <form onSubmit={handleAddTask} className="flex gap-2">
+                  <Input
+                    placeholder="Add a new task..."
+                    value={newTaskTitle}
+                    onChange={(e) => setNewTaskTitle(e.target.value)}
+                    disabled={addingTask}
+                    className="flex-1"
+                  />
+                  <Button type="submit" size="icon" disabled={addingTask || !newTaskTitle.trim()}>
+                    {addingTask ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Plus className="h-4 w-4" />
+                    )}
+                  </Button>
+                </form>
+
+                {taskError && (
+                  <p className="text-xs text-destructive">{taskError}</p>
+                )}
+
+                {/* Task List */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider text-[10px]">
+                    Tasks
+                  </h4>
+                  {selectedReward.tasks.length === 0 ? (
+                    <div className="text-center py-8 rounded-xl border border-dashed">
+                      <p className="text-sm text-muted-foreground">No tasks yet.</p>
+                    </div>
+                  ) : (
+                    <ul className="space-y-1">
+                      {selectedReward.tasks.map((task) => (
+                        <li
+                          key={task.id}
+                          className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => handleToggleTask(selectedReward.id, task.id)}
+                              className="focus:outline-none"
+                            >
+                              {task.completed ? (
+                                <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                              ) : (
+                                <Circle className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                              )}
+                            </button>
+                            <span
+                              className={`text-sm ${
+                                task.completed
+                                  ? "text-muted-foreground line-through"
+                                  : "text-foreground font-medium"
+                              }`}
+                            >
+                              {task.title}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+
+              <DialogFooter className="mt-4 sm:justify-start">
+                <div className="w-full flex items-center justify-between">
+                  <div className="text-xs text-muted-foreground">
+                    {getTaskStats(selectedReward.tasks).completed}/
+                    {getTaskStats(selectedReward.tasks).total} tasks completed
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setTaskDialogOpen(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
