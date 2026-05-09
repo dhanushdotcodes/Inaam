@@ -44,6 +44,21 @@ export interface RewardCreatePayload {
 }
 
 /**
+ * Payload for creating a new task.
+ */
+export interface TaskCreatePayload {
+  title: string;
+}
+
+/**
+ * Payload for updating a task.
+ */
+export interface TaskUpdatePayload {
+  title?: string;
+  completed?: boolean;
+}
+
+/**
  * Login response from the auth endpoint.
  * Mirrors the backend `LoginResponse` schema from `apps/server/schemas/auth.py`.
  */

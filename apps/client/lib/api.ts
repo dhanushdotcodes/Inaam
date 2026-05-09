@@ -1,4 +1,12 @@
-import type { ApiResponse, LoginResponse, Reward, RewardCreatePayload, Task } from "@/types";
+import type {
+  ApiResponse,
+  LoginResponse,
+  Reward,
+  RewardCreatePayload,
+  Task,
+  TaskCreatePayload,
+  TaskUpdatePayload,
+} from "@/types";
 
 /**
  * Base URL for the FastAPI server.
@@ -95,4 +103,29 @@ export async function createReward(
  */
 export async function getRewardTasks(rewardId: string): Promise<Task[]> {
   return apiFetch<Task[]>(`/rewards/${rewardId}/tasks`);
+}
+
+/**
+ * Create a new task for a specific reward.
+ */
+export async function createTask(
+  rewardId: string,
+  payload: TaskCreatePayload
+): Promise<Task> {
+  return apiFetch<Task>(`/rewards/${rewardId}/task`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Complete a specific task for a reward.
+ */
+export async function completeTask(
+  rewardId: string,
+  taskId: string
+): Promise<Task> {
+  return apiFetch<Task>(`/rewards/${rewardId}/task/${taskId}/complete`, {
+    method: "PATCH",
+  });
 }
