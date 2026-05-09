@@ -4,8 +4,8 @@ This document tracks all active `SKILL.md` files used for AI agent automation.
 
 ## Summary
 
-- **Total Skills**: 7
-- **Last Updated**: 2026-05-08
+- **Total Skills**: 9
+- **Last Updated**: 2026-05-09
 
 ## Active Skills
 
@@ -17,9 +17,12 @@ This document tracks all active `SKILL.md` files used for AI agent automation.
 | `handle-db` | Manages migrations and schema changes with Alembic/SQLAlchemy | `.agents/skills/handle-db` | "modify database", "alembic migration" | Active | @user |
 | `fastapi-api` | Builds new FastAPI API endpoints (route → schema → service) | `.agents/skills/fastapi-api` | "create API", "new endpoint", "add route" | Active | @user |
 | `implementation-planning` | Creates structured implementation plans and commit discipline | `.agents/skills/implementation-planning` | "new feature", "refactor system" | Active | @user |
-| `next.js` | Builds Next.js pages, components, and API integrations | `.agents/skills/next.js` | "create page", "new component", "frontend" | Active | @user |
+| `nextjs-page` | Creates Next.js App Router pages, layouts, loading/error states, and SEO metadata | `.agents/skills/nextjs-page` | "create page", "new route", "add layout" | Active | @user |
+| `nextjs-component` | Builds reusable React components with typed props and Tailwind CSS v4 styling | `.agents/skills/nextjs-component` | "new component", "build component", "UI element" | Active | @user |
+| `nextjs-api-client` | Builds API client functions, TypeScript types, and client-side form handling | `.agents/skills/nextjs-api-client` | "API client", "fetch function", "add types", "form handling" | Active | @user |
 
 ## Skill Audit Log
+- **2026-05-09** Replaced monolithic `next.js` skill with 3 focused sub-skills: `nextjs-page`, `nextjs-component`, `nextjs-api-client`.
 - **2026-05-08** Added `fastapi-api` and `next.js` skills to the registry.
 - **2026-05-08** Synchronized registry with `.agents/skills/` directory.
 
