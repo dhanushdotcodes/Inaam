@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-09
+
+### Added
+- Implemented Rewards Dashboard page at `/rewards` with task tracking and progress bars.
+- Integrated Rewards API client in `apps/client/lib/api.ts`.
+- Added Shadcn/UI components (Card, Dialog, Button, Badge, etc.) to the client.
+- Implemented Authentication verification gate on the home page with secret-key verification.
+- Added redirect logic from home page to `/rewards` upon successful verification.
+
+### Changed
+- Modularized Next.js skills documentation into specialized guides.
+- Replaced the initial health check dashboard with the secure Auth Verification gate.
+
 ## [0.1.1] - 2026-05-09
 
 ### Added
