@@ -31,5 +31,20 @@ services:
       db:
         condition: service_healthy
 
+  web:
+    build:
+      context: ../apps/client
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../apps/client:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NEXT_PUBLIC_SERVER_URL=http://localhost:8000
+    depends_on:
+      - server
+
 volumes:
   postgres_data:

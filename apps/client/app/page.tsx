@@ -1,65 +1,120 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+
+/**
+ * Interface for the Health API response.
+ * Matches the structure defined in apps/server/schemas/base.py and routes.py.
+ */
+interface HealthResponse {
+  data: {
+    status: string;
+    database: string;
+  } | null;
+  error: string | null;
+  message: string;
+}
 
 export default function Home() {
+  const [healthData, setHealthData] = useState<HealthResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchHealth = async () => {
+      try {
+        setLoading(true);
+        // Using NEXT_PUBLIC_SERVER_URL for client-side fetching
+        const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
+        const res = await fetch(`${serverUrl}/api/v1/health`);
+        
+        if (!res.ok) {
+          throw new Error(`Server responded with status: ${res.status}`);
+        }
+        
+        const data: HealthResponse = await res.json();
+        setHealthData(data);
+        setError(null);
+      } catch (err) {
+        console.error("Health check failed:", err);
+        setError(err instanceof Error ? err.message : "Failed to connect to the server");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHealth();
+  }, []);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 font-sans p-8 dark:bg-black">
+      <main className="w-full max-w-lg rounded-3xl bg-white p-10 shadow-xl dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 transition-all">
+        <div className="flex items-center gap-4 mb-8">
+          <div className={`w-3 h-3 rounded-full animate-pulse ${loading ? 'bg-amber-400' : error ? 'bg-red-500' : 'bg-emerald-500'}`} />
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">System Health</h1>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        
+        {error && (
+          <div className="p-4 mb-6 text-sm font-medium text-red-800 bg-red-50 rounded-2xl border border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/30">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{error}</span>
+            </div>
+            <p className="mt-2 text-xs opacity-70">Make sure the FastAPI server is running on {process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000"}</p>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-12 gap-4">
+            <div className="w-10 h-10 rounded-full border-4 border-zinc-200 border-t-zinc-800 dark:border-zinc-800 dark:t-zinc-400 animate-spin" />
+            <p className="text-zinc-500 dark:text-zinc-400 font-medium">Checking systems...</p>
+          </div>
+        ) : healthData ? (
+          <div className="space-y-6">
+            <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">Response Message</span>
+                <span className="text-lg font-medium text-zinc-900 dark:text-zinc-100">{healthData.message}</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-500">API Server</span>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${healthData.data?.status === 'ok' ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                    <span className="font-bold text-zinc-900 dark:text-zinc-100">{healthData.data?.status?.toUpperCase() || 'ERROR'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-500">Database</span>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${healthData.data?.database === 'connected' ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                    <span className="font-bold text-zinc-900 dark:text-zinc-100">{healthData.data?.database?.toUpperCase() || 'OFFLINE'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => window.location.reload()}
+              className="w-full py-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-2xl font-bold hover:opacity-90 transition-opacity"
+            >
+              Refresh Status
+            </button>
+          </div>
+        ) : null}
       </main>
+      
+      <p className="mt-8 text-zinc-400 text-xs dark:text-zinc-600">
+        Inaam Dashboard • Health Monitoring v1.0
+      </p>
     </div>
   );
 }

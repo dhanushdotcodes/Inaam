@@ -23,4 +23,4 @@ RUN chmod +x scripts/prestart.sh
 EXPOSE 8000
 
 # Start command
-CMD ["sh", "-c", "./scripts/prestart.sh && uv run fastapi dev main.py --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "sh ./scripts/prestart.sh && uv run fastapi dev main.py --host 0.0.0.0 --port 8000"]

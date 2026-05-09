@@ -1,4 +1,7 @@
-.PHONY: commit add status up down db-migrate db-upgrade dev-server test
+.PHONY: commit add status up down db-migrate db-upgrade dev-server dev-web test
+
+dev-web:
+	cd apps/client && bun run dev
 
 status:
 	git status

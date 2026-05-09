@@ -22,6 +22,7 @@ Error response:
 ## Authentication
 ---
 POST /api/v1/auth/login - login
+GET /api/v1/health - health check
 
 ## Reward management
 ---
