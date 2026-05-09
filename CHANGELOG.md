@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 - Implemented Rewards Dashboard page at `/rewards` with task tracking and progress bars.
-- Integrated Rewards API client in `apps/client/lib/api.ts`.
+- Refactored Reward cards to open a detailed Task Dialog on click.
+- Implemented task management within the dashboard (add tasks, toggle completion).
+- Integrated Rewards and Task API clients in `apps/client/lib/api.ts`.
 - Added Shadcn/UI components (Card, Dialog, Button, Badge, etc.) to the client.
 - Implemented Authentication verification gate on the home page with secret-key verification.
 - Added redirect logic from home page to `/rewards` upon successful verification.
