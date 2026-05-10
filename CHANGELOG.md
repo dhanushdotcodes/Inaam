@@ -8,11 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Created `VerifyAccessForm`, `RewardsHeader`, `RewardCard`, `CreateRewardDialog`, `TaskDetailsDialog`, and `RewardsDashboard` components.
+
+### Changed
+- Modularized the Next.js home and rewards pages into smaller, focused components in the `components/` directory.
+- Converted main page files (`page.tsx`) to Server Components to leverage Next.js App Router benefits.
 - Added eye icon visibility toggle for the secret key input on the login page.
 - Implemented JWT session persistence using browser cookies.
 - Protected the `/rewards` page with a client-side authentication check.
 - Added a Logout button to the Rewards page.
 - Integrated the JWT token into all API requests via the `Authorization` header.
+
+### Fixed
+- Centralized the `RewardWithTasks` interface in `types/index.ts` to resolve type mismatch errors.
+- Resolved cascading render linting warnings in the rewards dashboard by optimizing `useEffect` orchestration.
+
 
 
 ## [0.2.0] - 2026-05-09
