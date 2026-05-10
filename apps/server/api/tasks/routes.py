@@ -5,11 +5,16 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import get_db
+from core.security import verify_token
 from schemas.base import ApiResponse
 from schemas.task import TaskResponse
 from services import task as task_service
 
-router = APIRouter(prefix="/tasks", tags=["Tasks"])
+router = APIRouter(
+    prefix="/tasks", 
+    tags=["Tasks"],
+    dependencies=[Depends(verify_token)]
+)
 
 
 @router.get("", response_model=ApiResponse[List[TaskResponse]])

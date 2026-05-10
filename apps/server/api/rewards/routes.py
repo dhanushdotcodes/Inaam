@@ -7,11 +7,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from services import reward as reward_service
 from services import task as task_service
 from core.database import get_db
+from core.security import verify_token
 from schemas.base import ApiResponse
 from schemas.reward import RewardCreate, RewardResponse, RewardUpdate
 from schemas.task import TaskCreate, TaskResponse, TaskUpdate
 
-router = APIRouter(prefix="/rewards", tags=["Rewards"])
+router = APIRouter(
+    prefix="/rewards", 
+    tags=["Rewards"],
+    dependencies=[Depends(verify_token)]
+)
 
 
 @router.get("", response_model=ApiResponse[List[RewardResponse]])
