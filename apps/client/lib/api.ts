@@ -15,7 +15,10 @@ import type {
  * Falls back to localhost for local development.
  */
 const BASE_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
+  (process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000").replace(
+    /\/$/,
+    ""
+  );
 
 const API_PREFIX = "/api/v1";
 

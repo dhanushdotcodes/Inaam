@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 - Centralized the `RewardWithTasks` interface in `types/index.ts` to resolve type mismatch errors.
 - Resolved cascading render linting warnings in the rewards dashboard by optimizing `useEffect` orchestration.
+- Fixed double slashes in API client URLs by normalizing `BASE_URL` to prevent preflight redirects.
 - Updated `SKILL.md` files (`nextjs-component`, `nextjs-page`, `nextjs-api-client`) with modular architecture patterns and standardized `apiFetch` usage.
 - Updated `ARCHITECTURE.md` to reflect the new feature-based component organization and data layering.
 
