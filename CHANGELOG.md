@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Implemented PWA support with a manual service worker (`sw.js`) for offline capabilities and installability.
+- Generated premium branding assets (192x192 and 512x512 icons) for Inaam.
+- Created `ServiceWorkerRegistrar` component for automatic PWA registration.
+- Configured application manifest with project-specific metadata and PWA settings.
 - Created `VerifyAccessForm`, `RewardsHeader`, `RewardCard`, `CreateRewardDialog`, `TaskDetailsDialog`, and `RewardsDashboard` components.
 - Added `updateReward`, `deleteReward`, `updateTask`, and `deleteTask` API client methods.
 - Created `RewardFormDialog` to handle both reward creation and updates.
