@@ -42,6 +42,11 @@ Do NOT use when:
 
 ### Architecture Rules
 - Reusable components live in `components/` at the project root level.
+- **Modular Organization**: Large features SHOULD have their own directory within `components/` (e.g., `components/rewards/`).
+- **Subdirectories**: Within feature directories, group components by their role:
+  - `dialogs/`: For modal/popup components.
+  - `tasks/` (or feature-specific sub-folders): For related sub-components.
+  - `shared/`: For components used across multiple features.
 - ALL components MUST have typed props using `interface`.
 - Server Components are the default — use `"use client"` only when the component needs interactivity, hooks, or browser APIs.
 - NEVER fetch data in Client Components when a Server Component can do it.
@@ -66,10 +71,18 @@ Do NOT use when:
 ```text
 apps/client/
 ├── components/
-│   ├── RewardCard.tsx          # Reward display card component
-│   ├── TaskItem.tsx            # Individual task list item component
-│   ├── ProgressBar.tsx         # Progress indicator component
-│   └── LoginForm.tsx           # Login form with validation
+│   ├── rewards/                # Feature-specific directory
+│   │   ├── dialogs/            # Grouped dialog components
+│   │   │   ├── RewardFormDialog.tsx
+│   │   │   └── TaskDetailsDialog.tsx
+│   │   ├── tasks/              # Grouped task-related components
+│   │   │   ├── TaskForm.tsx
+│   │   │   ├── TaskItem.tsx
+│   │   │   └── TaskList.tsx
+│   │   ├── RewardCard.tsx
+│   │   └── RewardsDashboard.tsx
+│   └── shared/                 # Generic shared components
+│       └── ProgressBar.tsx
 ├── app/
 │   └── globals.css             # CSS variables and design tokens
 └── types/

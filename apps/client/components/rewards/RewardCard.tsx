@@ -1,6 +1,7 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -14,19 +15,21 @@ import type { Reward, Task } from "@/types";
 interface RewardCardProps {
   reward: Reward & { tasks: Task[]; tasksLoading: boolean };
   onClick: () => void;
+  onEdit: (reward: Reward) => void;
+  onDelete: (id: string) => void;
 }
 
 /**
  * RewardCard component — Displays summary of a reward and its task progress.
  */
-export default function RewardCard({ reward, onClick }: RewardCardProps) {
+export default function RewardCard({ reward, onClick, onEdit, onDelete }: RewardCardProps) {
   const total = reward.tasks.length;
   const completed = reward.tasks.filter((t) => t.completed).length;
   const allDone = total > 0 && completed === total;
 
   return (
     <Card
-      className="transition-all hover:shadow-md cursor-pointer hover:border-primary/50 min-w-64"
+      className="transition-all hover:shadow-md cursor-pointer hover:border-primary/50 min-w-64 group"
       onClick={onClick}
     >
       <CardHeader className="pb-3">
@@ -36,22 +39,49 @@ export default function RewardCard({ reward, onClick }: RewardCardProps) {
               {reward.title}
             </CardTitle>
             {reward.description && (
-              <CardDescription className="mt-1 line-clamp-2">
+              <CardDescription className="mt-1 line-clamp-2 text-xs">
                 {reward.description}
               </CardDescription>
             )}
           </div>
-          {reward.claimed ? (
-            <Badge variant="secondary">Claimed</Badge>
-          ) : allDone ? (
-            <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10">
-              Ready
-            </Badge>
-          ) : (
-            <Badge variant="outline">
-              {total === 0 ? "No tasks" : "In Progress"}
-            </Badge>
-          )}
+          <div className="flex flex-col items-end gap-2">
+            {reward.claimed ? (
+              <Badge variant="secondary">Claimed</Badge>
+            ) : allDone ? (
+              <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10">
+                Ready
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="text-[10px] px-1.5 h-5">
+                {total === 0 ? "No tasks" : "In Progress"}
+              </Badge>
+            )}
+            
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-muted-foreground hover:text-primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(reward);
+                }}
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(reward.id);
+                }}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </div>
         </div>
       </CardHeader>
 

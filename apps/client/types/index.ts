@@ -51,6 +51,23 @@ export interface TaskCreatePayload {
 }
 
 /**
+ * Payload for updating a reward.
+ */
+export interface RewardUpdatePayload {
+  title?: string;
+  description?: string;
+  claimed?: boolean;
+}
+
+/**
+ * Payload for updating a task.
+ */
+export interface TaskUpdatePayload {
+  title?: string;
+  completed?: boolean;
+}
+
+/**
  * Reward with its tasks and UI loading state.
  */
 export interface RewardWithTasks extends Reward {

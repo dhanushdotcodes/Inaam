@@ -4,8 +4,10 @@ import type {
   LoginResponse,
   Reward,
   RewardCreatePayload,
+  RewardUpdatePayload,
   Task,
   TaskCreatePayload,
+  TaskUpdatePayload,
 } from "@/types";
 
 /**
@@ -103,6 +105,28 @@ export async function createReward(
 }
 
 /**
+ * Update a specific reward.
+ */
+export async function updateReward(
+  rewardId: string,
+  payload: RewardUpdatePayload
+): Promise<Reward> {
+  return apiFetch<Reward>(`/rewards/${rewardId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Delete a specific reward.
+ */
+export async function deleteReward(rewardId: string): Promise<boolean> {
+  return apiFetch<boolean>(`/rewards/${rewardId}`, {
+    method: "DELETE",
+  });
+}
+
+/**
  * Fetch all tasks for a specific reward.
  */
 export async function getRewardTasks(rewardId: string): Promise<Task[]> {
@@ -119,6 +143,32 @@ export async function createTask(
   return apiFetch<Task>(`/rewards/${rewardId}/task`, {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Update a specific task for a reward.
+ */
+export async function updateTask(
+  rewardId: string,
+  taskId: string,
+  payload: TaskUpdatePayload
+): Promise<Task> {
+  return apiFetch<Task>(`/rewards/${rewardId}/task/${taskId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Delete a specific task for a reward.
+ */
+export async function deleteTask(
+  rewardId: string,
+  taskId: string
+): Promise<boolean> {
+  return apiFetch<boolean>(`/rewards/${rewardId}/task/${taskId}`, {
+    method: "DELETE",
   });
 }
 

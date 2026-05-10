@@ -13,22 +13,31 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createReward } from "@/lib/api";
+import { createReward, updateReward } from "@/lib/api";
+import type { Reward } from "@/types";
 
-interface CreateRewardDialogProps {
+interface RewardFormDialogProps {
+  reward?: Reward | null; // If provided, we are in edit mode
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 }
 
 /**
- * CreateRewardDialog component — Modal form for adding new rewards.
+ * RewardFormDialog component — Modal form for adding or editing rewards.
  */
-export default function CreateRewardDialog({ open, onOpenChange, onSuccess }: CreateRewardDialogProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+export default function RewardFormDialog({
+  reward,
+  open,
+  onOpenChange,
+  onSuccess,
+}: RewardFormDialogProps) {
+  const [title, setTitle] = useState(reward?.title || "");
+  const [description, setDescription] = useState(reward?.description || "");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isEdit = !!reward;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,10 +51,18 @@ export default function CreateRewardDialog({ open, onOpenChange, onSuccess }: Cr
 
     try {
       setSubmitting(true);
-      await createReward({
-        title: trimmedTitle,
-        description: description.trim() || undefined,
-      });
+      
+      if (isEdit && reward) {
+        await updateReward(reward.id, {
+          title: trimmedTitle,
+          description: description.trim() || undefined,
+        });
+      } else {
+        await createReward({
+          title: trimmedTitle,
+          description: description.trim() || undefined,
+        });
+      }
 
       /* Reset and close */
       setTitle("");
@@ -53,7 +70,11 @@ export default function CreateRewardDialog({ open, onOpenChange, onSuccess }: Cr
       onOpenChange(false);
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create reward");
+      setError(
+        err instanceof Error
+          ? err.message
+          : `Failed to ${isEdit ? "update" : "create"} reward`
+      );
     } finally {
       setSubmitting(false);
     }
@@ -64,9 +85,11 @@ export default function CreateRewardDialog({ open, onOpenChange, onSuccess }: Cr
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create New Reward</DialogTitle>
+            <DialogTitle>{isEdit ? "Edit Reward" : "Create New Reward"}</DialogTitle>
             <DialogDescription>
-              Add a reward that you can unlock by completing tasks.
+              {isEdit
+                ? "Update the details of your reward."
+                : "Add a reward that you can unlock by completing tasks."}
             </DialogDescription>
           </DialogHeader>
 
@@ -125,7 +148,7 @@ export default function CreateRewardDialog({ open, onOpenChange, onSuccess }: Cr
               {submitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Create Reward
+              {isEdit ? "Save Changes" : "Create Reward"}
             </Button>
           </DialogFooter>
         </form>

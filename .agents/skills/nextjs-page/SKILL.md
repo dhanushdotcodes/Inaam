@@ -40,7 +40,8 @@ Do NOT use when:
 ### Architecture Rules
 - Pages live in `app/` using the App Router convention.
 - Server Components are the default — In case we need to have client component inside a page we can do that but it should be a seperate component and should be imported from `components/`.
-- Always try to break the page into smaller components and import them from `components/`.
+- Always try to break the page into smaller components and import them from feature-specific directories in `components/`.
+- **Feature Grouping**: Prefer grouping related components into a directory named after the feature (e.g., `components/rewards/`) instead of flat files in `components/`.
 - NEVER fetch data in Client Components when a Server Component can do it.
 - Compose pages from reusable components defined in `components/`.
 - The root layout (`app/layout.tsx`) handles global fonts, metadata, and providers — avoid duplicating these in nested layouts.
@@ -70,7 +71,11 @@ apps/client/
 │       ├── layout.tsx          # Dashboard-specific layout (optional)
 │       ├── loading.tsx         # Loading state (optional)
 │       └── error.tsx           # Error boundary (optional)
-├── components/                 # Reusable components (see nextjs-component skill)
+├── components/                 # Reusable components grouped by feature
+│   ├── rewards/                # Feature directory
+│   │   ├── dialogs/
+│   │   └── tasks/
+│   └── shared/                 # Generic shared components
 ├── lib/                        # API client & utilities (see nextjs-api-client skill)
 ├── types/                      # TypeScript types (see nextjs-api-client skill)
 └── public/                     # Static assets

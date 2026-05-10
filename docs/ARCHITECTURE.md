@@ -9,21 +9,8 @@
 
 ## Project Structure
 ---
-```
+```text
 .
-├── .agents/
-│   ├── rules/
-│   │   └── rules.md
-│   ├── skills/
-│   │   └── example-skill/
-│   │       └── SKILL.md
-│   └── workflows/
-│       └── example-workflow/
-│           └── WORKFLOW.md
-├── .context/                   # Project context and knowledge base
-├── .github/
-│   └── workflows/              # CI/CD pipeline definitions
-│       └── example-ci.yml
 ├── apps/
 │   ├── server/
 │   │   ├── alembic/            # Database migrations
@@ -34,10 +21,15 @@
 │   │   ├── services/           # Business logic and external integrations
 │   │   ├── tests/              # Backend test suite
 │   │   └── main.py             # FastAPI entry point
-│   └── web/
+│   └── client/
 │       ├── app/                # Next.js App Router (pages and layouts)
 │       ├── components/         # Reusable React components
-│       ├── lib/                # Utility functions and API clients
+│       │   ├── rewards/        # Feature-specific modular components
+│       │   │   ├── dialogs/    # Modals and popups
+│       │   │   └── tasks/      # Granular sub-components
+│       │   ├── ui/             # Base UI primitives (buttons, inputs)
+│       │   └── shared/         # Shared feature components
+│       ├── lib/                # Utility functions and API clients (apiFetch)
 │       ├── public/             # Static assets (images, fonts, etc.)
 │       └── types/              # TypeScript type definitions
 ├── docs/                       # Project documentation
@@ -48,15 +40,15 @@
 
 ## Layering
 ---
-```
+```text
 ┌─────────────────────────────────────────┐
 │         Client (Next.js)               │
 │    ├──────────────────────────────────┤  
-│    │     API Calls to FastAPI         │
+│    │     API Calls (apiFetch)         │
 │    └──────────────────────────────────┘
 └─────────────────────────────────────────┘
         ↓
-        ↓ (HTTP Request)
+        ↓ (HTTP Request + JWT)
         ↓
 ┌─────────────────────────────────────────┐
 │        Server (FastAPI)                 │
@@ -65,10 +57,10 @@
 │    ├──────────────────────────────────┤
 │    │     2. Services (Business Logic) │
 │    ├──────────────────────────────────┤
-│    │     3. Repositories (Query)      │
+│    │     3. Repositories (SQLAlchemy) │
 │    └──────────────────────────────────┘
         ↓
-        ↓ (SQL Query)
+        ↓ (Asynchronous SQL)
         ↓
 ┌─────────────────────────────────────────┐
 │         Database (PostgreSQL)             │
@@ -79,20 +71,20 @@
 
 ## Principles
 ---
-- KISS (Keep It Simple, Stupid)
-- YAGNI (You Ain't Gonna Need This)
-- DRY (Don't Repeat Yourself)
-- SOLID:
-  - Single Responsibility: Each function or component should do exactly one thing.
-  - Open / Closed: Code should be easy to extend but shouldn't require changing the core logic.
-- Keep your FastAPI business logic out of your Next.js UI components.
+- **KISS**: Keep It Simple, Stupid.
+- **YAGNI**: You Ain't Gonna Need This.
+- **DRY**: Don't Repeat Yourself (Centralized `apiFetch`, modular components).
+- **SOLID**:
+  - Single Responsibility: Extracted `TaskItem`, `TaskForm` from monolithic dialogs.
+  - Open / Closed: Generic `AlertDialog` and `RewardFormDialog` are easy to extend.
+- **Modular Component Architecture**: Group components by feature and role (dialogs, tasks, etc.).
 
 ---
 
 ## Data Flow
 ---
-```
-User -> Web App (Next.js) -> API Call -> FastAPI Route -> FastAPI Service -> FastAPI Repository (SQLAlchemy) -> Database (Postgresql)
+```text
+User -> Web App (Next.js) -> apiFetch (lib/api.ts) -> FastAPI Route -> FastAPI Service -> SQLAlchemy -> Postgres
 ```
 ---
 
@@ -100,8 +92,9 @@ User -> Web App (Next.js) -> API Call -> FastAPI Route -> FastAPI Service -> Fas
 ---
 | Decision | Choice | Reasoning |
 | --- | --- | --- |
-| Web App | Next.js | Fast UI, Typescript, Supports Server side components and client side components, SEO, ease of use. 
-| API Layer | FastAPI | Python's best framework for APIs, Type hints, Async support. 
-| Database | PostgreSQL | Relational database with good performance, ease of use, community support, widely used. 
-| ORM | SQLAlchemy | Widely used, Async support, 
-| Containerization | Docker | Ease of Use, Community support, widely used.
+| Web App | Next.js 16 | Fast UI, React 19, Server Components, SEO, modular architecture. |
+| API Layer | FastAPI | Python's best framework for APIs, Async support, Pydantic validation. |
+| Database | PostgreSQL | Robust relational database, Docker-ready. |
+| ORM | SQLAlchemy 2.0 | Advanced async ORM with returning clauses. |
+| Component Design | Atomic/Feature-based | Modular folders (`dialogs/`, `tasks/`) for better maintainability. |
+| API Client | apiFetch Wrapper | Centralized auth, error handling, and base URL config. |

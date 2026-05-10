@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 - Created `VerifyAccessForm`, `RewardsHeader`, `RewardCard`, `CreateRewardDialog`, `TaskDetailsDialog`, and `RewardsDashboard` components.
+- Added `updateReward`, `deleteReward`, `updateTask`, and `deleteTask` API client methods.
+- Created `RewardFormDialog` to handle both reward creation and updates.
 
 ### Changed
 - Modularized the Next.js home and rewards pages into smaller, focused components in the `components/` directory.
@@ -18,10 +20,20 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Protected the `/rewards` page with a client-side authentication check.
 - Added a Logout button to the Rewards page.
 - Integrated the JWT token into all API requests via the `Authorization` header.
+- Implemented update and delete functionality for both rewards and tasks in the UI.
+- Enhanced `TaskDetailsDialog` with inline task editing and task deletion.
+- Added quick action buttons (edit/delete) to `RewardCard`.
+- Refactored reward creation logic into a unified `RewardFormDialog`.
+- Reorganized `rewards` components into a modular directory structure (`dialogs/`, `tasks/`).
+- Extracted granular sub-components (`TaskItem`, `TaskForm`, `TaskList`) to improve maintainability.
+- Integrated `AlertDialog` for all destructive actions (delete reward/task).
+- Implemented task completion toggle (undo/redo).
 
 ### Fixed
 - Centralized the `RewardWithTasks` interface in `types/index.ts` to resolve type mismatch errors.
 - Resolved cascading render linting warnings in the rewards dashboard by optimizing `useEffect` orchestration.
+- Updated `SKILL.md` files (`nextjs-component`, `nextjs-page`, `nextjs-api-client`) with modular architecture patterns and standardized `apiFetch` usage.
+- Updated `ARCHITECTURE.md` to reflect the new feature-based component organization and data layering.
 
 
 

@@ -2,16 +2,19 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Gift, Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getRewards, getRewardTasks } from "@/lib/api";
+import { getRewards, getRewardTasks, deleteReward } from "@/lib/api";
 import { isAuthenticated, removeToken } from "@/lib/auth";
-import type { RewardWithTasks } from "@/types";
+import type { Reward, RewardWithTasks } from "@/types";
 
 import RewardsHeader from "./RewardsHeader";
 import RewardCard from "./RewardCard";
-import CreateRewardDialog from "./CreateRewardDialog";
-import TaskDetailsDialog from "./TaskDetailsDialog";
+import RewardFormDialog from "./dialogs/RewardFormDialog";
+import TaskDetailsDialog from "./dialogs/TaskDetailsDialog";
+import EmptyRewardsState from "./EmptyRewardsState";
+import { AlertDialog } from "@/components/ui/alert-dialog";
+
 /**
  * RewardsDashboard component — Main orchestrator for the rewards page.
  */
@@ -22,9 +25,14 @@ export default function RewardsDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   /* Dialog states */
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [formDialogOpen, setFormDialogOpen] = useState(false);
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [selectedReward, setSelectedReward] = useState<RewardWithTasks | null>(null);
+  const [rewardToEdit, setRewardToEdit] = useState<Reward | null>(null);
+
+  /* Reward deletion state */
+  const [rewardToDelete, setRewardToDelete] = useState<string | null>(null);
+  const [isDeletingReward, setIsDeletingReward] = useState(false);
 
   // Protection: Redirect if not authenticated
   useEffect(() => {
@@ -78,9 +86,6 @@ export default function RewardsDashboard() {
   }, []);
 
   useEffect(() => {
-    // Calling fetchRewards directly in useEffect can trigger a synchronous
-    // setState (setLoading) which causes a cascading render warning.
-    // Wrapping it in an async IIFE or using a check avoids this.
     const initialize = async () => {
       await fetchRewards();
     };
@@ -97,10 +102,38 @@ export default function RewardsDashboard() {
     }
   };
 
+  const openCreateDialog = () => {
+    setRewardToEdit(null);
+    setFormDialogOpen(true);
+  };
+
+  const handleEditReward = (reward: Reward) => {
+    setRewardToEdit(reward);
+    setFormDialogOpen(true);
+  };
+
+  const handleDeleteReward = async () => {
+    if (!rewardToDelete) return;
+    try {
+      setIsDeletingReward(true);
+      await deleteReward(rewardToDelete);
+      setRewards((prev) => prev.filter((r) => r.id !== rewardToDelete));
+      if (selectedReward?.id === rewardToDelete) {
+        setTaskDialogOpen(false);
+        setSelectedReward(null);
+      }
+      setRewardToDelete(null);
+    } catch (err) {
+      console.error("Failed to delete reward:", err);
+    } finally {
+      setIsDeletingReward(false);
+    }
+  };
+
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
       <RewardsHeader 
-        onNewReward={() => setCreateDialogOpen(true)} 
+        onNewReward={openCreateDialog} 
         onLogout={handleLogout} 
       />
 
@@ -130,20 +163,7 @@ export default function RewardsDashboard() {
 
       {/* Empty State */}
       {!loading && !error && rewards.length === 0 && (
-        <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed p-12 text-center">
-          <div className="rounded-xl bg-muted p-3">
-            <Gift className="h-8 w-8 text-muted-foreground" />
-          </div>
-          <div>
-            <p className="font-medium">No rewards yet</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Create your first reward to get started.
-            </p>
-          </div>
-          <Button onClick={() => setCreateDialogOpen(true)}>
-            Create Reward
-          </Button>
-        </div>
+        <EmptyRewardsState onCreateClick={openCreateDialog} />
       )}
 
       {/* Rewards Grid */}
@@ -157,15 +177,19 @@ export default function RewardsDashboard() {
                 setSelectedReward(reward);
                 setTaskDialogOpen(true);
               }}
+              onEdit={handleEditReward}
+              onDelete={(id) => setRewardToDelete(id)}
             />
           ))}
         </div>
       )}
 
       {/* Dialogs */}
-      <CreateRewardDialog 
-        open={createDialogOpen} 
-        onOpenChange={setCreateDialogOpen} 
+      <RewardFormDialog 
+        key={rewardToEdit?.id || "new"}
+        reward={rewardToEdit}
+        open={formDialogOpen} 
+        onOpenChange={setFormDialogOpen} 
         onSuccess={fetchRewards}
       />
 
@@ -174,6 +198,17 @@ export default function RewardsDashboard() {
         open={taskDialogOpen}
         onOpenChange={setTaskDialogOpen}
         onUpdate={handleRewardUpdate}
+      />
+
+      <AlertDialog
+        open={!!rewardToDelete}
+        onOpenChange={(open) => !open && setRewardToDelete(null)}
+        title="Delete Reward"
+        description="Are you sure you want to delete this reward? All associated tasks will also be removed."
+        confirmText="Delete"
+        onConfirm={handleDeleteReward}
+        variant="destructive"
+        isLoading={isDeletingReward}
       />
     </main>
   );

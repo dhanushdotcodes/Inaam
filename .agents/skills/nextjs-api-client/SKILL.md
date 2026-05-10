@@ -40,11 +40,15 @@ Do NOT use when:
 
 ### Architecture Rules
 - API client functions live in `lib/api.ts`.
+- **Standardized Fetch**: Use a wrapper function like `apiFetch` to centralize:
+  - Base URL configuration.
+  - Authentication headers (JWT).
+  - Error handling and response parsing.
 - Utility helpers live in `lib/utils.ts`.
-- TypeScript type definitions live in `types/index.ts` (or split by domain as needed).
+- TypeScript type definitions live in `types/index.ts`.
 - ALL fetch functions MUST return typed responses.
-- ALL fetch functions MUST handle errors explicitly — throw on non-OK responses with status and body.
-- Use the `NEXT_PUBLIC_SERVER_URL` environment variable for the base URL — NEVER hardcode API URLs.
+- ALL fetch functions MUST handle errors explicitly — throw on non-OK responses.
+- Use the `NEXT_PUBLIC_SERVER_URL` environment variable for the base URL.
 
 ### Security
 - NEVER expose backend secrets or server-side tokens in client-side code.
@@ -88,49 +92,64 @@ apps/client/
      export interface Reward {
        id: string;
        title: string;
-       points: number;
-       isRedeemed: boolean;
+       description?: string;
+       claimed: boolean;
      }
 
      export interface RewardCreatePayload {
        title: string;
-       points: number;
+       description?: string;
      }
 
-     export type RewardStatus = "active" | "redeemed" | "expired";
+     export interface Task {
+       id: string;
+       reward_id: string;
+       title: string;
+       completed: boolean;
+     }
      ```
 
 3. **Build the API client functions**
    - Add fetch functions in `lib/api.ts` that call the FastAPI backend.
-   - Use the `NEXT_PUBLIC_SERVER_URL` environment variable for the base URL.
-   - Handle errors explicitly — throw on non-OK responses with status and body.
-   - Return typed responses.
+   - Use the `apiFetch` standardized wrapper.
    - Example:
      ```typescript
      // lib/api.ts
 
      const API_BASE = process.env.NEXT_PUBLIC_SERVER_URL;
 
-     export async function getRewards(): Promise<Reward[]> {
-       const res = await fetch(`${API_BASE}/api/v1/rewards`);
+     async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+       
+       const headers: HeadersInit = {
+         "Content-Type": "application/json",
+         ...(token && { Authorization: `Bearer ${token}` }),
+         ...options.headers,
+       };
+
+       const res = await fetch(`${API_BASE}/api/v1${endpoint}`, { ...options, headers });
+       
        if (!res.ok) {
-         const body = await res.text();
-         throw new Error(`Failed to fetch rewards: ${res.status} - ${body}`);
+         const error = await res.text();
+         throw new Error(error || `Request failed with status ${res.status}`);
        }
+
        return res.json();
      }
 
-     export async function createReward(payload: RewardCreatePayload): Promise<Reward> {
-       const res = await fetch(`${API_BASE}/api/v1/rewards`, {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
+     export async function getRewards(): Promise<Reward[]> {
+       return apiFetch<Reward[]>("/rewards");
+     }
+
+     export async function updateReward(id: string, payload: Partial<Reward>): Promise<Reward> {
+       return apiFetch<Reward>(`/rewards/${id}`, {
+         method: "PUT",
          body: JSON.stringify(payload),
        });
-       if (!res.ok) {
-         const body = await res.text();
-         throw new Error(`Failed to create reward: ${res.status} - ${body}`);
-       }
-       return res.json();
+     }
+
+     export async function deleteReward(id: string): Promise<void> {
+       return apiFetch<void>(`/rewards/${id}`, { method: "DELETE" });
      }
      ```
 
@@ -139,40 +158,9 @@ apps/client/
    - Validate all inputs before sending to the backend.
    - Use React state hooks (`useState`, `useReducer`) for form state.
    - Handle loading, success, and error states.
-   - Example:
-     ```typescript
-     // Inside a Client Component using the API client
-     "use client";
-
-     import { useState } from "react";
-     import { createReward } from "@/lib/api";
-     import type { RewardCreatePayload } from "@/types";
-
-     export function useCreateReward() {
-       const [isLoading, setIsLoading] = useState(false);
-       const [error, setError] = useState<string | null>(null);
-
-       async function handleCreate(payload: RewardCreatePayload) {
-         setIsLoading(true);
-         setError(null);
-         try {
-           const reward = await createReward(payload);
-           return reward;
-         } catch (err) {
-           setError(err instanceof Error ? err.message : "Unknown error");
-           return null;
-         } finally {
-           setIsLoading(false);
-         }
-       }
-
-       return { handleCreate, isLoading, error };
-     }
-     ```
 
 5. **Add utility functions (if needed)**
    - Place shared helpers in `lib/utils.ts` for formatting, transformations, or validations.
-   - Example: date formatters, currency formatters, input sanitizers.
 
 6. **Validate**
    - Start the dev server: `cd apps/client && bun run dev`
@@ -221,7 +209,8 @@ apps/client/
 ## Checklist
 - [ ] TypeScript types are defined in `types/` for all API responses and payloads
 - [ ] API client functions are in `lib/api.ts` with typed return values
-- [ ] `NEXT_PUBLIC_SERVER_URL` environment variable is used for the base URL (no hardcoded URLs)
+- [ ] Standardized `apiFetch` wrapper is used for consistency
+- [ ] `NEXT_PUBLIC_SERVER_URL` environment variable is used for the base URL
 - [ ] Errors are handled explicitly — non-OK responses throw with status and body
 - [ ] All user inputs are validated before sending to the backend
 - [ ] `interface` is used for object shapes, `type` for unions/intersections
