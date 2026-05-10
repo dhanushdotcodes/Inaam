@@ -39,7 +39,8 @@ Do NOT use when:
 
 ### Architecture Rules
 - Pages live in `app/` using the App Router convention.
-- Server Components are the default — use `"use client"` only when the page genuinely needs interactivity, hooks, or browser APIs.
+- Server Components are the default — In case we need to have client component inside a page we can do that but it should be a seperate component and should be imported from `components/`.
+- Always try to break the page into smaller components and import them from `components/`.
 - NEVER fetch data in Client Components when a Server Component can do it.
 - Compose pages from reusable components defined in `components/`.
 - The root layout (`app/layout.tsx`) handles global fonts, metadata, and providers — avoid duplicating these in nested layouts.
@@ -82,12 +83,13 @@ apps/client/
 1. **Clarify the requirement**
    - Identify the route path (e.g., `/dashboard`, `/rewards`).
    - Determine data requirements — does the page need backend API data?
-   - Decide if the page is a Server Component (default) or needs `"use client"`.
+   - Decide if the page is a Server Component (default) or needs a client component with `"use client"`.
    - Check if the required components already exist in `components/`.
    - Check if the required API client functions already exist in `lib/api.ts`.
 
 2. **Create the page file**
    - Add `page.tsx` inside the appropriate `app/<route>/` directory.
+   - If you need to use client components inside a page, create them as separate components and import them from `components/`. Add "use client" at the top of the client component file.
    - Use Server Components for data fetching when possible.
    - Compose the page from components in `components/`.
    - Example:
@@ -145,9 +147,9 @@ apps/client/
 
 6. **Validate**
    - Start the dev server: `cd apps/client && bun run dev`
-   - Visit the page in the browser and verify rendering, responsiveness, and interactivity.
+   - Ask user to verify the page in the browser and verify rendering, responsiveness, and interactivity.
    - Check the terminal for TypeScript or build errors.
-   - Verify no console errors in the browser.
+   - Ask user to verify no console errors in the browser.
 
 ---
 

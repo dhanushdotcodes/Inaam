@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+- Added eye icon visibility toggle for the secret key input on the login page.
+- Implemented JWT session persistence using browser cookies.
+- Protected the `/rewards` page with a client-side authentication check.
+- Added a Logout button to the Rewards page.
+- Integrated the JWT token into all API requests via the `Authorization` header.
+
+
 ## [0.2.0] - 2026-05-09
 
 ### Added

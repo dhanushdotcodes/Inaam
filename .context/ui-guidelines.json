@@ -1,0 +1,327 @@
+{
+  "meta": {
+    "name": "dashboard-design-system",
+    "stack": {
+      "framework": "Next.js",
+      "language": "TypeScript",
+      "styling": "Tailwind CSS"
+    },
+    "principles": [
+      "Consistency over creativity",
+      "Reusable primitives",
+      "Semantic styling",
+      "Mobile-first responsiveness",
+      "Composable architecture",
+      "Accessible interactions"
+    ]
+  },
+  "architecture": {
+    "folders": {
+      "components/ui": "Reusable primitive UI components",
+      "components/layout": "Dashboard layout structures",
+      "components/forms": "Form abstractions",
+      "components/feedback": "Toasts, alerts, loaders",
+      "components/data-display": "Cards, tables, badges",
+      "components/navigation": "Sidebar, navbar, tabs",
+      "features": "Feature/domain-specific components",
+      "lib/variants": "cva variant configurations",
+      "lib/constants": "Shared constants",
+      "styles": "Global styles and tokens"
+    }
+  },
+  "design_tokens": {
+    "borderRadius": {
+      "default": "rounded-xl",
+      "card": "rounded-2xl"
+    },
+    "spacing": {
+      "2": "8px",
+      "4": "16px",
+      "6": "24px",
+      "8": "32px",
+      "12": "48px",
+      "16": "64px"
+    },
+    "typography": {
+      "fontSizes": [
+        "text-xs",
+        "text-sm",
+        "text-base",
+        "text-lg",
+        "text-xl",
+        "text-2xl"
+      ],
+      "fontWeights": [
+        "font-normal",
+        "font-medium",
+        "font-semibold"
+      ]
+    },
+    "colors": {
+      "semantic": [
+        "primary",
+        "secondary",
+        "accent",
+        "muted",
+        "success",
+        "warning",
+        "destructive",
+        "border",
+        "background",
+        "foreground"
+      ]
+    }
+  },
+  "responsive_system": {
+    "strategy": "mobile-first",
+    "breakpoints": {
+      "sm": "mobile landscape",
+      "md": "tablet",
+      "lg": "laptop",
+      "xl": "desktop",
+      "2xl": "wide screens"
+    },
+    "layout_rules": {
+      "containers": [
+        "max-w-7xl",
+        "mx-auto",
+        "px-4",
+        "md:px-6",
+        "lg:px-8"
+      ],
+      "grid_pattern": [
+        "grid-cols-1",
+        "md:grid-cols-2",
+        "xl:grid-cols-4"
+      ],
+      "flex_pattern": [
+        "flex-col",
+        "lg:flex-row"
+      ]
+    },
+    "sidebar_behavior": {
+      "mobile": "drawer",
+      "tablet": "collapsible",
+      "desktop": "persistent"
+    },
+    "modal_behavior": {
+      "mobile": "bottom-sheet",
+      "desktop": "centered-modal"
+    },
+    "table_behavior": {
+      "mobile": [
+        "horizontal-scroll",
+        "stacked-cards",
+        "responsive-row-collapse"
+      ]
+    }
+  },
+  "layout_system": {
+    "dashboard_structure": [
+      "DashboardShell",
+      "Sidebar",
+      "Header",
+      "MainContent",
+      "PageHeader",
+      "Toolbar",
+      "Content",
+      "FooterActions"
+    ],
+    "layout_components": [
+      "DashboardShell",
+      "PageContainer",
+      "PageHeader",
+      "Section",
+      "Card",
+      "Toolbar",
+      "EmptyState"
+    ]
+  },
+  "buttons": {
+    "variants": [
+      "primary",
+      "secondary",
+      "outline",
+      "ghost",
+      "destructive",
+      "success",
+      "link"
+    ],
+    "sizes": {
+      "sm": "h-8",
+      "md": "h-10",
+      "lg": "h-12",
+      "icon": "square"
+    },
+    "states": [
+      "default",
+      "hover",
+      "active",
+      "disabled",
+      "loading",
+      "focus-visible"
+    ],
+    "rules": {
+      "fontWeight": "font-medium",
+      "borderRadius": "rounded-xl",
+      "primaryUsage": "Only one dominant primary action per section"
+    },
+    "api_pattern": {
+      "example": "<Button variant=\"primary\" size=\"md\">Save</Button>"
+    }
+  },
+  "data_display": {
+    "cards": {
+      "styles": [
+        "rounded-2xl",
+        "border",
+        "bg-background"
+      ]
+    },
+    "tables": {
+      "features": [
+        "sorting",
+        "pagination",
+        "loading-state",
+        "empty-state",
+        "row-actions",
+        "responsive-handling"
+      ],
+      "structure": [
+        "TableToolbar",
+        "Filters",
+        "TableContent",
+        "Pagination"
+      ]
+    },
+    "badges": {
+      "variants": [
+        "success",
+        "warning",
+        "danger",
+        "neutral",
+        "info"
+      ]
+    },
+    "stats_cards": {
+      "sections": [
+        "title",
+        "metric",
+        "delta",
+        "chart"
+      ]
+    }
+  },
+  "forms": {
+    "components": [
+      "Input",
+      "Textarea",
+      "Select",
+      "MultiSelect",
+      "Checkbox",
+      "RadioGroup",
+      "Switch",
+      "DatePicker",
+      "Combobox",
+      "FileUpload"
+    ],
+    "field_structure": [
+      "Label",
+      "Input",
+      "DescriptionOrError"
+    ],
+    "supported_states": [
+      "label",
+      "description",
+      "error",
+      "required",
+      "disabled"
+    ],
+    "input_height": "h-10",
+    "validation": {
+      "libraries": [
+        "React Hook Form",
+        "Zod"
+      ]
+    }
+  },
+  "modals_and_overlays": {
+    "types": [
+      "Dialog",
+      "Drawer",
+      "Popover",
+      "Dropdown",
+      "CommandPalette",
+      "Tooltip"
+    ],
+    "modal_sizes": [
+      "sm",
+      "md",
+      "lg",
+      "xl",
+      "full"
+    ],
+    "structure": [
+      "Header",
+      "Content",
+      "Footer"
+    ]
+  },
+  "toasts": {
+    "types": [
+      "success",
+      "error",
+      "warning",
+      "info",
+      "loading"
+    ],
+    "duration": "3-5 seconds",
+    "position": {
+      "desktop": "top-right",
+      "mobile": "bottom-center"
+    }
+  },
+  "recommended_libraries": {
+    "ui": {
+      "name": "shadcn/ui",
+      "website": "https://ui.shadcn.com"
+    },
+    "variants": {
+      "name": "class-variance-authority",
+      "website": "https://cva.style/docs"
+    },
+    "class_merge": {
+      "name": "tailwind-merge",
+      "website": "https://github.com/dcastil/tailwind-merge"
+    },
+    "animations": {
+      "name": "Motion",
+      "website": "https://motion.dev"
+    },
+    "headless_components": {
+      "name": "Radix UI",
+      "website": "https://www.radix-ui.com"
+    }
+  },
+  "rules": {
+    "avoid": [
+      "Random spacing",
+      "Arbitrary font sizes",
+      "Inline component styling",
+      "Mixed border radius usage",
+      "Too many primary buttons",
+      "Hardcoded colors",
+      "Unstructured forms",
+      "Desktop-first layouts"
+    ],
+    "enforce": [
+      "Semantic tokens",
+      "Reusable variants",
+      "Consistent spacing scale",
+      "Unified input heights",
+      "Composable layouts",
+      "Responsive patterns",
+      "Accessibility-first interactions"
+    ]
+  }
+}
