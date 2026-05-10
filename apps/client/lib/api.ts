@@ -14,9 +14,9 @@ import type {
  * Base URL for the FastAPI server.
  * Falls back to localhost for local development.
  */
-const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL as string;
+const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
-const API_PREFIX = "api/v1";
+const API_PREFIX = "/api/v1";
 
 /**
  * Generic fetch wrapper that handles JSON parsing and error extraction
