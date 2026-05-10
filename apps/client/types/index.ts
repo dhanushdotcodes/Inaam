@@ -51,11 +51,11 @@ export interface TaskCreatePayload {
 }
 
 /**
- * Payload for updating a task.
+ * Reward with its tasks and UI loading state.
  */
-export interface TaskUpdatePayload {
-  title?: string;
-  completed?: boolean;
+export interface RewardWithTasks extends Reward {
+  tasks: Task[];
+  tasksLoading: boolean;
 }
 
 /**
@@ -66,3 +66,4 @@ export interface LoginResponse {
   access_token: string;
   token_type: string;
 }
+

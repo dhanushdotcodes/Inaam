@@ -6,7 +6,6 @@ import type {
   RewardCreatePayload,
   Task,
   TaskCreatePayload,
-  TaskUpdatePayload,
 } from "@/types";
 
 /**
