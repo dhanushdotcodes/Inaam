@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 import { verifyKey } from "@/lib/api";
+import { setToken, isAuthenticated } from "@/lib/auth";
 
 /**
  * Home page — Secret key verification gate.
@@ -14,6 +16,15 @@ export default function Home() {
   const [key, setKey] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [showKey, setShowKey] = useState(false);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated()) {
+      router.push("/rewards");
+    }
+  }, [router]);
 
   /**
    * Handle form submission to verify the secret key.
@@ -31,7 +42,8 @@ export default function Home() {
       setLoading(true);
       setError(null);
 
-      await verifyKey(trimmedKey);
+      const result = await verifyKey(trimmedKey);
+      setToken(result.access_token);
       router.push("/rewards");
     } catch (err) {
       setError(
@@ -68,16 +80,30 @@ export default function Home() {
             >
               Secret Key
             </label>
-            <input
-              id="secret-key"
-              type="password"
-              value={key}
-              onChange={(e) => setKey(e.target.value)}
-              disabled={loading}
-              placeholder="Enter your secret key"
-              autoFocus
-              className="w-full rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-all disabled:opacity-50"
-            />
+            <div className="relative group">
+              <input
+                id="secret-key"
+                type={showKey ? "text" : "password"}
+                value={key}
+                onChange={(e) => setKey(e.target.value)}
+                disabled={loading}
+                placeholder="Enter your secret key"
+                autoFocus
+                className="w-full rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 pr-12 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 transition-all disabled:opacity-50"
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey(!showKey)}
+                disabled={loading}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400 transition-colors disabled:opacity-50"
+              >
+                {showKey ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           </div>
 
           {error && (

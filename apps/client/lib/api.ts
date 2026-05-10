@@ -1,3 +1,4 @@
+import { getToken } from "./auth";
 import type {
   ApiResponse,
   LoginResponse,
@@ -26,10 +27,13 @@ async function apiFetch<T>(
   options?: RequestInit
 ): Promise<T> {
   const url = `${BASE_URL}${API_PREFIX}${path}`;
+  const token = getToken();
 
   const response = await fetch(url, {
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options?.headers,
     },
     ...options,
@@ -63,6 +67,7 @@ export async function verifyKey(key: string): Promise<LoginResponse> {
 
   const response = await fetch(url, {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ key }),
   });

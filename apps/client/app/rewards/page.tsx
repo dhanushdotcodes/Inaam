@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Plus, Gift, CheckCircle2, Circle, Loader2, AlertCircle, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Plus, Gift, CheckCircle2, Circle, Loader2, AlertCircle, X, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 
 import { getRewards, createReward, getRewardTasks, createTask, completeTask } from "@/lib/api";
+import { isAuthenticated, removeToken } from "@/lib/auth";
 import type { Reward, Task } from "@/types";
 
 /**
@@ -36,6 +38,7 @@ interface RewardWithTasks extends Reward {
 }
 
 export default function RewardsPage() {
+  const router = useRouter();
   const [rewards, setRewards] = useState<RewardWithTasks[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +56,21 @@ export default function RewardsPage() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [addingTask, setAddingTask] = useState(false);
   const [taskError, setTaskError] = useState<string | null>(null);
+
+  // Protection: Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push("/");
+    }
+  }, [router]);
+
+  /**
+   * Handle logout.
+   */
+  const handleLogout = () => {
+    removeToken();
+    router.push("/");
+  };
 
   /**
    * Fetch all rewards and then fetch tasks for each reward.
@@ -214,90 +232,96 @@ export default function RewardsPage() {
           </p>
         </div>
 
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger
-            render={<Button id="create-reward-button" />}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            New Reward
-          </DialogTrigger>
+        <div className="flex items-center gap-2">
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger
+              render={<Button id="create-reward-button" />}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              New Reward
+            </DialogTrigger>
 
-          <DialogContent className="sm:max-w-md">
-            <form onSubmit={handleCreateReward}>
-              <DialogHeader>
-                <DialogTitle>Create New Reward</DialogTitle>
-                <DialogDescription>
-                  Add a reward that you can unlock by completing tasks.
-                </DialogDescription>
-              </DialogHeader>
+            <DialogContent className="sm:max-w-md">
+              <form onSubmit={handleCreateReward}>
+                <DialogHeader>
+                  <DialogTitle>Create New Reward</DialogTitle>
+                  <DialogDescription>
+                    Add a reward that you can unlock by completing tasks.
+                  </DialogDescription>
+                </DialogHeader>
 
-              <div className="mt-6 space-y-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="reward-title"
-                    className="text-sm font-medium"
-                  >
-                    Title <span className="text-destructive">*</span>
-                  </label>
-                  <Input
-                    id="reward-title"
-                    placeholder="e.g. Buy a new book"
-                    value={formTitle}
-                    onChange={(e) => setFormTitle(e.target.value)}
-                    disabled={submitting}
-                    maxLength={255}
-                    autoFocus
-                  />
-                </div>
+                <div className="mt-6 space-y-4">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="reward-title"
+                      className="text-sm font-medium"
+                    >
+                      Title <span className="text-destructive">*</span>
+                    </label>
+                    <Input
+                      id="reward-title"
+                      placeholder="e.g. Buy a new book"
+                      value={formTitle}
+                      onChange={(e) => setFormTitle(e.target.value)}
+                      disabled={submitting}
+                      maxLength={255}
+                      autoFocus
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <label
-                    htmlFor="reward-description"
-                    className="text-sm font-medium"
-                  >
-                    Description
-                  </label>
-                  <Textarea
-                    id="reward-description"
-                    placeholder="Optional details about this reward..."
-                    value={formDescription}
-                    onChange={(e) => setFormDescription(e.target.value)}
-                    disabled={submitting}
-                    maxLength={1000}
-                    rows={3}
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="reward-description"
+                      className="text-sm font-medium"
+                    >
+                      Description
+                    </label>
+                    <Textarea
+                      id="reward-description"
+                      placeholder="Optional details about this reward..."
+                      value={formDescription}
+                      onChange={(e) => setFormDescription(e.target.value)}
+                      disabled={submitting}
+                      maxLength={1000}
+                      rows={3}
+                    />
+                  </div>
 
-                {formError && (
-                  <p className="text-sm text-destructive" role="alert">
-                    {formError}
-                  </p>
-                )}
-              </div>
-
-              <DialogFooter className="mt-6">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setDialogOpen(false)}
-                  disabled={submitting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  id="submit-reward-button"
-                  type="submit"
-                  disabled={submitting}
-                >
-                  {submitting && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {formError && (
+                    <p className="text-sm text-destructive" role="alert">
+                      {formError}
+                    </p>
                   )}
-                  Create Reward
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+                </div>
+
+                <DialogFooter className="mt-6">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setDialogOpen(false)}
+                    disabled={submitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    id="submit-reward-button"
+                    type="submit"
+                    disabled={submitting}
+                  >
+                    {submitting && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Create Reward
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          <Button variant="ghost" size="icon" onClick={handleLogout} title="Logout">
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Loading State */}
