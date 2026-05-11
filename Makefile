@@ -31,3 +31,6 @@ dev-server:
 
 test:
 	cd apps/server && PYTHONPATH=../..:.:$$PYTHONPATH uv run pytest
+
+install-client:
+	cd apps/client && bun install $(pkg)

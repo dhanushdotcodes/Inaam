@@ -27,13 +27,18 @@ export default function TaskList({
     );
   }
 
+  const sortedTasks = [...tasks].sort((a, b) => {
+    if (a.completed === b.completed) return 0;
+    return a.completed ? 1 : -1;
+  });
+
   return (
-    <div className="space-y-2">
-      <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider text-[10px]">
+    <div className="space-y-2 w-full overflow-hidden">
+      <h4 className="font-medium text-muted-foreground uppercase tracking-wider text-[10px]">
         Tasks
       </h4>
       <ul className="space-y-1">
-        {tasks.map((task) => (
+        {sortedTasks.map((task) => (
           <TaskItem
             key={task.id}
             rewardId={rewardId}

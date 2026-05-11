@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { updateTask } from "@/lib/api";
 import type { Task } from "@/types";
+import { motion } from "motion/react";
 
 interface TaskItemProps {
   rewardId: string;
@@ -67,7 +68,8 @@ export default function TaskItem({
   };
 
   return (
-    <li 
+    <motion.li 
+      layout
       className={`flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors group ${!isEditing ? "cursor-pointer" : ""}`}
       onClick={() => !isEditing && handleToggle()}
     >
@@ -156,6 +158,6 @@ export default function TaskItem({
           </Button>
         </div>
       )}
-    </li>
+    </motion.li>
   );
 }
