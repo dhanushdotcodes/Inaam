@@ -67,22 +67,23 @@ export default function TaskItem({
   };
 
   return (
-    <li className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors group">
+    <li 
+      className={`flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors group ${!isEditing ? "cursor-pointer" : ""}`}
+      onClick={() => !isEditing && handleToggle()}
+    >
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        <button
-          onClick={handleToggle}
+        <div
           className="focus:outline-none shrink-0"
-          disabled={isEditing}
         >
           {task.completed ? (
             <CheckCircle2 className="h-5 w-5 text-emerald-500" />
           ) : (
             <Circle className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
           )}
-        </button>
+        </div>
 
         {isEditing ? (
-          <div className="flex items-center gap-1 flex-1">
+          <div className="flex items-center gap-1 flex-1" onClick={(e) => e.stopPropagation()}>
             <Input
               value={editingTitle}
               onChange={(e) => setEditingTitle(e.target.value)}
@@ -135,7 +136,10 @@ export default function TaskItem({
             variant="ghost"
             size="icon"
             className="h-7 w-7 text-muted-foreground hover:text-primary"
-            onClick={() => setIsEditing(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditing(true);
+            }}
           >
             <Pencil className="h-3.5 w-3.5" />
           </Button>
@@ -143,7 +147,10 @@ export default function TaskItem({
             variant="ghost"
             size="icon"
             className="h-7 w-7 text-muted-foreground hover:text-destructive"
-            onClick={() => onDeleteRequest(task.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteRequest(task.id);
+            }}
           >
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
