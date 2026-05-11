@@ -14,7 +14,7 @@ import type {
  * Base URL for the FastAPI server.
  * Falls back to localhost for local development.
  */
-const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
 
 const API_PREFIX = "/api/v1";
 
@@ -26,7 +26,9 @@ async function apiFetch<T>(
   path: string,
   options?: RequestInit
 ): Promise<T> {
-  const url = `${BASE_URL}${API_PREFIX}${path}`;
+  // Ensure path starts with /
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const url = `${BASE_URL}${API_PREFIX}${normalizedPath}`;
   const token = getToken();
 
   const response = await fetch(url, {

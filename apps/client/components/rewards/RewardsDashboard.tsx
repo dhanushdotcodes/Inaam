@@ -55,12 +55,25 @@ export default function RewardsDashboard() {
       setError(null);
       const data = await getRewards();
 
+      if (!Array.isArray(data)) {
+        setRewards([]);
+        setLoading(false);
+        return;
+      }
+
+      if (data.length === 0) {
+        setRewards([]);
+        setLoading(false);
+        return;
+      }
+
       const rewardsWithTasks: RewardWithTasks[] = data.map((r) => ({
         ...r,
         tasks: [],
         tasksLoading: true,
       }));
       setRewards(rewardsWithTasks);
+      setLoading(false); // Show the grid with individual loaders
 
       const taskResults = await Promise.allSettled(
         data.map((r) => getRewardTasks(r.id))
@@ -77,19 +90,19 @@ export default function RewardsDashboard() {
         })
       );
     } catch (err) {
+      console.error("Fetch rewards error:", err);
       setError(
         err instanceof Error ? err.message : "Failed to fetch rewards"
       );
+      setLoading(false);
     } finally {
+      // Ensure loading is false in all cases
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    const initialize = async () => {
-      await fetchRewards();
-    };
-    initialize();
+    fetchRewards();
   }, [fetchRewards]);
 
 
