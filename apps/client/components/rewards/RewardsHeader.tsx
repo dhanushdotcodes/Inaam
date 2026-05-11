@@ -11,14 +11,17 @@ interface RewardsHeaderProps {
 /**
  * RewardsHeader component — Handles the page title and actions.
  */
-export default function RewardsHeader({ onNewReward, onLogout }: RewardsHeaderProps) {
+export default function RewardsHeader({
+  onNewReward,
+  onLogout,
+}: RewardsHeaderProps) {
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
+      <div className="min-w-0 flex-1">
+        <h1 className="text-2xl font-semibold tracking-tight wrap-break-word break-all max-w-full">
           Rewards
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-muted-foreground wrap-break-word">
           Manage your rewards and track task progress.
         </p>
       </div>

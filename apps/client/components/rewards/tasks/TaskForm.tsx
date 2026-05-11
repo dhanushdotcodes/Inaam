@@ -49,6 +49,7 @@ export default function TaskForm({ rewardId, onTaskAdded }: TaskFormProps) {
           onChange={(e) => setTitle(e.target.value)}
           disabled={submitting}
           className="flex-1"
+          autoFocus
         />
         <Button type="submit" size="icon" disabled={submitting || !title.trim()}>
           {submitting ? (

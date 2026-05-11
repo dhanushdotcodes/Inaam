@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Circle, Loader2, Pencil, Trash2, X, Check } from "lucide-react";
+import {
+  CheckCircle2,
+  Circle,
+  Loader2,
+  Pencil,
+  Trash2,
+  X,
+  Check,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { updateTask } from "@/lib/api";
@@ -63,7 +71,7 @@ export default function TaskItem({
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <button
           onClick={handleToggle}
-          className="focus:outline-none flex-shrink-0"
+          className="focus:outline-none shrink-0"
           disabled={isEditing}
         >
           {task.completed ? (
@@ -110,7 +118,7 @@ export default function TaskItem({
           </div>
         ) : (
           <span
-            className={`text-sm truncate ${
+            className={`text-sm wrap-break-word whitespace-normal break-all max-w-full ${
               task.completed
                 ? "text-muted-foreground line-through"
                 : "text-foreground font-medium"
@@ -122,7 +130,7 @@ export default function TaskItem({
       </div>
 
       {!isEditing && (
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
           <Button
             variant="ghost"
             size="icon"

@@ -22,22 +22,25 @@ interface RewardCardProps {
 /**
  * RewardCard component — Displays summary of a reward and its task progress.
  */
-export default function RewardCard({ reward, onClick, onEdit, onDelete }: RewardCardProps) {
+export default function RewardCard({
+  reward,
+  onClick,
+  onEdit,
+  onDelete,
+}: RewardCardProps) {
   const total = reward.tasks.length;
   const completed = reward.tasks.filter((t) => t.completed).length;
   const allDone = total > 0 && completed === total;
 
   return (
     <Card
-      className="transition-all hover:shadow-md cursor-pointer hover:border-primary/50 min-w-64 group"
+      className="transition-all hover:shadow-md cursor-pointer hover:border-primary/50 w-full group overflow-hidden min-w-64"
       onClick={onClick}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <CardTitle className="truncate text-base">
-              {reward.title}
-            </CardTitle>
+            <CardTitle className="text-base truncate max-w-40 break-all">{reward.title}</CardTitle>
             {reward.description && (
               <CardDescription className="mt-1 line-clamp-2 text-xs">
                 {reward.description}
@@ -56,8 +59,8 @@ export default function RewardCard({ reward, onClick, onEdit, onDelete }: Reward
                 {total === 0 ? "No tasks" : "In Progress"}
               </Badge>
             )}
-            
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+
+            <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
               <Button
                 variant="ghost"
                 size="icon"
@@ -95,11 +98,11 @@ export default function RewardCard({ reward, onClick, onEdit, onDelete }: Reward
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span className="font-medium">
-                {total === 0
-                  ? "No tasks"
-                  : `${completed}/${total} tasks`}
+                {total === 0 ? "No tasks" : `${completed}/${total} tasks`}
               </span>
-              <span>{total > 0 ? Math.round((completed / total) * 100) : 0}%</span>
+              <span>
+                {total > 0 ? Math.round((completed / total) * 100) : 0}%
+              </span>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
               <div

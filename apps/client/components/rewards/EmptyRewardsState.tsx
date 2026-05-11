@@ -9,7 +9,7 @@ interface EmptyRewardsStateProps {
 
 export default function EmptyRewardsState({ onCreateClick }: EmptyRewardsStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed p-12 text-center">
+    <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed p-6 sm:p-12 text-center">
       <div className="rounded-xl bg-muted p-3">
         <Gift className="h-8 w-8 text-muted-foreground" />
       </div>

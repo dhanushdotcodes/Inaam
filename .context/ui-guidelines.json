@@ -55,6 +55,11 @@
         "font-normal",
         "font-medium",
         "font-semibold"
+      ],
+      "utilities": [
+        "wrap-break-word",
+        "truncate",
+        "line-clamp"
       ]
     },
     "colors": {

@@ -49,7 +49,7 @@ export default function TaskDetailsDialog({
 
   const handleTaskUpdate = (updatedTask: Task) => {
     const updatedTasks = reward.tasks.map((t) =>
-      t.id === updatedTask.id ? updatedTask : t
+      t.id === updatedTask.id ? updatedTask : t,
     );
     onUpdate({ ...reward, tasks: updatedTasks });
   };
@@ -75,16 +75,22 @@ export default function TaskDetailsDialog({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg w-[95vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <div className="flex items-center justify-between pr-6">
-              <div>
-                <DialogTitle>{reward.title}</DialogTitle>
-                <DialogDescription className="mt-1">
+            <div className="flex items-start justify-between gap-4 pr-6">
+              <div className="min-w-0 flex-1">
+                <DialogTitle className="wrap-break-word whitespace-normal">
+                  {reward.title}
+                </DialogTitle>
+                <DialogDescription className="mt-1 wrap-break-word">
                   {reward.description || "Manage tasks for this reward."}
                 </DialogDescription>
               </div>
-              {reward.claimed && <Badge variant="secondary">Claimed</Badge>}
+              {reward.claimed && (
+                <Badge variant="secondary" className="shrink-0">
+                  Claimed
+                </Badge>
+              )}
             </div>
           </DialogHeader>
 
