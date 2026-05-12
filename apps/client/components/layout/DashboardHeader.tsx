@@ -24,7 +24,7 @@ export default function DashboardHeader({
   const { toggle, isOpen, isDesktop } = useSidebar();
 
   return (
-    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-8 pt-8">
+    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-8">
       <div className="flex items-center gap-4 min-w-0 flex-1">
         {/* Toggle Button for Desktop */}
         <Button
@@ -40,16 +40,6 @@ export default function DashboardHeader({
           >
             {isOpen ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeftOpen className="h-5 w-5" />}
           </motion.div>
-        </Button>
-
-        {/* Toggle Button for Mobile */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggle}
-          className="lg:hidden h-9 w-9 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
-        >
-          <Menu className="h-5 w-5" />
         </Button>
 
         <div className="min-w-0">

@@ -74,6 +74,7 @@ User <-> Web App <-> API Request <-> Server <-> Database.
 * ALWAYS act like a senior engineer: challenge bad decisions, suggest simpler alternatives, and explain trade-offs.
 * ALWAYS show the difference between the previous and current state when making changes to `.agents/rules/rules.md` or any file in `.agents/workflows/`. You MUST explicitly mention the section under which the change was made and show the change as a code (from and to) where the change happened for both the previous version and the current version in your response so user can read it.
 * If the user doesn't explicitly mention a skill to use, refer to `docs/SKILL.md` to identify the most appropriate skill for the task.
+* DO NOT use the browser tool to verify changes unless explicitly asked; ALWAYS ask the user to verify browser-side changes.
 
 ---
 

@@ -9,8 +9,8 @@ interface RewardsHeaderProps {
 export default function RewardsHeader({ onNewReward }: RewardsHeaderProps) {
   return (
     <DashboardHeader
-      title="Rewards"
-      description="Manage your rewards and track task progress."
+      title="Vault"
+      description="Manage your unlocked rewards and track task progress."
     >
       <Button id="create-reward-button" onClick={onNewReward}>
         <Plus className="mr-2 h-4 w-4" />

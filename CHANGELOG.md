@@ -8,37 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
-- Implemented PWA support with a manual service worker (`sw.js`) for offline capabilities and installability.
-- Generated premium branding assets (192x192 and 512x512 icons) for Inaam.
-- Created `ServiceWorkerRegistrar` component for automatic PWA registration.
-- Configured application manifest with project-specific metadata and PWA settings.
-- Created `VerifyAccessForm`, `RewardsHeader`, `RewardCard`, `CreateRewardDialog`, `TaskDetailsDialog`, and `RewardsDashboard` components.
-- Added `updateReward`, `deleteReward`, `updateTask`, and `deleteTask` API client methods.
-- Created `RewardFormDialog` to handle both reward creation and updates.
+- Created a consolidated **Quests** dashboard (`/quests`) for global task tracking across all rewards.
+- Implemented modular quest components: `QuestDashboard`, `QuestList`, `QuestItem`, `QuestHeader`, and `QuestFilters`.
+- Added automatic sorting for quests where completed items smoothly animate to the bottom of the list.
+- Implemented **`RewardsOverview`** component to standardize the financials/stats dashboard.
+- Added a logout button to the mobile bottom navigation bar for functional parity with desktop.
+- Created a centralized **`DashboardHeader`** component to handle page titles and sidebar toggling consistently.
 
 ### Changed
-- Modularized the Next.js home and rewards pages into smaller, focused components in the `components/` directory.
-- Converted main page files (`page.tsx`) to Server Components to leverage Next.js App Router benefits.
-- Added eye icon visibility toggle for the secret key input on the login page.
-- Implemented JWT session persistence using browser cookies.
-- Protected the `/rewards` page with a client-side authentication check.
-- Added a Logout button to the Rewards page.
-- Integrated the JWT token into all API requests via the `Authorization` header.
-- Implemented update and delete functionality for both rewards and tasks in the UI.
-- Enhanced `TaskDetailsDialog` with inline task editing and task deletion.
-- Added quick action buttons (edit/delete) to `RewardCard`.
-- Refactored reward creation logic into a unified `RewardFormDialog`.
-- Reorganized `rewards` components into a modular directory structure (`dialogs/`, `tasks/`).
-- Extracted granular sub-components (`TaskItem`, `TaskForm`, `TaskList`) to improve maintainability.
-- Integrated `AlertDialog` for all destructive actions (delete reward/task).
-- Implemented task completion toggle (undo/redo).
+- Renamed the Rewards (items) route to **`/vault`** and the Treasury (stats) route to **`/rewards`** for better domain alignment.
+- Updated the **Sidebar** navigation and styling to follow new UI guidelines (consistent spacing, premium active indicators).
+- Refactored `rewards/page.tsx` and `vault/page.tsx` into clean, component-based entry points.
+- Aligned global UI tokens: standardized inputs/buttons to `h-10` height and `rounded-xl` border radius.
+- Enhanced layout animations using `motion/react` and `AnimatePresence` with `popLayout` for smooth reordering.
+- Updated `SidebarContext` to implement responsive "Persistent vs. Drawer" behavior based on device size.
 
 ### Fixed
-- Centralized the `RewardWithTasks` interface in `types/index.ts` to resolve type mismatch errors.
-- Resolved cascading render linting warnings in the rewards dashboard by optimizing `useEffect` orchestration.
-- Fixed double slashes in API client URLs by normalizing `BASE_URL` to prevent preflight redirects.
-- Updated `SKILL.md` files (`nextjs-component`, `nextjs-page`, `nextjs-api-client`) with modular architecture patterns and standardized `apiFetch` usage.
-- Updated `ARCHITECTURE.md` to reflect the new feature-based component organization and data layering.
+- Standardized dashboard-wide horizontal spacing using a unified `<main>` container with responsive padding.
+- Corrected sidebar icon mapping (Vault = Wallet, Rewards = Gift) to match the new naming conventions.
+- Fixed the missing `updateTask` import in the Quest dashboard.
+- Resolved inconsistent header heights by standardizing the `DashboardHeader` usage.
 
 
 

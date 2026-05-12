@@ -19,7 +19,8 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     const checkDesktop = () => {
       const desktop = window.innerWidth >= 1024; // lg breakpoint
       setIsDesktop(desktop);
-      // On desktop, default to open. On mobile, default to closed.
+      // Desktop: Persistent behavior (Open by default)
+      // Tablet/Mobile: Drawer/Collapsible behavior (Closed by default)
       setIsOpen(desktop);
     };
 

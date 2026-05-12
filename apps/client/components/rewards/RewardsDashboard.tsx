@@ -132,84 +132,86 @@ export default function RewardsDashboard() {
   };
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:px-8">
+    <>
       <RewardsHeader 
         onNewReward={openCreateDialog} 
       />
 
-      {/* Loading State */}
-      {loading && (
-        <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
-          <Loader2 className="mb-4 h-8 w-8 animate-spin" />
-          <p className="text-sm font-medium">Loading rewards...</p>
-        </div>
-      )}
-
-      {/* Error State */}
-      {!loading && error && (
-        <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-destructive/20 bg-destructive/5 p-8 text-center">
-          <AlertCircle className="h-8 w-8 text-destructive" />
-          <div>
-            <p className="font-medium text-destructive">{error}</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Make sure the API server is running.
-            </p>
+      <main className="flex-1 px-8 lg:px-12 py-4">
+        {/* Loading State */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
+            <Loader2 className="mb-4 h-8 w-8 animate-spin" />
+            <p className="text-sm font-medium">Loading rewards...</p>
           </div>
-          <Button variant="outline" onClick={fetchRewards}>
-            Try Again
-          </Button>
-        </div>
-      )}
+        )}
 
-      {/* Empty State */}
-      {!loading && !error && rewards.length === 0 && (
-        <EmptyRewardsState onCreateClick={openCreateDialog} />
-      )}
+        {/* Error State */}
+        {!loading && error && (
+          <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-destructive/20 bg-destructive/5 p-8 text-center">
+            <AlertCircle className="h-8 w-8 text-destructive" />
+            <div>
+              <p className="font-medium text-destructive">{error}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Make sure the API server is running.
+              </p>
+            </div>
+            <Button variant="outline" onClick={fetchRewards}>
+              Try Again
+            </Button>
+          </div>
+        )}
 
-      {/* Rewards Grid */}
-      {!loading && !error && rewards.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {rewards.map((reward) => (
-            <RewardCard 
-              key={reward.id} 
-              reward={reward} 
-              onClick={() => {
-                setSelectedReward(reward);
-                setTaskDialogOpen(true);
-              }}
-              onEdit={handleEditReward}
-              onDelete={(id) => setRewardToDelete(id)}
-            />
-          ))}
-        </div>
-      )}
+        {/* Empty State */}
+        {!loading && !error && rewards.length === 0 && (
+          <EmptyRewardsState onCreateClick={openCreateDialog} />
+        )}
 
-      {/* Dialogs */}
-      <RewardFormDialog 
-        key={rewardToEdit?.id || "new"}
-        reward={rewardToEdit}
-        open={formDialogOpen} 
-        onOpenChange={setFormDialogOpen} 
-        onSuccess={fetchRewards}
-      />
+        {/* Rewards Grid */}
+        {!loading && !error && rewards.length > 0 && (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {rewards.map((reward) => (
+              <RewardCard 
+                key={reward.id} 
+                reward={reward} 
+                onClick={() => {
+                  setSelectedReward(reward);
+                  setTaskDialogOpen(true);
+                }}
+                onEdit={handleEditReward}
+                onDelete={(id) => setRewardToDelete(id)}
+              />
+            ))}
+          </div>
+        )}
 
-      <TaskDetailsDialog 
-        reward={selectedReward}
-        open={taskDialogOpen}
-        onOpenChange={setTaskDialogOpen}
-        onUpdate={handleRewardUpdate}
-      />
+        {/* Dialogs */}
+        <RewardFormDialog 
+          key={rewardToEdit?.id || "new"}
+          reward={rewardToEdit}
+          open={formDialogOpen} 
+          onOpenChange={setFormDialogOpen} 
+          onSuccess={fetchRewards}
+        />
 
-      <AlertDialog
-        open={!!rewardToDelete}
-        onOpenChange={(open) => !open && setRewardToDelete(null)}
-        title="Delete Reward"
-        description="Are you sure you want to delete this reward? All associated tasks will also be removed."
-        confirmText="Delete"
-        onConfirm={handleDeleteReward}
-        variant="destructive"
-        isLoading={isDeletingReward}
-      />
-    </main>
+        <TaskDetailsDialog 
+          reward={selectedReward}
+          open={taskDialogOpen}
+          onOpenChange={setTaskDialogOpen}
+          onUpdate={handleRewardUpdate}
+        />
+
+        <AlertDialog
+          open={!!rewardToDelete}
+          onOpenChange={(open) => !open && setRewardToDelete(null)}
+          title="Delete Reward"
+          description="Are you sure you want to delete this reward? All associated tasks will also be removed."
+          confirmText="Delete"
+          onConfirm={handleDeleteReward}
+          variant="destructive"
+          isLoading={isDeletingReward}
+        />
+      </main>
+    </>
   );
 }

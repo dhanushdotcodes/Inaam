@@ -1,14 +1,11 @@
 import { Metadata } from "next";
-import RewardsDashboard from "@/components/rewards/RewardsDashboard";
+import RewardsOverview from "@/components/rewards/RewardsOverview";
 
 export const metadata: Metadata = {
   title: "Rewards | Inaam",
-  description: "View and manage your rewards and tasks.",
+  description: "Monitor your reward earnings and manage your financial assets.",
 };
 
-/**
- * Rewards Page — Server component that renders the RewardsDashboard.
- */
 export default function RewardsPage() {
-  return <RewardsDashboard />;
+  return <RewardsOverview />;
 }

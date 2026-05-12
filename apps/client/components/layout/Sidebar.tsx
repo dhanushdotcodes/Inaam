@@ -21,19 +21,19 @@ import { motion, AnimatePresence } from "motion/react";
 
 const NAV_ITEMS = [
   {
-    label: "Rewards",
-    href: "/rewards",
-    icon: Gift,
-  },
-  {
     label: "Quests",
     href: "/quests",
     icon: Compass,
   },
   {
-    label: "Treasury",
-    href: "/treasury",
+    label: "Vault",
+    href: "/vault",
     icon: Wallet,
+  },
+  {
+    label: "Rewards",
+    href: "/rewards",
+    icon: Gift,
   },
 ];
 
@@ -55,7 +55,7 @@ export default function Sidebar() {
         </h1>
       </div>
 
-      <nav className="flex-1 space-y-2 px-4 py-4">
+      <nav className="flex-1 space-y-1.5 px-4 py-6">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -63,40 +63,49 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "group flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all duration-200",
+                "group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all duration-300",
                 isActive
-                  ? "bg-zinc-900 text-white shadow-lg shadow-zinc-200 dark:bg-zinc-100 dark:text-zinc-900 dark:shadow-none"
-                  : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+                  ? "bg-zinc-900 text-white shadow-xl shadow-zinc-200/50 dark:bg-white dark:text-zinc-950 dark:shadow-none"
+                  : "text-zinc-500 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-900/50 hover:text-zinc-900 dark:hover:text-zinc-50"
               )}
             >
               <item.icon className={cn(
-                "h-5 w-5 shrink-0 transition-transform duration-200 group-hover:scale-110",
-                isActive ? "text-inherit" : "text-zinc-400 group-hover:text-zinc-900 dark:text-zinc-500 dark:group-hover:text-zinc-50"
+                "h-5 w-5 shrink-0 transition-all duration-300",
+                isActive ? "text-inherit" : "text-zinc-400 group-hover:text-zinc-900 dark:text-zinc-500 dark:group-hover:text-zinc-50 group-hover:scale-110"
               )} />
               {isOpen && (
                 <motion.span
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  className="truncate"
                 >
                   {item.label}
                 </motion.span>
+              )}
+              {isActive && (
+                <motion.div
+                  layoutId="sidebarActive"
+                  className="absolute left-0 w-1 h-5 bg-white dark:bg-zinc-950 rounded-full"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                />
               )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 mt-auto border-t border-zinc-100 dark:border-zinc-800">
+      <div className="p-4 mt-auto border-t border-zinc-100/50 dark:border-zinc-800/50">
         <Button
           variant="ghost"
           className={cn(
-            "w-full justify-start gap-3 rounded-xl px-3 py-6 text-zinc-500 hover:text-destructive hover:bg-destructive/5 transition-colors",
-            !isOpen && "justify-center"
+            "w-full justify-start gap-3 rounded-xl px-3.5 py-6 text-sm font-semibold text-zinc-500 hover:text-destructive hover:bg-destructive/5 transition-all",
+            !isOpen && "justify-center px-0"
           )}
           onClick={handleLogout}
         >
-          <LogOut className="h-5 w-5" />
+          <LogOut className="h-5 w-5 shrink-0" />
           {isOpen && <span>Logout</span>}
         </Button>
       </div>
@@ -129,6 +138,13 @@ export default function Sidebar() {
             </Link>
           );
         })}
+        <button
+          onClick={handleLogout}
+          className="flex flex-col items-center gap-1 p-2 rounded-xl text-zinc-400 hover:text-destructive transition-colors"
+        >
+          <LogOut className="h-5 w-5" />
+          <span className="text-[10px] font-bold uppercase tracking-wider">Logout</span>
+        </button>
       </nav>
 
       {/* Desktop Sidebar (Animated) */}

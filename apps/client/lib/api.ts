@@ -184,3 +184,10 @@ export async function completeTask(
     method: "PATCH",
   });
 }
+
+/**
+ * Fetch all tasks across all rewards.
+ */
+export async function getAllTasks(): Promise<Task[]> {
+  return apiFetch<Task[]>("/tasks");
+}
