@@ -186,6 +186,15 @@ export async function completeTask(
 }
 
 /**
+ * Claim a specific reward.
+ */
+export async function claimReward(rewardId: string): Promise<Reward> {
+  return apiFetch<Reward>(`/rewards/${rewardId}/claim`, {
+    method: "PATCH",
+  });
+}
+
+/**
  * Fetch all tasks across all rewards.
  */
 export async function getAllTasks(): Promise<Task[]> {
