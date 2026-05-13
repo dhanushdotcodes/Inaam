@@ -32,7 +32,7 @@ export default function RewardCard({
   const total = reward.tasks.length;
   const completed = reward.tasks.filter((t) => t.completed).length;
   const allDone = total > 0 && completed === total;
-  const isClaimed = reward.claimed;
+  const isClaimed = !!reward.claimed_at;
 
   return (
     <Card

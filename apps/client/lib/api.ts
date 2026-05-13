@@ -87,6 +87,77 @@ export async function verifyKey(key: string): Promise<LoginResponse> {
 }
 
 /**
+ * Fetch all tasks across all rewards.
+ */
+export async function getAllTasks(): Promise<Task[]> {
+  return apiFetch<Task[]>("/tasks");
+}
+
+/**
+ * Fetch all tasks for a specific reward.
+ */
+export async function getRewardTasks(rewardId: string): Promise<Task[]> {
+  return apiFetch<Task[]>(`/rewards/${rewardId}/tasks`);
+}
+
+/**
+ * Create a new task. If rewardId is provided, it's a reward task, otherwise independent.
+ */
+export async function createTask(
+  payload: TaskCreatePayload,
+  rewardId?: string
+): Promise<Task> {
+  const path = rewardId ? `/rewards/${rewardId}/task` : "/tasks";
+  return apiFetch<Task>(path, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Update a specific task.
+ */
+export async function updateTask(
+  taskId: string,
+  payload: TaskUpdatePayload,
+  rewardId?: string | null
+): Promise<Task> {
+  const path = rewardId ? `/rewards/${rewardId}/task/${taskId}` : `/tasks/${taskId}`;
+  return apiFetch<Task>(path, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Complete a specific task.
+ */
+export async function completeTask(
+  taskId: string,
+  rewardId?: string | null
+): Promise<Task> {
+  const path = rewardId 
+    ? `/rewards/${rewardId}/task/${taskId}/complete` 
+    : `/tasks/${taskId}/complete`;
+  return apiFetch<Task>(path, {
+    method: "PATCH",
+  });
+}
+
+/**
+ * Delete a specific task.
+ */
+export async function deleteTask(
+  taskId: string,
+  rewardId?: string | null
+): Promise<boolean> {
+  const path = rewardId ? `/rewards/${rewardId}/task/${taskId}` : `/tasks/${taskId}`;
+  return apiFetch<boolean>(path, {
+    method: "DELETE",
+  });
+}
+
+/**
  * Fetch all rewards.
  */
 export async function getRewards(): Promise<Reward[]> {
@@ -128,75 +199,10 @@ export async function deleteReward(rewardId: string): Promise<boolean> {
 }
 
 /**
- * Fetch all tasks for a specific reward.
- */
-export async function getRewardTasks(rewardId: string): Promise<Task[]> {
-  return apiFetch<Task[]>(`/rewards/${rewardId}/tasks`);
-}
-
-/**
- * Create a new task for a specific reward.
- */
-export async function createTask(
-  rewardId: string,
-  payload: TaskCreatePayload
-): Promise<Task> {
-  return apiFetch<Task>(`/rewards/${rewardId}/task`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
-}
-
-/**
- * Update a specific task for a reward.
- */
-export async function updateTask(
-  rewardId: string,
-  taskId: string,
-  payload: TaskUpdatePayload
-): Promise<Task> {
-  return apiFetch<Task>(`/rewards/${rewardId}/task/${taskId}`, {
-    method: "PUT",
-    body: JSON.stringify(payload),
-  });
-}
-
-/**
- * Delete a specific task for a reward.
- */
-export async function deleteTask(
-  rewardId: string,
-  taskId: string
-): Promise<boolean> {
-  return apiFetch<boolean>(`/rewards/${rewardId}/task/${taskId}`, {
-    method: "DELETE",
-  });
-}
-
-/**
- * Complete a specific task for a reward.
- */
-export async function completeTask(
-  rewardId: string,
-  taskId: string
-): Promise<Task> {
-  return apiFetch<Task>(`/rewards/${rewardId}/task/${taskId}/complete`, {
-    method: "PATCH",
-  });
-}
-
-/**
  * Claim a specific reward.
  */
 export async function claimReward(rewardId: string): Promise<Reward> {
   return apiFetch<Reward>(`/rewards/${rewardId}/claim`, {
     method: "PATCH",
   });
-}
-
-/**
- * Fetch all tasks across all rewards.
- */
-export async function getAllTasks(): Promise<Task[]> {
-  return apiFetch<Task[]>("/tasks");
 }

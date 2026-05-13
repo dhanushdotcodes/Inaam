@@ -25,8 +25,9 @@ export default function QuestList({ tasks, rewards, onToggle }: QuestListProps) 
     return a.completed ? 1 : -1;
   });
 
-  const getRewardTitle = (rewardId: string) => {
-    return rewards.find(r => r.id === rewardId)?.title || "Unknown Reward";
+  const getRewardTitle = (rewardId: string | null) => {
+    if (!rewardId) return null;
+    return rewards.find(r => r.id === rewardId)?.title || null;
   };
 
   return (

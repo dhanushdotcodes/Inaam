@@ -9,6 +9,25 @@ export interface ApiResponse<T> {
 }
 
 /**
+ * Task Difficulty levels.
+ */
+export enum TaskDifficulty {
+  TINY = "TINY",
+  SMALL = "SMALL",
+  MEDIUM = "MEDIUM",
+  HARD = "HARD",
+  EXTREME = "EXTREME",
+}
+
+/**
+ * Reward Type.
+ */
+export enum RewardType {
+  DIRECT = "DIRECT",
+  ECONOMY = "ECONOMY",
+}
+
+/**
  * Reward entity.
  * Mirrors the backend `RewardResponse` schema from `apps/server/schemas/reward.py`.
  */
@@ -16,7 +35,9 @@ export interface Reward {
   id: string;
   title: string;
   description: string | null;
-  claimed: boolean;
+  reward_type: RewardType;
+  cost_points: number;
+  claimed_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -28,8 +49,12 @@ export interface Reward {
 export interface Task {
   id: string;
   title: string;
+  description: string | null;
+  difficulty: TaskDifficulty;
+  points: number;
   completed: boolean;
-  reward_id: string;
+  completed_at: string | null;
+  reward_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -41,6 +66,8 @@ export interface Task {
 export interface RewardCreatePayload {
   title: string;
   description?: string;
+  reward_type?: RewardType;
+  cost_points?: number;
 }
 
 /**
@@ -48,6 +75,10 @@ export interface RewardCreatePayload {
  */
 export interface TaskCreatePayload {
   title: string;
+  description?: string;
+  difficulty?: TaskDifficulty;
+  points?: number;
+  reward_id?: string | null;
 }
 
 /**
@@ -56,7 +87,9 @@ export interface TaskCreatePayload {
 export interface RewardUpdatePayload {
   title?: string;
   description?: string;
-  claimed?: boolean;
+  reward_type?: RewardType;
+  cost_points?: number;
+  claimed_at?: string | null;
 }
 
 /**
@@ -64,7 +97,11 @@ export interface RewardUpdatePayload {
  */
 export interface TaskUpdatePayload {
   title?: string;
+  description?: string;
+  difficulty?: TaskDifficulty;
+  points?: number;
   completed?: boolean;
+  reward_id?: string | null;
 }
 
 /**

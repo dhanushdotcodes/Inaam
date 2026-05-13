@@ -1,25 +1,36 @@
 "use client";
 
 import React from "react";
-import { Trophy } from "lucide-react";
+import { Trophy, Plus } from "lucide-react";
 import DashboardHeader from "../../layout/DashboardHeader";
+import { Button } from "@/components/ui/button";
 
 interface QuestHeaderProps {
   completedCount: number;
   totalCount: number;
+  onNewTask: () => void;
 }
 
-export default function QuestHeader({ completedCount, totalCount }: QuestHeaderProps) {
+export default function QuestHeader({ completedCount, totalCount, onNewTask }: QuestHeaderProps) {
   return (
     <DashboardHeader 
       title="Quests"
       description="Complete tasks across all your rewards to unlock legendary treasures."
     >
-      <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-        <Trophy className="h-4 w-4 text-amber-500" />
-        <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-          {completedCount}/{totalCount}
-        </span>
+      <div className="flex items-center gap-3">
+        <Button 
+          variant="contained"
+          onClick={onNewTask}
+          startIcon={<Plus />}
+        >
+          New Quest
+        </Button>
+        <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-muted/30 border border-border">
+          <Trophy className="size-4 text-amber-500" />
+          <span className="text-xs font-bold text-foreground">
+            {completedCount}/{totalCount} Achieved
+          </span>
+        </div>
       </div>
     </DashboardHeader>
   );

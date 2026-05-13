@@ -23,10 +23,10 @@ async def get_tasks(
 
 async def create_task(
     db: AsyncSession, 
-    reward_id: UUID, 
-    task_data: TaskCreate
+    task_data: TaskCreate,
+    reward_id: Optional[UUID] = None
 ) -> Task:
-    """Create a new task for a reward."""
+    """Create a new task."""
     task = Task(**task_data.model_dump(), reward_id=reward_id)
     db.add(task)
     await db.flush()

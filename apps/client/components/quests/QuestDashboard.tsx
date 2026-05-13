@@ -2,12 +2,14 @@
 
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Loader2 } from "lucide-react";
-import { getAllTasks, getRewards, updateTask } from "@/lib/api";
-import type { Task, Reward } from "@/types";
 import { Button } from "@/components/ui/button";
 import QuestHeader from "./components/QuestHeader";
 import QuestFilters from "./components/QuestFilters";
 import QuestList from "./components/QuestList";
+import QuestCreateForm from "./components/QuestCreateForm";
+import { createTask, getAllTasks, getRewards, updateTask, completeTask } from "@/lib/api";
+import type { Task, Reward, TaskCreatePayload } from "@/types";
+import { AnimatePresence, motion } from "motion/react";
 
 /**
  * QuestDashboard component — Orchestrates the display and completion of all tasks.
@@ -19,6 +21,7 @@ export default function QuestDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
+  const [isCreating, setIsCreating] = useState(false);
 
   const fetchQuestsData = useCallback(async () => {
     try {
@@ -42,20 +45,32 @@ export default function QuestDashboard() {
     fetchQuestsData();
   }, [fetchQuestsData]);
 
+  const handleCreateTask = async (payload: TaskCreatePayload) => {
+    try {
+      const newTask = await createTask(payload);
+      setTasks((prev) => [newTask, ...prev]);
+      setIsCreating(false);
+    } catch (err) {
+      console.error("Create quest error:", err);
+      throw err;
+    }
+  };
+
   const handleToggleComplete = async (task: Task) => {
-    const newStatus = !task.completed;
+    if (task.completed) return; // Prevent un-completing for now if desired, or handle it
+    
     try {
       // Optimistic update
       setTasks((prev) => 
-        prev.map((t) => t.id === task.id ? { ...t, completed: newStatus } : t)
+        prev.map((t) => t.id === task.id ? { ...t, completed: true, completed_at: new Date().toISOString() } : t)
       );
 
-      await updateTask(task.reward_id, task.id, { completed: newStatus });
+      await completeTask(task.id, task.reward_id);
     } catch (err) {
       console.error("Toggle quest error:", err);
       // Revert optimistic update
       setTasks((prev) => 
-        prev.map((t) => t.id === task.id ? { ...t, completed: !newStatus } : t)
+        prev.map((t) => t.id === task.id ? { ...t, completed: false, completed_at: null } : t)
       );
     }
   };
@@ -99,9 +114,26 @@ export default function QuestDashboard() {
       <QuestHeader 
         completedCount={stats.completed} 
         totalCount={stats.total} 
+        onNewTask={() => setIsCreating(true)}
       />
 
       <div className="px-8 space-y-6">
+        <AnimatePresence>
+          {isCreating && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+              animate={{ opacity: 1, height: "auto", marginBottom: 24 }}
+              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+              className="overflow-hidden"
+            >
+              <QuestCreateForm 
+                onSubmit={handleCreateTask} 
+                onCancel={() => setIsCreating(false)} 
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <QuestFilters 
           searchQuery={searchQuery} 
           onSearchChange={setSearchQuery} 

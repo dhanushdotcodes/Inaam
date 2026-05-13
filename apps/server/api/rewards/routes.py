@@ -127,7 +127,7 @@ async def create_reward_task(
 ):
     """Create a new task for a specific reward."""
     async with db.begin():
-        task = await task_service.create_task(db, id, payload)
+        task = await task_service.create_task(db, payload, reward_id=id)
     return ApiResponse.success(data=task)
 
 

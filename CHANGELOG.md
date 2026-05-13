@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Created a centralized **`DashboardHeader`** component to handle page titles and sidebar toggling consistently.
 
 ### Changed
+- Aligned core primary theme tokens: mapped `--primary` to `#131313` (`brand-night`) and `--primary-foreground` to `#F3F3F3` (`brand-white-smoke`) for native minimalist Apple/Vercel-like profile adaptivity.
+- Redesigned **Quests** dashboard components (`QuestItem`, `QuestFilters`, `QuestHeader`, `QuestCreateForm`) with Framer Motion `layoutId` active indicator pill micro-animations, glassmorphism borders, and unconstrained input foundations compliance.
+- Refactored `button.tsx` core variants to natively pull from synchronized global CSS primary/foreground styling classes.
 - Renamed the Rewards (items) route to **`/vault`** and the Treasury (stats) route to **`/rewards`** for better domain alignment.
 - Updated the **Sidebar** navigation and styling to follow new UI guidelines (consistent spacing, premium active indicators).
 - Refactored `rewards/page.tsx` and `vault/page.tsx` into clean, component-based entry points.
@@ -24,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Updated `SidebarContext` to implement responsive "Persistent vs. Drawer" behavior based on device size.
 - Modularized project rules by splitting `.agents/rules/rules.md` into domain-specific files (`backend.md`, `frontend.md`, etc.).
 - Created a centralized root `rules.md` acting as a registry for both project rules and `docs/` documentation.
+
+### Removed
+- Permanently deleted `ButtonPreview.tsx` component.
 
 ### Fixed
 - Standardized dashboard-wide horizontal spacing using a unified `<main>` container with responsive padding.

@@ -77,10 +77,10 @@ export default function RewardsOverview() {
   const availableRewards = rewards.filter(r => {
     const total = r.tasks.length;
     const completed = r.tasks.filter(t => t.completed).length;
-    return total > 0 && completed === total && !r.claimed;
+    return total > 0 && completed === total && !r.claimed_at;
   });
 
-  const claimedRewards = rewards.filter(r => r.claimed);
+  const claimedRewards = rewards.filter(r => !!r.claimed_at);
 
   return (
     <>
