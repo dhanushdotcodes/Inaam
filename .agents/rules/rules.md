@@ -1,5 +1,7 @@
 ---
 trigger: always_on
+description: Root registry for project rules, architecture, and standards.
+activation: Always active as the primary source of truth for project-wide rules.
 ---
 
 # Project Rules & Registry
@@ -66,7 +68,8 @@ User <-> Web App <-> API Request <-> Server <-> Database.
 - If the user doesn't mention a skill, refer to `docs/SKILL.md`.
 
 ## Planning and Execution
-- Refer to `.antigravity/skills/planning-and-execution/SKILL.md` for structured execution.
+- Refer to [.agents/skills/implementation-planning/SKILL.md](file:///Users/dhanush_d27/Dev/inaam/.agents/skills/implementation-planning/SKILL.md) for structured planning.
+- Refer to [.agents/skills/execution/SKILL.md](file:///Users/dhanush_d27/Dev/inaam/.agents/skills/execution/SKILL.md) for incremental execution.
 - Create `implementation_plan.md` for complex tasks and wait for approval.
 
 ---

@@ -1,5 +1,5 @@
 ---
-trigger: always_on
+trigger: model_decision
 ---
 
 # Next.js Frontend Rules
@@ -19,3 +19,9 @@ trigger: always_on
 - ALWAYS prefer early returns over deep nesting.
 - Comments MUST explain WHY, not WHAT; avoid obvious comments.
 - ALWAYS reuse existing utilities and patterns before creating new abstractions.
+---
+
+## Related Skills
+- [nextjs-page](file:///Users/dhanush_d27/Dev/inaam/.agents/skills/nextjs-page/SKILL.md) — Creating App Router pages and SEO metadata.
+- [nextjs-component](file:///Users/dhanush_d27/Dev/inaam/.agents/skills/nextjs-component/SKILL.md) — Building reusable React components.
+- [nextjs-api-client](file:///Users/dhanush_d27/Dev/inaam/.agents/skills/nextjs-api-client/SKILL.md) — Building API client functions and form handling.

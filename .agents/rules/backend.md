@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+trigger: model_decision
+description: Standards for FastAPI, SQLAlchemy, and backend-specific naming/logic.
 ---
 
 # FastAPI Backend Rules
@@ -17,3 +18,9 @@ trigger: always_on
 - Use specific error types; avoid generic catch-alls that hide root causes.
 - Error messages must include: request params, response body, status codes, correlation IDs.
 - Use structured logging fields — do not interpolate dynamic values into message strings.
+---
+
+## Related Skills
+- [fastapi-api](file:///Users/dhanush_d27/Dev/inaam/.agents/skills/fastapi-api/SKILL.md) — Building new FastAPI endpoints.
+- [handle-db](file:///Users/dhanush_d27/Dev/inaam/.agents/skills/handle-db/SKILL.md) — Database migrations and schema changes.
+- [fastapi-server-tests](file:///Users/dhanush_d27/Dev/inaam/.agents/skills/fastapi-server-tests/SKILL.md) — Writing integration tests.

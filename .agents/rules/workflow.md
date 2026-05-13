@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+trigger: model_decision
+description: Git workflow, conventional commits, and changelog management.
 ---
 
 # Git & Workflow Rules

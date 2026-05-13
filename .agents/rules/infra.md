@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+trigger: model_decision
+description: Rules for infrastructure, environment variables, and Makefile commands.
 ---
 
 # Infrastructure & Configuration Rules
@@ -13,3 +14,7 @@ trigger: always_on
 - Create a `Makefile` in the root directory to manage and execute all project commands.
 - Use Makefile commands for all terminal operations.
 - Always add any new command to the `Makefile` before execution.
+---
+
+## Related Skills
+- [containerise-app](file:///Users/dhanush_d27/Dev/inaam/.agents/skills/containerise-app/SKILL.md) — Creating Dockerfiles and docker-compose configurations.

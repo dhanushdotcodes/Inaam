@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+trigger: model_decision
+description: Security protocols, authentication rules, and safety constraints.
 ---
 
 # Security & Authentication Rules
