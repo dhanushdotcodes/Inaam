@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Redesigned **Quests** dashboard components (`QuestItem`, `QuestFilters`, `QuestHeader`, `QuestCreateForm`) with Framer Motion `layoutId` active indicator pill micro-animations, glassmorphism borders, and unconstrained input foundations compliance.
 - Refactored `button.tsx` core variants to natively pull from synchronized global CSS primary/foreground styling classes.
 - Renamed the Rewards (items) route to **`/vault`** and the Treasury (stats) route to **`/rewards`** for better domain alignment.
-- Updated the **Sidebar** navigation and styling to follow new UI guidelines (consistent spacing, premium active indicators).
+- Aligned Sidebar layout with EOS UI guidelines (w-[264px] width, h-[48px] items, px-6 py-9 padding) and implemented 24px square active indicators for collapsed states.
 - Refactored `rewards/page.tsx` and `vault/page.tsx` into clean, component-based entry points.
 - Aligned global UI tokens: standardized inputs/buttons to `h-10` height and `rounded-xl` border radius.
 - Enhanced layout animations using `motion/react` and `AnimatePresence` with `popLayout` for smooth reordering.
