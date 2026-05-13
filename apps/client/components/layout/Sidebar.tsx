@@ -69,7 +69,7 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "group relative flex items-center transition-all duration-300 h-[48px] select-none outline-none rounded-xl",
+                "group relative flex items-center transition-all duration-300 h-12 select-none outline-none rounded-xl",
                 isOpen ? "px-3 gap-3" : "justify-center"
               )}
             >
@@ -119,7 +119,7 @@ export default function Sidebar() {
         <button
           onClick={handleLogout}
           className={cn(
-            "group relative flex items-center transition-all duration-300 h-[48px] select-none outline-none rounded-xl w-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive",
+            "group relative flex items-center transition-all duration-300 h-12 select-none outline-none rounded-xl w-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive",
             isOpen ? "px-3 gap-3" : "justify-center"
           )}
         >

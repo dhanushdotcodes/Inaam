@@ -6,11 +6,9 @@ import { Button } from "@/components/ui/button";
 import TaskHeader from "./components/TaskHeader";
 import TaskFilters from "./components/TaskFilters";
 import TaskList from "./components/TaskList";
-import TaskCreateForm from "./components/TaskCreateForm";
-import { createTask, getAllTasks, getRewards, updateTask, completeTask } from "@/lib/api";
-import type { Task, Reward, TaskCreatePayload } from "@/types";
-import { TaskType } from "@/types";
-import { AnimatePresence, motion } from "motion/react";
+import TaskCreateDialog from "./components/TaskCreateDialog";
+import { getAllTasks, getRewards, completeTask } from "@/lib/api";
+import type { Task, Reward } from "@/types";
 
 /**
  * TaskDashboard component — Orchestrates the display and completion of all tasks (Bounties & Objectives).
@@ -22,7 +20,7 @@ export default function TaskDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
-  const [isCreating, setIsCreating] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const fetchTasksData = useCallback(async () => {
     try {
@@ -45,21 +43,6 @@ export default function TaskDashboard() {
   useEffect(() => {
     fetchTasksData();
   }, [fetchTasksData]);
-
-  const handleCreateTask = async (payload: TaskCreatePayload) => {
-    try {
-      // Standalone tasks created here are BOUNTIES by default
-      const newTask = await createTask({
-        ...payload,
-        task_type: TaskType.BOUNTY
-      });
-      setTasks((prev) => [newTask, ...prev]);
-      setIsCreating(false);
-    } catch (err) {
-      console.error("Create bounty error:", err);
-      throw err;
-    }
-  };
 
   const handleToggleComplete = async (task: Task) => {
     if (task.completed) return;
@@ -121,26 +104,10 @@ export default function TaskDashboard() {
       <TaskHeader 
         completedCount={stats.completed} 
         totalCount={stats.total} 
-        onNewTask={() => setIsCreating(true)}
+        onNewTask={() => setIsCreateDialogOpen(true)}
       />
 
       <div className="px-8 space-y-6">
-        <AnimatePresence>
-          {isCreating && (
-            <motion.div
-              initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-              animate={{ opacity: 1, height: "auto", marginBottom: 24 }}
-              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-              className="overflow-hidden"
-            >
-              <TaskCreateForm 
-                onSubmit={handleCreateTask} 
-                onCancel={() => setIsCreating(false)} 
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         <TaskFilters 
           searchQuery={searchQuery} 
           onSearchChange={setSearchQuery} 
@@ -154,6 +121,12 @@ export default function TaskDashboard() {
           onToggle={handleToggleComplete} 
         />
       </div>
+
+      <TaskCreateDialog 
+        open={isCreateDialogOpen} 
+        onOpenChange={setIsCreateDialogOpen} 
+        onSuccess={fetchTasksData}
+      />
     </div>
   );
 }
