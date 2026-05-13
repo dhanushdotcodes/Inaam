@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Aligned global UI tokens: standardized inputs/buttons to `h-10` height and `rounded-xl` border radius.
 - Enhanced layout animations using `motion/react` and `AnimatePresence` with `popLayout` for smooth reordering.
 - Updated `SidebarContext` to implement responsive "Persistent vs. Drawer" behavior based on device size.
+- Modularized project rules by splitting `.agents/rules/rules.md` into domain-specific files (`backend.md`, `frontend.md`, etc.).
+- Created a centralized root `rules.md` acting as a registry for both project rules and `docs/` documentation.
 
 ### Fixed
 - Standardized dashboard-wide horizontal spacing using a unified `<main>` container with responsive padding.
