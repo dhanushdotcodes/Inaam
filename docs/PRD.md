@@ -6,29 +6,29 @@ Inaam helps me unlock rewards by completing a list of associated tasks in a simp
 
 ## Core Modules
 - Authentication Management - Password based access using a stored hashed password.
-- Reward Management - Add, Edit, Delete Rewards.
-- Task Management - Add, Edit, Delete Tasks linked to Rewards.
-- Progress Tracking - Track completion percentage and reward eligibility.
-- Points Tracking - Earn points from tasks and spend them on economy rewards.
+- Reward Management - Add, Edit, Delete Quests (task-based) and Prizes (economy-based).
+- Task Management - Add, Edit, Delete Bounties (independent) and Objectives (linked to Quests).
+- Progress Tracking - Track completion percentage and Quest eligibility.
+- Points Tracking - Earn points from Bounties and Objectives to spend on Prizes.
 - PWA Support - Installable mobile-friendly application experience.
 
 ## Success Metrics
-- Successfully creating and managing rewards.
-- Successfully creating and completing tasks associated with rewards.
-- Correct calculation of reward progress percentage.
-- Correctly identifying claimable rewards after task completion.
+- Successfully creating and managing Quests and Prizes.
+- Successfully creating and completing Bounties and Objectives.
+- Correct calculation of Quest progress percentage.
+- Correctly identifying claimable Quests after Objective completion.
 - Containerisation and successful deployment of the application.
-- Successful generation of fake reward and task data for testing purposes using faker.js.
+- Successful generation of fake data for testing purposes using faker.js.
 
 ## User Flow
 
 ### Core loop
 - User enters the password to access the application.
-- User creates a reward.
-- User adds tasks associated with the reward.
+- User creates a Quest or a Prize.
+- User adds Objectives to a Quest or completes Bounties for points.
 - User completes tasks progressively.
-- Application updates the reward completion percentage.
-- User unlocks and claims the reward after completing all tasks.
+- Application updates the Quest completion percentage.
+- User unlocks and claims the Quest after completing all Objectives, or buys a Prize with points.
 
 ## Milestones
 

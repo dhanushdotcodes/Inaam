@@ -35,7 +35,7 @@ export default function TaskList({
   return (
     <div className="space-y-2 w-full overflow-hidden">
       <h4 className="font-medium text-muted-foreground uppercase tracking-wider text-[10px]">
-        Tasks
+        Objectives
       </h4>
       <ul className="space-y-1">
         {sortedTasks.map((task) => (

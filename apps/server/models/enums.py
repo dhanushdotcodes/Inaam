@@ -22,3 +22,9 @@ class TaskDifficulty(str, enum.Enum):
     MEDIUM = "MEDIUM"
     HARD = "HARD"
     EXTREME = "EXTREME"
+
+
+class TaskType(str, enum.Enum):
+    """Type of task."""
+    BOUNTY = "BOUNTY"
+    OBJECTIVE = "OBJECTIVE"

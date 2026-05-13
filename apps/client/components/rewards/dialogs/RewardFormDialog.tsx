@@ -13,8 +13,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { createReward, updateReward } from "@/lib/api";
 import type { Reward } from "@/types";
+import { RewardType } from "@/types";
 
 interface RewardFormDialogProps {
   reward?: Reward | null; // If provided, we are in edit mode
@@ -24,7 +32,7 @@ interface RewardFormDialogProps {
 }
 
 /**
- * RewardFormDialog component — Modal form for adding or editing rewards.
+ * RewardFormDialog component — Modal form for adding or editing Quests and Prizes.
  */
 export default function RewardFormDialog({
   reward,
@@ -34,6 +42,8 @@ export default function RewardFormDialog({
 }: RewardFormDialogProps) {
   const [title, setTitle] = useState(reward?.title || "");
   const [description, setDescription] = useState(reward?.description || "");
+  const [rewardType, setRewardType] = useState<RewardType>(reward?.reward_type || RewardType.DIRECT);
+  const [costPoints, setCostPoints] = useState(reward?.cost_points || 0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,21 +62,24 @@ export default function RewardFormDialog({
     try {
       setSubmitting(true);
       
+      const payload = {
+        title: trimmedTitle,
+        description: description.trim() || undefined,
+        reward_type: rewardType,
+        cost_points: rewardType === RewardType.ECONOMY ? costPoints : 0,
+      };
+
       if (isEdit && reward) {
-        await updateReward(reward.id, {
-          title: trimmedTitle,
-          description: description.trim() || undefined,
-        });
+        await updateReward(reward.id, payload);
       } else {
-        await createReward({
-          title: trimmedTitle,
-          description: description.trim() || undefined,
-        });
+        await createReward(payload);
       }
 
       /* Reset and close */
       setTitle("");
       setDescription("");
+      setRewardType(RewardType.DIRECT);
+      setCostPoints(0);
       onOpenChange(false);
       onSuccess();
     } catch (err) {
@@ -85,22 +98,39 @@ export default function RewardFormDialog({
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{isEdit ? "Edit Reward" : "Create New Reward"}</DialogTitle>
+            <DialogTitle>{isEdit ? "Edit Reward" : "New Reward"}</DialogTitle>
             <DialogDescription>
               {isEdit
-                ? "Update the details of your reward."
-                : "Add a reward that you can unlock by completing tasks."}
+                ? "Update the details of your quest or prize."
+                : "Create a Quest (task-based) or a Prize (points-based)."}
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6 space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Type</label>
+              <Select
+                value={rewardType}
+                onValueChange={(value) => setRewardType(value as RewardType)}
+                disabled={isEdit || submitting}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={RewardType.DIRECT}>Quest (Task-based)</SelectItem>
+                  <SelectItem value={RewardType.ECONOMY}>Prize (Points-based)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <label htmlFor="reward-title" className="text-sm font-medium">
                 Title <span className="text-destructive">*</span>
               </label>
               <Input
                 id="reward-title"
-                placeholder="e.g. Buy a new book"
+                placeholder={rewardType === RewardType.DIRECT ? "e.g. Finish the Project" : "e.g. Buy a Pizza"}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 disabled={submitting}
@@ -115,7 +145,7 @@ export default function RewardFormDialog({
               </label>
               <Textarea
                 id="reward-description"
-                placeholder="Optional details about this reward..."
+                placeholder="Details about this reward..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 disabled={submitting}
@@ -123,6 +153,22 @@ export default function RewardFormDialog({
                 rows={3}
               />
             </div>
+
+            {rewardType === RewardType.ECONOMY && (
+              <div className="space-y-2">
+                <label htmlFor="cost-points" className="text-sm font-medium">
+                  Points Cost
+                </label>
+                <Input
+                  id="cost-points"
+                  type="number"
+                  min="0"
+                  value={costPoints}
+                  onChange={(e) => setCostPoints(parseInt(e.target.value) || 0)}
+                  disabled={submitting}
+                />
+              </div>
+            )}
 
             {error && (
               <p className="text-sm text-destructive" role="alert">
@@ -148,7 +194,7 @@ export default function RewardFormDialog({
               {submitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {isEdit ? "Save Changes" : "Create Reward"}
+              {isEdit ? "Save Changes" : `Create ${rewardType === RewardType.DIRECT ? "Quest" : "Prize"}`}
             </Button>
           </DialogFooter>
         </form>

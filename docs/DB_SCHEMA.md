@@ -38,11 +38,12 @@
 | id | uuid | Primary Key | Unique identifier for the task |
 | title | varchar | | Task Title |
 | description | varchar | Optional | Task description |
+| task_type | varchar | Enum: BOUNTY, OBJECTIVE | Type of task (independent vs linked) |
 | difficulty | varchar | Enum: TINY, SMALL, MEDIUM, HARD, EXTREME | Energy level cost |
 | points | integer | Default: 0 | Points earned upon completion |
 | completed | boolean | | Task completion status |
 | completed_at | timestamp | Optional | When the task was completed |
-| reward_id | uuid | Foreign Key, Nullable | Link to parent reward |
+| reward_id | uuid | Foreign Key, Nullable | Link to parent Quest |
 | created_at | timestamp | | Creation timestamp |
 | updated_at | timestamp | | Last update timestamp |
 

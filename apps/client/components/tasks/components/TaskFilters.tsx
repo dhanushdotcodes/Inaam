@@ -6,25 +6,25 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { motion } from "motion/react";
 
-interface QuestFiltersProps {
+interface TaskFiltersProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   filter: "all" | "active" | "completed";
   onFilterChange: (filter: "all" | "active" | "completed") => void;
 }
 
-export default function QuestFilters({
+export default function TaskFilters({
   searchQuery,
   onSearchChange,
   filter,
   onFilterChange,
-}: QuestFiltersProps) {
+}: TaskFiltersProps) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-center">
       <div className="relative flex-1 w-full">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
         <Input 
-          placeholder="Search quests..." 
+          placeholder="Search bounties and objectives..." 
           className="pl-12"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}

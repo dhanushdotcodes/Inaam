@@ -3,19 +3,19 @@
 import React from "react";
 import { AnimatePresence } from "motion/react";
 import type { Task, Reward } from "@/types";
-import QuestItem from "./QuestItem";
+import TaskItem from "./TaskItem";
 
-interface QuestListProps {
+interface TaskListProps {
   tasks: Task[];
   rewards: Reward[];
   onToggle: (task: Task) => void;
 }
 
-export default function QuestList({ tasks, rewards, onToggle }: QuestListProps) {
+export default function TaskList({ tasks, rewards, onToggle }: TaskListProps) {
   if (tasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50">
-        <p className="text-sm text-zinc-500">No quests found matching your criteria.</p>
+        <p className="text-sm text-zinc-500">No tasks found matching your criteria.</p>
       </div>
     );
   }
@@ -34,7 +34,7 @@ export default function QuestList({ tasks, rewards, onToggle }: QuestListProps) 
     <div className="grid gap-4">
       <AnimatePresence mode="popLayout">
         {sortedTasks.map((task) => (
-          <QuestItem 
+          <TaskItem 
             key={task.id} 
             task={task} 
             rewardTitle={getRewardTitle(task.reward_id)} 

@@ -4,18 +4,20 @@ import { useState, useRef, useEffect } from "react";
 import { Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createTask, createRewardTask } from "@/lib/api";
+import { createRewardTask } from "@/lib/api";
 import type { Task } from "@/types";
+import { TaskType } from "@/types";
 
 interface TaskFormProps {
   rewardId: string;
+  taskType?: TaskType;
   onTaskAdded: (task: Task) => void;
 }
 
 /**
- * TaskForm component — Inline form for adding tasks to a reward.
+ * TaskForm component — Inline form for adding objectives to a Quest.
  */
-export default function TaskForm({ rewardId, onTaskAdded }: TaskFormProps) {
+export default function TaskForm({ rewardId, taskType = TaskType.OBJECTIVE, onTaskAdded }: TaskFormProps) {
   const [title, setTitle] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,12 +32,13 @@ export default function TaskForm({ rewardId, onTaskAdded }: TaskFormProps) {
       setError(null);
       const newTask = await createRewardTask(rewardId, {
         title: title.trim(),
+        task_type: taskType
       });
 
       onTaskAdded(newTask);
       setTitle("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add task");
+      setError(err instanceof Error ? err.message : "Failed to add objective");
     } finally {
       setSubmitting(false);
     }
@@ -51,7 +54,7 @@ export default function TaskForm({ rewardId, onTaskAdded }: TaskFormProps) {
     <div className="space-y-2">
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
-          placeholder="Add a new task..."
+          placeholder="Add a new objective..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           disabled={submitting}

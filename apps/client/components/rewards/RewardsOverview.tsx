@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { Wallet, TrendingUp, ArrowUpRight, ArrowDownLeft, Loader2, AlertCircle, RefreshCcw } from "lucide-react";
+import { Wallet, Trophy, ShoppingBag, RefreshCcw, Loader2, AlertCircle } from "lucide-react";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import { getRewards, getRewardTasks, claimReward } from "@/lib/api";
 import type { RewardWithTasks } from "@/types";
+import { RewardType } from "@/types";
 import RewardCard from "./RewardCard";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import PointsDisplay from "../shared/PointsDisplay";
 
 /**
- * RewardsOverview component — Displays the financial stats and transaction history.
+ * RewardsOverview component — Displays Quests (task-based) and Prizes (economy-based).
  */
 export default function RewardsOverview() {
   const [rewards, setRewards] = useState<RewardWithTasks[]>([]);
@@ -66,9 +67,7 @@ export default function RewardsOverview() {
   const handleClaim = async (rewardId: string) => {
     try {
       await claimReward(rewardId);
-      // Refresh to update states
       fetchRewards();
-      // Dispatch refreshPoints event
       window.dispatchEvent(new CustomEvent("refreshPoints"));
     } catch (err) {
       console.error("Claim error:", err);
@@ -77,19 +76,20 @@ export default function RewardsOverview() {
   };
 
   // Filter rewards
-  const availableRewards = rewards.filter(r => {
-    const total = r.tasks.length;
-    const completed = r.tasks.filter(t => t.completed).length;
-    return total > 0 && completed === total && !r.claimed_at;
+  const quests = rewards.filter(r => r.reward_type === RewardType.DIRECT && !r.claimed_at);
+  const prizes = rewards.filter(r => r.reward_type === RewardType.ECONOMY && !r.claimed_at);
+  
+  const readyToClaimQuests = quests.filter(q => {
+    const total = q.tasks.length;
+    const completed = q.tasks.filter(t => t.completed).length;
+    return total > 0 && completed === total;
   });
-
-  const claimedRewards = rewards.filter(r => !!r.claimed_at);
 
   return (
     <>
       <DashboardHeader 
         title="Rewards"
-        description="Monitor your reward earnings and manage your financial assets."
+        description="Claim your achieved Quests or spend points on legendary Prizes."
       >
         <div className="flex items-center gap-3">
           <PointsDisplay />
@@ -105,8 +105,7 @@ export default function RewardsOverview() {
         </div>
       </DashboardHeader>
 
-      <main className="flex-1 px-8 lg:px-12 py-4">
-        {/* Loading/Error States */}
+      <main className="flex-1 px-8 lg:px-12 py-4 space-y-12">
         {loading && rewards.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-zinc-400">
             <Loader2 className="h-8 w-8 animate-spin mb-4" />
@@ -121,58 +120,62 @@ export default function RewardsOverview() {
           </div>
         )}
 
-        {/* Available Rewards */}
-        <div className="mb-10">
-          <h3 className="text-lg font-semibold mb-5 text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
-            Available to Claim
-            {availableRewards.length > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-bold">
-                {availableRewards.length}
-              </span>
-            )}
-          </h3>
+        {/* Quests Section */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-amber-500" />
+              Active Quests
+              {readyToClaimQuests.length > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black animate-pulse">
+                  {readyToClaimQuests.length} READY
+                </span>
+              )}
+            </h3>
+          </div>
           
-          {availableRewards.length > 0 ? (
+          {quests.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {availableRewards.map((reward) => (
+              {quests.map((quest) => (
                 <RewardCard 
-                  key={reward.id} 
-                  reward={reward} 
-                  onClick={() => handleClaim(reward.id)}
+                  key={quest.id} 
+                  reward={quest} 
+                  onClick={() => handleClaim(quest.id)}
                 />
               ))}
             </div>
           ) : (
-            <div className="rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800 p-12 flex flex-col items-center justify-center text-center">
-              <div className="h-12 w-12 rounded-2xl bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center mb-4">
-                <Wallet className="h-6 w-6 text-zinc-300" />
-              </div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-xs">
-                No rewards ready to claim. Complete all tasks in your vault to unlock rewards.
-              </p>
+            <div className="rounded-3xl border border-dashed border-border p-12 flex flex-col items-center justify-center text-center bg-muted/20">
+              <p className="text-sm text-muted-foreground">No active quests. Start one to begin your journey.</p>
             </div>
           )}
-        </div>
+        </section>
 
-        {/* Reward History (Claimed) */}
-        <div>
-          <h3 className="text-lg font-semibold mb-5 text-zinc-900 dark:text-zinc-50">Reward History</h3>
-          {claimedRewards.length > 0 ? (
+        {/* Prizes Section */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5 text-primary" />
+              Prize Shop
+            </h3>
+          </div>
+          
+          {prizes.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {claimedRewards.map((reward) => (
+              {prizes.map((prize) => (
                 <RewardCard 
-                  key={reward.id} 
-                  reward={reward} 
-                  onClick={() => {}} 
+                  key={prize.id} 
+                  reward={prize} 
+                  onClick={() => handleClaim(prize.id)}
                 />
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 border border-zinc-100 dark:border-zinc-800 rounded-3xl bg-zinc-50/30 dark:bg-zinc-900/30">
-              <p className="text-sm text-zinc-400 italic">No claimed rewards yet.</p>
+            <div className="rounded-3xl border border-dashed border-border p-12 flex flex-col items-center justify-center text-center bg-muted/20">
+              <p className="text-sm text-muted-foreground">The shop is empty for now. Check back later!</p>
             </div>
           )}
-        </div>
+        </section>
       </main>
     </>
   );

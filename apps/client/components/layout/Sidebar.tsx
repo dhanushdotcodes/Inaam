@@ -21,8 +21,8 @@ import { motion, AnimatePresence } from "motion/react";
 
 const NAV_ITEMS = [
   {
-    label: "Quests",
-    href: "/quests",
+    label: "Tasks",
+    href: "/tasks",
     icon: Compass,
   },
   {

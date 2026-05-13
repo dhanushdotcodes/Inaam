@@ -20,7 +20,7 @@ export default function VerifyAccessForm() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated()) {
-      router.push("/quests");
+      router.push("/tasks");
     }
   }, [router]);
 

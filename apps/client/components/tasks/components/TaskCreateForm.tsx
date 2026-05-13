@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TaskDifficulty, TaskCreatePayload } from "@/types";
+import { TaskDifficulty, TaskCreatePayload, TaskType } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,16 +12,17 @@ import {
 } from "@/components/ui/select";
 import { Loader2, PlusCircle, X } from "lucide-react";
 
-interface QuestCreateFormProps {
+interface TaskCreateFormProps {
   onSubmit: (payload: TaskCreatePayload) => Promise<void>;
   onCancel: () => void;
 }
 
-export default function QuestCreateForm({ onSubmit, onCancel }: QuestCreateFormProps) {
+export default function TaskCreateForm({ onSubmit, onCancel }: TaskCreateFormProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<TaskCreatePayload>({
     title: "",
     description: "",
+    task_type: TaskType.BOUNTY,
     difficulty: TaskDifficulty.MEDIUM,
     points: 10,
   });
@@ -34,7 +35,7 @@ export default function QuestCreateForm({ onSubmit, onCancel }: QuestCreateFormP
       setLoading(true);
       await onSubmit(formData);
     } catch (err) {
-      console.error("Submit quest error:", err);
+      console.error("Submit task error:", err);
     } finally {
       setLoading(false);
     }
@@ -43,7 +44,7 @@ export default function QuestCreateForm({ onSubmit, onCancel }: QuestCreateFormP
   return (
     <div className="p-6 rounded-2xl bg-background border border-border shadow-xl animate-in fade-in zoom-in duration-300">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-foreground">New Independent Quest</h3>
+        <h3 className="text-lg font-semibold text-foreground">New Bounty</h3>
         <button onClick={onCancel} className="text-muted-foreground hover:text-foreground transition-colors">
           <X className="h-5 w-5" />
         </button>
@@ -53,7 +54,7 @@ export default function QuestCreateForm({ onSubmit, onCancel }: QuestCreateFormP
         <div className="space-y-2">
           <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Title</label>
           <Input
-            placeholder="e.g., Defeat the Shadows"
+            placeholder="e.g., Wash the Dragon (Dishes)"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             required
@@ -109,7 +110,7 @@ export default function QuestCreateForm({ onSubmit, onCancel }: QuestCreateFormP
             startIcon={<PlusCircle />}
             className="flex-1"
           >
-            Spawn Quest
+            Post Bounty
           </Button>
           <Button
             type="button"

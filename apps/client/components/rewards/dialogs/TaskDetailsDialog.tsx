@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { deleteTask } from "@/lib/api";
 import type { RewardWithTasks, Task } from "@/types";
+import { RewardType, TaskType } from "@/types";
 
 import TaskForm from "../tasks/TaskForm";
 import TaskList from "../tasks/TaskList";
@@ -26,7 +27,7 @@ interface TaskDetailsDialogProps {
 }
 
 /**
- * TaskDetailsDialog component — Orchestrates task management UI for a specific reward.
+ * TaskDetailsDialog component — Orchestrates objective management UI for a specific Quest.
  */
 export default function TaskDetailsDialog({
   reward,
@@ -39,6 +40,8 @@ export default function TaskDetailsDialog({
   const [isDeletingTask, setIsDeletingTask] = useState(false);
 
   if (!reward) return null;
+
+  const isQuest = reward.reward_type === RewardType.DIRECT;
 
   const handleTaskAdded = (newTask: Task) => {
     onUpdate({
@@ -79,14 +82,19 @@ export default function TaskDetailsDialog({
           <DialogHeader>
             <div className="flex items-start justify-between gap-4 pr-6">
               <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    {isQuest ? "Quest Management" : "Prize Details"}
+                  </span>
+                </div>
                 <DialogTitle className="wrap-break-word whitespace-normal">
                   {reward.title}
                 </DialogTitle>
                 <DialogDescription className="mt-1 wrap-break-word">
-                  {reward.description || "Manage tasks for this reward."}
+                  {reward.description || (isQuest ? "Complete these objectives to unlock this quest." : "Redeem this prize with your earned points.")}
                 </DialogDescription>
               </div>
-              {reward.claimed && (
+              {reward.claimed_at && (
                 <Badge variant="secondary" className="shrink-0">
                   Claimed
                 </Badge>
@@ -94,25 +102,41 @@ export default function TaskDetailsDialog({
             </div>
           </DialogHeader>
 
-          <div className="mt-4 space-y-6">
-            <TaskForm rewardId={reward.id} onTaskAdded={handleTaskAdded} />
+          {isQuest ? (
+            <div className="mt-4 space-y-6">
+              <TaskForm rewardId={reward.id} taskType={TaskType.OBJECTIVE} onTaskAdded={handleTaskAdded} />
 
-            <TaskList
-              rewardId={reward.id}
-              tasks={reward.tasks}
-              onTaskUpdate={handleTaskUpdate}
-              onTaskDeleteRequest={setTaskToDelete}
-            />
-          </div>
+              <TaskList
+                rewardId={reward.id}
+                tasks={reward.tasks}
+                onTaskUpdate={handleTaskUpdate}
+                onTaskDeleteRequest={setTaskToDelete}
+              />
+            </div>
+          ) : (
+            <div className="mt-6 p-12 rounded-3xl border border-dashed border-border flex flex-col items-center justify-center bg-muted/10">
+               <p className="text-sm text-muted-foreground text-center">
+                 Prizes are redeemed directly with points. No objectives required.
+               </p>
+               {!reward.claimed_at && (
+                 <Button className="mt-6" variant="contained">
+                   Redeem for {reward.cost_points} Points
+                 </Button>
+               )}
+            </div>
+          )}
 
           <DialogFooter className="mt-4 sm:justify-start">
             <div className="w-full flex items-center justify-between">
-              <div className="text-xs text-muted-foreground">
-                {completedCount}/{totalCount} tasks completed
-              </div>
+              {isQuest && (
+                <div className="text-xs text-muted-foreground">
+                  {completedCount}/{totalCount} objectives completed
+                </div>
+              )}
               <Button
                 variant="outline"
-                size="sm"
+                size="default"
+                className="ml-auto"
                 onClick={() => onOpenChange(false)}
               >
                 Close
@@ -125,8 +149,8 @@ export default function TaskDetailsDialog({
       <AlertDialog
         open={!!taskToDelete}
         onOpenChange={(open) => !open && setTaskToDelete(null)}
-        title="Delete Task"
-        description="Are you sure you want to delete this task? This action cannot be undone."
+        title="Delete Objective"
+        description="Are you sure you want to delete this objective? This action cannot be undone."
         confirmText="Delete"
         onConfirm={handleDeleteTask}
         variant="destructive"

@@ -7,13 +7,15 @@ import { cn } from "@/lib/utils";
 import type { Task } from "@/types";
 import DifficultyBadge from "./DifficultyBadge";
 
-interface QuestItemProps {
+interface TaskItemProps {
   task: Task;
   rewardTitle: string | null;
   onToggle: (task: Task) => void;
 }
 
-export default function QuestItem({ task, rewardTitle, onToggle }: QuestItemProps) {
+export default function TaskItem({ task, rewardTitle, onToggle }: TaskItemProps) {
+  const isObjective = task.reward_id !== null;
+  
   return (
     <motion.div
       layout
@@ -56,8 +58,11 @@ export default function QuestItem({ task, rewardTitle, onToggle }: QuestItemProp
             <DifficultyBadge difficulty={task.difficulty} />
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-              {rewardTitle || "Independent Quest"}
+            <span className={cn(
+              "text-[11px] font-bold uppercase tracking-widest",
+              isObjective ? "text-amber-500" : "text-zinc-500"
+            )}>
+              {isObjective ? `Objective: ${rewardTitle || "Quest"}` : "Bounty"}
             </span>
             <span className="text-[11px] font-bold text-muted-foreground">•</span>
             <span className="text-[11px] font-bold text-primary uppercase tracking-widest">
@@ -74,7 +79,7 @@ export default function QuestItem({ task, rewardTitle, onToggle }: QuestItemProp
             ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" 
             : "bg-primary text-primary-foreground border-primary"
         )}>
-          {task.completed ? "Achieved" : "Available"}
+          {task.completed ? "Completed" : "Active"}
         </span>
       </div>
     </motion.div>

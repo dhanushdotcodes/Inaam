@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Introduced **`task_type`** (`BOUNTY` | `OBJECTIVE`) to the task model to differentiate between independent tasks and reward-linked tasks.
+- Added **`TaskType`** enum in the backend (`models/enums.py`) and frontend (`types/index.ts`).
+- Created a custom Alembic migration to handle PostgreSQL Enum creation and data migration for existing tasks.
 - Implemented a comprehensive **Points System** and transaction ledger to track user progress and reward claiming.
 - Created **`transaction_service`** in the backend to manage point history (`EARNED`, `SPENT`, `BONUS`, `PENALTY`) and calculate balances.
 - Added **`PointsDisplay`** component to the frontend, providing real-time balance updates across Quests, Rewards, and Vault pages.
@@ -16,6 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Integrated automatic point earning: completing a task now automatically generates an `EARNED` transaction.
 
 ### Changed
+- Refactored terminology across the entire project for better domain alignment:
+    - **Quests**: Task-based rewards (formerly `DIRECT`).
+    - **Prizes**: Economy-based rewards (formerly `ECONOMY`).
+    - **Bounties**: Independent tasks.
+    - **Objectives**: Tasks linked to a Quest.
+- Renamed the primary task management route from `/quests` to **`/tasks`**.
+- Refactored frontend components to use the new nomenclature: **`TaskDashboard`**, **`TaskHeader`**, **`TaskList`**, **`TaskItem`**, and **`TaskCreateForm`**.
+- Updated **`RewardCard`** and **`RewardsOverview`** to explicitly distinguish between Quest progress and Prize redemption.
+- Enhanced **`RewardFormDialog`** to support creating both Quests and Prizes with appropriate inputs (e.g., points cost for prizes).
+- Updated project documentation (`PRD.md`, `DB_SCHEMA.md`, `API_SPEC.md`) to reflect the new architecture.
 - Refactored task completion logic: transitioned from boolean `completed` to `completed_at` timestamp for better audit trails.
 - Differentiated task creation APIs: introduced `createRewardTask` to distinguish from standalone `createTask`.
 - Switched to `completeTask` API for all task completion actions to ensure point transactions are triggered.
@@ -37,6 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Permanently deleted `ButtonPreview.tsx` component.
 
 ### Fixed
+- Resolved a TypeScript error in `TaskDashboard.tsx` where string literals were used instead of `TaskType` enum members.
+- Corrected the parameter order for `updateTask` in the reward task management UI.
 - Standardized dashboard-wide horizontal spacing using a unified `<main>` container with responsive padding.
 - Corrected sidebar icon mapping (Vault = Wallet, Rewards = Gift) to match the new naming conventions.
 - Fixed the missing `updateTask` import in the Quest dashboard.

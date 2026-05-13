@@ -20,6 +20,14 @@ export enum TaskDifficulty {
 }
 
 /**
+ * Task Type.
+ */
+export enum TaskType {
+  BOUNTY = "BOUNTY",
+  OBJECTIVE = "OBJECTIVE",
+}
+
+/**
  * Reward Type.
  */
 export enum RewardType {
@@ -50,6 +58,7 @@ export interface Task {
   id: string;
   title: string;
   description: string | null;
+  task_type: TaskType;
   difficulty: TaskDifficulty;
   points: number;
   completed: boolean;
@@ -76,6 +85,7 @@ export interface RewardCreatePayload {
 export interface TaskCreatePayload {
   title: string;
   description?: string;
+  task_type?: TaskType;
   difficulty?: TaskDifficulty;
   points?: number;
   reward_id?: string | null;
@@ -98,6 +108,7 @@ export interface RewardUpdatePayload {
 export interface TaskUpdatePayload {
   title?: string;
   description?: string;
+  task_type?: TaskType;
   difficulty?: TaskDifficulty;
   points?: number;
   completed?: boolean;

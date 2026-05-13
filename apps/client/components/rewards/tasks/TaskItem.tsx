@@ -57,9 +57,9 @@ export default function TaskItem({
 
     try {
       setIsUpdating(true);
-      const updated = await updateTask(rewardId, task.id, {
+      const updated = await updateTask(task.id, {
         title: editingTitle.trim(),
-      });
+      }, rewardId);
       onUpdate(updated);
       setIsEditing(false);
     } catch (err) {

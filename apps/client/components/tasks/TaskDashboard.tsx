@@ -3,18 +3,19 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import QuestHeader from "./components/QuestHeader";
-import QuestFilters from "./components/QuestFilters";
-import QuestList from "./components/QuestList";
-import QuestCreateForm from "./components/QuestCreateForm";
+import TaskHeader from "./components/TaskHeader";
+import TaskFilters from "./components/TaskFilters";
+import TaskList from "./components/TaskList";
+import TaskCreateForm from "./components/TaskCreateForm";
 import { createTask, getAllTasks, getRewards, updateTask, completeTask } from "@/lib/api";
 import type { Task, Reward, TaskCreatePayload } from "@/types";
+import { TaskType } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
 
 /**
- * QuestDashboard component — Orchestrates the display and completion of all tasks.
+ * TaskDashboard component — Orchestrates the display and completion of all tasks (Bounties & Objectives).
  */
-export default function QuestDashboard() {
+export default function TaskDashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,7 @@ export default function QuestDashboard() {
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   const [isCreating, setIsCreating] = useState(false);
 
-  const fetchQuestsData = useCallback(async () => {
+  const fetchTasksData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -34,30 +35,34 @@ export default function QuestDashboard() {
       setTasks(tasksData || []);
       setRewards(rewardsData || []);
     } catch (err) {
-      console.error("Fetch quests error:", err);
-      setError(err instanceof Error ? err.message : "Failed to load quests");
+      console.error("Fetch tasks error:", err);
+      setError(err instanceof Error ? err.message : "Failed to load tasks");
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchQuestsData();
-  }, [fetchQuestsData]);
+    fetchTasksData();
+  }, [fetchTasksData]);
 
   const handleCreateTask = async (payload: TaskCreatePayload) => {
     try {
-      const newTask = await createTask(payload);
+      // Standalone tasks created here are BOUNTIES by default
+      const newTask = await createTask({
+        ...payload,
+        task_type: TaskType.BOUNTY
+      });
       setTasks((prev) => [newTask, ...prev]);
       setIsCreating(false);
     } catch (err) {
-      console.error("Create quest error:", err);
+      console.error("Create bounty error:", err);
       throw err;
     }
   };
 
   const handleToggleComplete = async (task: Task) => {
-    if (task.completed) return; // Prevent un-completing for now if desired, or handle it
+    if (task.completed) return;
     
     try {
       // Optimistic update
@@ -69,7 +74,7 @@ export default function QuestDashboard() {
       // Dispatch refreshPoints event
       window.dispatchEvent(new CustomEvent("refreshPoints"));
     } catch (err) {
-      console.error("Toggle quest error:", err);
+      console.error("Toggle task error:", err);
       // Revert optimistic update
       setTasks((prev) => 
         prev.map((t) => t.id === task.id ? { ...t, completed: false, completed_at: null } : t)
@@ -97,7 +102,7 @@ export default function QuestDashboard() {
     return (
       <div className="flex flex-col items-center justify-center py-40">
         <Loader2 className="h-8 w-8 animate-spin text-zinc-300 mb-4" />
-        <p className="text-sm text-zinc-500">Loading your journey...</p>
+        <p className="text-sm text-zinc-500">Loading your tasks...</p>
       </div>
     );
   }
@@ -106,14 +111,14 @@ export default function QuestDashboard() {
     return (
       <div className="flex flex-col items-center justify-center py-40 text-center">
         <p className="text-destructive font-medium mb-4">{error}</p>
-        <Button variant="outline" onClick={fetchQuestsData}>Try Again</Button>
+        <Button variant="outline" onClick={fetchTasksData}>Try Again</Button>
       </div>
     );
   }
 
   return (
     <div className="pb-20 lg:pb-8">
-      <QuestHeader 
+      <TaskHeader 
         completedCount={stats.completed} 
         totalCount={stats.total} 
         onNewTask={() => setIsCreating(true)}
@@ -128,7 +133,7 @@ export default function QuestDashboard() {
               exit={{ opacity: 0, height: 0, marginBottom: 0 }}
               className="overflow-hidden"
             >
-              <QuestCreateForm 
+              <TaskCreateForm 
                 onSubmit={handleCreateTask} 
                 onCancel={() => setIsCreating(false)} 
               />
@@ -136,14 +141,14 @@ export default function QuestDashboard() {
           )}
         </AnimatePresence>
 
-        <QuestFilters 
+        <TaskFilters 
           searchQuery={searchQuery} 
           onSearchChange={setSearchQuery} 
           filter={filter} 
           onFilterChange={setFilter} 
         />
 
-        <QuestList 
+        <TaskList 
           tasks={filteredTasks} 
           rewards={rewards} 
           onToggle={handleToggleComplete} 
