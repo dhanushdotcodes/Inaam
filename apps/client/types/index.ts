@@ -121,3 +121,37 @@ export interface LoginResponse {
   token_type: string;
 }
 
+/**
+ * Transaction Type.
+ */
+export enum TransactionType {
+  EARNED = "EARNED",
+  SPENT = "SPENT",
+  BONUS = "BONUS",
+  PENALTY = "PENALTY",
+}
+
+/**
+ * Point Transaction entity.
+ */
+export interface PointTransaction {
+  id: string;
+  type: TransactionType;
+  points: number;
+  description: string;
+  task_id: string | null;
+  reward_id: string | null;
+  created_at: string;
+}
+
+/**
+ * Payload for creating a manual transaction.
+ */
+export interface TransactionCreatePayload {
+  type: TransactionType;
+  points: number;
+  description: string;
+  task_id?: string | null;
+  reward_id?: string | null;
+}
+

@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { updateTask } from "@/lib/api";
+import { updateTask, completeTask } from "@/lib/api";
 import type { Task } from "@/types";
 import { motion } from "motion/react";
 
@@ -37,13 +37,15 @@ export default function TaskItem({
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleToggle = async () => {
+    if (task.completed) return; // Prevent un-completing for now as points were already awarded
+
     try {
-      const updated = await updateTask(rewardId, task.id, {
-        completed: !task.completed,
-      });
+      const updated = await completeTask(task.id, rewardId);
       onUpdate(updated);
+      // Dispatch refreshPoints event
+      window.dispatchEvent(new CustomEvent("refreshPoints"));
     } catch (err) {
-      console.error("Failed to toggle task:", err);
+      console.error("Failed to complete task:", err);
     }
   };
 

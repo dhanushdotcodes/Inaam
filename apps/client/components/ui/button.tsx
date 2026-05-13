@@ -27,8 +27,8 @@ const buttonVariants = cva(
         destructive: "bg-destructive border-destructive text-white hover:bg-destructive/90 active:scale-[0.98]",
       },
       size: {
-        default: "h-[48px] rounded-xl text-sm",
-        icon: "size-[48px] rounded-xl p-0",
+        default: "h-10 rounded-xl text-sm",
+        icon: "h-8 w-8 rounded-xl p-0",
       },
     },
     defaultVariants: {

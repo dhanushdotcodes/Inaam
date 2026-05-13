@@ -8,6 +8,8 @@ import type {
   Task,
   TaskCreatePayload,
   TaskUpdatePayload,
+  PointTransaction,
+  TransactionCreatePayload,
 } from "@/types";
 
 /**
@@ -101,14 +103,25 @@ export async function getRewardTasks(rewardId: string): Promise<Task[]> {
 }
 
 /**
- * Create a new task. If rewardId is provided, it's a reward task, otherwise independent.
+ * Create a new standalone task.
  */
 export async function createTask(
-  payload: TaskCreatePayload,
-  rewardId?: string
+  payload: TaskCreatePayload
 ): Promise<Task> {
-  const path = rewardId ? `/rewards/${rewardId}/task` : "/tasks";
-  return apiFetch<Task>(path, {
+  return apiFetch<Task>("/tasks", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Create a new task linked to a specific reward.
+ */
+export async function createRewardTask(
+  rewardId: string,
+  payload: TaskCreatePayload
+): Promise<Task> {
+  return apiFetch<Task>(`/rewards/${rewardId}/task`, {
     method: "POST",
     body: JSON.stringify(payload),
   });
@@ -160,8 +173,9 @@ export async function deleteTask(
 /**
  * Fetch all rewards.
  */
-export async function getRewards(): Promise<Reward[]> {
-  return apiFetch<Reward[]>("/rewards");
+export async function getRewards(status?: "claimed" | "unclaimed"): Promise<Reward[]> {
+  const path = status ? `/rewards?status=${status}` : "/rewards";
+  return apiFetch<Reward[]>(path);
 }
 
 /**
@@ -204,5 +218,31 @@ export async function deleteReward(rewardId: string): Promise<boolean> {
 export async function claimReward(rewardId: string): Promise<Reward> {
   return apiFetch<Reward>(`/rewards/${rewardId}/claim`, {
     method: "PATCH",
+  });
+}
+
+/**
+ * Fetch current total points balance.
+ */
+export async function getPoints(): Promise<number> {
+  return apiFetch<number>("/points");
+}
+
+/**
+ * Fetch all point transactions.
+ */
+export async function getTransactions(): Promise<PointTransaction[]> {
+  return apiFetch<PointTransaction[]>("/transactions");
+}
+
+/**
+ * Create a new manual transaction (bonus/penalty).
+ */
+export async function createTransaction(
+  payload: TransactionCreatePayload
+): Promise<PointTransaction> {
+  return apiFetch<PointTransaction>("/transactions", {
+    method: "POST",
+    body: JSON.stringify(payload),
   });
 }

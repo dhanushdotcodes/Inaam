@@ -9,6 +9,7 @@ Inaam helps me unlock rewards by completing a list of associated tasks in a simp
 - Reward Management - Add, Edit, Delete Rewards.
 - Task Management - Add, Edit, Delete Tasks linked to Rewards.
 - Progress Tracking - Track completion percentage and reward eligibility.
+- Points Tracking - Earn points from tasks and spend them on economy rewards.
 - PWA Support - Installable mobile-friendly application experience.
 
 ## Success Metrics

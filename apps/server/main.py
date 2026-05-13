@@ -4,6 +4,7 @@ from api.auth.routes import router as auth_router
 from api.rewards.routes import router as rewards_router
 from api.tasks.routes import router as tasks_router
 from api.health.routes import router as health_router
+from api.points.routes import router as points_router
 from core.config import settings
 
 app = FastAPI(title="Inaam API")
@@ -21,6 +22,7 @@ app.include_router(auth_router, prefix="/api/v1")
 app.include_router(rewards_router, prefix="/api/v1")
 app.include_router(tasks_router, prefix="/api/v1")
 app.include_router(health_router, prefix="/api/v1")
+app.include_router(points_router, prefix="/api/v1")
 
 
 @app.get("/")

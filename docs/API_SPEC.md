@@ -45,3 +45,9 @@ GET /api/v1/rewards/{id}/task/{id} - get a specific task
 PUT /api/v1/rewards/{id}/task/{id} - update a specific task
 DELETE /api/v1/rewards/{id}/task/{id} - delete a specific task
 PATCH /api/v1/rewards/{id}/task/{id}/complete - complete a specific task
+
+## Points and Transactions
+---
+GET /api/v1/points - get current total points balance
+GET /api/v1/transactions - get all point transactions history
+POST /api/v1/transactions - manually add a bonus or penalty transaction

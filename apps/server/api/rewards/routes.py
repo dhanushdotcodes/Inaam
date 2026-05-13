@@ -96,8 +96,14 @@ async def claim_reward(
     db: AsyncSession = Depends(get_db)
 ):
     """Claim a specific reward."""
-    async with db.begin():
-        reward = await reward_service.claim_reward(db, id)
+    try:
+        async with db.begin():
+            reward = await reward_service.claim_reward(db, id)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
     
     if not reward:
         raise HTTPException(

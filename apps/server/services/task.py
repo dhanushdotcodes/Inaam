@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, Sequence
 from uuid import UUID
 
@@ -5,7 +6,10 @@ from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.task import Task
+from models.enums import TransactionType
 from schemas.task import TaskCreate, TaskUpdate
+from schemas.transaction import TransactionCreate
+from services import transaction as transaction_service
 
 
 async def get_tasks(
@@ -27,7 +31,11 @@ async def create_task(
     reward_id: Optional[UUID] = None
 ) -> Task:
     """Create a new task."""
-    task = Task(**task_data.model_dump(), reward_id=reward_id)
+    data = task_data.model_dump()
+    if reward_id:
+        data["reward_id"] = reward_id
+        
+    task = Task(**data)
     db.add(task)
     await db.flush()
     await db.refresh(task)
@@ -88,10 +96,26 @@ async def complete_task(
     reward_id: Optional[UUID] = None
 ) -> Optional[Task]:
     """Complete a specific task."""
-    query = update(Task).where(Task.id == task_id)
-    if reward_id:
-        query = query.where(Task.reward_id == reward_id)
+    task = await get_task(db, task_id, reward_id)
+    if not task:
+        return None
         
-    query = query.values(completed=True).returning(Task)
-    result = await db.execute(query)
-    return result.scalar_one_or_none()
+    if task.completed:
+        return task
+        
+    # Create EARNED transaction
+    await transaction_service.create_transaction(
+        db,
+        TransactionCreate(
+            type=TransactionType.EARNED,
+            points=task.points,
+            description=f"Completed task: {task.title}",
+            task_id=task.id
+        )
+    )
+    
+    task.completed = True
+    task.completed_at = datetime.now()
+    await db.flush()
+    await db.refresh(task)
+    return task

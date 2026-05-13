@@ -4,6 +4,7 @@ import React from "react";
 import { Trophy, Plus } from "lucide-react";
 import DashboardHeader from "../../layout/DashboardHeader";
 import { Button } from "@/components/ui/button";
+import PointsDisplay from "../../shared/PointsDisplay";
 
 interface QuestHeaderProps {
   completedCount: number;
@@ -18,6 +19,7 @@ export default function QuestHeader({ completedCount, totalCount, onNewTask }: Q
       description="Complete tasks across all your rewards to unlock legendary treasures."
     >
       <div className="flex items-center gap-3">
+        <PointsDisplay />
         <Button 
           variant="contained"
           onClick={onNewTask}

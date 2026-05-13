@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createTask } from "@/lib/api";
+import { createTask, createRewardTask } from "@/lib/api";
 import type { Task } from "@/types";
 
 interface TaskFormProps {
@@ -28,7 +28,7 @@ export default function TaskForm({ rewardId, onTaskAdded }: TaskFormProps) {
     try {
       setSubmitting(true);
       setError(null);
-      const newTask = await createTask(rewardId, {
+      const newTask = await createRewardTask(rewardId, {
         title: title.trim(),
       });
 

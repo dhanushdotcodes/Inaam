@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, Sequence
 from uuid import UUID
 
@@ -5,7 +6,10 @@ from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.reward import Reward
+from models.enums import RewardType, TransactionType
 from schemas.reward import RewardCreate, RewardUpdate
+from schemas.transaction import TransactionCreate
+from services import transaction as transaction_service
 
 
 async def get_rewards(
@@ -16,9 +20,9 @@ async def get_rewards(
     query = select(Reward)
     
     if status == "claimed":
-        query = query.where(Reward.claimed == True)
+        query = query.where(Reward.claimed_at.is_not(None))
     elif status == "unclaimed":
-        query = query.where(Reward.claimed == False)
+        query = query.where(Reward.claimed_at.is_(None))
         
     result = await db.execute(query)
     return result.scalars().all()
@@ -68,11 +72,31 @@ async def delete_reward(db: AsyncSession, reward_id: UUID) -> bool:
 
 async def claim_reward(db: AsyncSession, reward_id: UUID) -> Optional[Reward]:
     """Claim a specific reward."""
-    query = (
-        update(Reward)
-        .where(Reward.id == reward_id)
-        .values(claimed=True)
-        .returning(Reward)
-    )
-    result = await db.execute(query)
-    return result.scalar_one_or_none()
+    reward = await get_reward(db, reward_id)
+    if not reward:
+        return None
+        
+    if reward.claimed_at:
+        return reward
+        
+    # If ECONOMY, check points
+    if reward.reward_type == RewardType.ECONOMY:
+        user_points = await transaction_service.get_user_points(db)
+        if user_points < reward.cost_points:
+            raise ValueError(f"Insufficient points to claim reward. Need {reward.cost_points}, have {user_points}")
+            
+        # Create SPENT transaction
+        await transaction_service.create_transaction(
+            db,
+            TransactionCreate(
+                type=TransactionType.SPENT,
+                points=reward.cost_points,
+                description=f"Claimed reward: {reward.title}",
+                reward_id=reward.id
+            )
+        )
+        
+    reward.claimed_at = datetime.now()
+    await db.flush()
+    await db.refresh(reward)
+    return reward

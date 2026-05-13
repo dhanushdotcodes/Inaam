@@ -66,6 +66,8 @@ export default function QuestDashboard() {
       );
 
       await completeTask(task.id, task.reward_id);
+      // Dispatch refreshPoints event
+      window.dispatchEvent(new CustomEvent("refreshPoints"));
     } catch (err) {
       console.error("Toggle quest error:", err);
       // Revert optimistic update

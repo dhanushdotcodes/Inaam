@@ -8,14 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
-- Created a consolidated **Quests** dashboard (`/quests`) for global task tracking across all rewards.
-- Implemented modular quest components: `QuestDashboard`, `QuestList`, `QuestItem`, `QuestHeader`, and `QuestFilters`.
-- Added automatic sorting for quests where completed items smoothly animate to the bottom of the list.
-- Implemented **`RewardsOverview`** component to standardize the financials/stats dashboard.
-- Added a logout button to the mobile bottom navigation bar for functional parity with desktop.
-- Created a centralized **`DashboardHeader`** component to handle page titles and sidebar toggling consistently.
+- Implemented a comprehensive **Points System** and transaction ledger to track user progress and reward claiming.
+- Created **`transaction_service`** in the backend to manage point history (`EARNED`, `SPENT`, `BONUS`, `PENALTY`) and calculate balances.
+- Added **`PointsDisplay`** component to the frontend, providing real-time balance updates across Quests, Rewards, and Vault pages.
+- Implemented **Economy Rewards** support: claiming rewards of type `ECONOMY` now deducts points and validates balance.
+- Added new API endpoints: `GET /api/v1/points`, `GET /api/v1/transactions`, and `POST /api/v1/transactions`.
+- Integrated automatic point earning: completing a task now automatically generates an `EARNED` transaction.
 
 ### Changed
+- Refactored task completion logic: transitioned from boolean `completed` to `completed_at` timestamp for better audit trails.
+- Differentiated task creation APIs: introduced `createRewardTask` to distinguish from standalone `createTask`.
+- Switched to `completeTask` API for all task completion actions to ensure point transactions are triggered.
+- Updated **`QuestDashboard`**, **`RewardsOverview`**, and **`TaskItem`** to react to a custom `refreshPoints` event for immediate UI updates.
+- Refined **`Button`** component sizes and variants to align with the latest minimalist design standards.
 - Aligned core primary theme tokens: mapped `--primary` to `#131313` (`brand-night`) and `--primary-foreground` to `#F3F3F3` (`brand-white-smoke`) for native minimalist Apple/Vercel-like profile adaptivity.
 - Redesigned **Quests** dashboard components (`QuestItem`, `QuestFilters`, `QuestHeader`, `QuestCreateForm`) with Framer Motion `layoutId` active indicator pill micro-animations, glassmorphism borders, and unconstrained input foundations compliance.
 - Refactored `button.tsx` core variants to natively pull from synchronized global CSS primary/foreground styling classes.

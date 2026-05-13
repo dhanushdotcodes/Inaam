@@ -8,6 +8,7 @@ import type { RewardWithTasks } from "@/types";
 import RewardCard from "./RewardCard";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import PointsDisplay from "../shared/PointsDisplay";
 
 /**
  * RewardsOverview component — Displays the financial stats and transaction history.
@@ -67,6 +68,8 @@ export default function RewardsOverview() {
       await claimReward(rewardId);
       // Refresh to update states
       fetchRewards();
+      // Dispatch refreshPoints event
+      window.dispatchEvent(new CustomEvent("refreshPoints"));
     } catch (err) {
       console.error("Claim error:", err);
       alert(err instanceof Error ? err.message : "Failed to claim reward");
@@ -89,6 +92,7 @@ export default function RewardsOverview() {
         description="Monitor your reward earnings and manage your financial assets."
       >
         <div className="flex items-center gap-3">
+          <PointsDisplay />
           <Button 
             variant="ghost" 
             size="icon" 
