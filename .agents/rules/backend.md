@@ -18,6 +18,7 @@ description: Standards for FastAPI, SQLAlchemy, and backend-specific naming/logi
 - Use specific error types; avoid generic catch-alls that hide root causes.
 - Error messages must include: request params, response body, status codes, correlation IDs.
 - Use structured logging fields — do not interpolate dynamic values into message strings.
+- **CRITICAL**: NEVER add, remove, or modify Alembic migration files (`apps/server/alembic/versions/`) manually. ONLY use `alembic revision --autogenerate` to manage schema changes.
 ---
 
 ## Related Skills

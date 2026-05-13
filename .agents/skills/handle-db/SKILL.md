@@ -29,7 +29,7 @@ Do NOT use when:
 
 * SQLAlchemy 2.0+ (Declarative Mapping) MUST be used for ORM.
 * Alembic MUST be used for all database migrations.
-* You MUST NOT re-write the versions inside the `alembic/versions` directory.
+* **CRITICAL**: You MUST NOT add, remove, or modify Alembic migration files (`apps/server/alembic/versions/`) manually. ONLY use `alembic revision --autogenerate` to manage schema changes.
 * Database operations MUST be asynchronous.
 * ALL models MUST inherit from `server.models.base.Base`.
 * ALL models MUST be imported in `apps/server/models/__init__.py` to be recognized by Alembic.
