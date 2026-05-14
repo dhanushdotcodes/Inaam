@@ -4,6 +4,6 @@
 set -e
 
 echo "Running migrations..."
-PYTHONPATH=..:.:$PYTHONPATH uv run alembic upgrade head
+PYTHONPATH=.:$PYTHONPATH alembic upgrade head
 
 echo "Migrations completed successfully."
