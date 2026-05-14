@@ -36,13 +36,13 @@ export default function RewardCard({
   
   const total = reward.tasks.length;
   const completed = reward.tasks.filter((t) => t.completed).length;
-  const allDone = isQuest && total > 0 && completed === total;
+  const allDone = isQuest && completed === total;
   const isClaimed = !!reward.claimed_at;
 
   return (
     <Card
       className={cn(
-        "transition-all w-full group overflow-hidden min-w-64 border-zinc-100 dark:border-zinc-800",
+        "transition-all w-full group overflow-hidden min-w-64 border-zinc-100 dark:border-zinc-800 rounded-[24px]",
         isClaimed 
           ? "grayscale opacity-60 cursor-not-allowed bg-zinc-50/50 dark:bg-zinc-900/50" 
           : "hover:shadow-md cursor-pointer hover:border-primary/50 bg-white dark:bg-zinc-900"
@@ -53,17 +53,19 @@ export default function RewardCard({
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 mb-1">
-              {isQuest ? (
-                <Trophy className="h-3 w-3 text-amber-500" />
-              ) : (
-                <ShoppingBag className="h-3 w-3 text-primary" />
-              )}
+              <div className="w-5 h-5 flex items-center justify-center">
+                {isQuest ? (
+                  <Trophy className="h-4 w-4 text-amber-500" />
+                ) : (
+                  <ShoppingBag className="h-4 w-4 text-primary" />
+                )}
+              </div>
               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 {isQuest ? "Quest" : "Prize"}
               </span>
             </div>
             <CardTitle className={cn(
-              "text-base truncate max-w-40 break-all",
+              "text-base truncate max-w-40 break-all tracking-[-0.02em]",
               isClaimed && "text-muted-foreground"
             )}>
               {reward.title}
@@ -87,8 +89,10 @@ export default function RewardCard({
               </Badge>
             ) : (
               <Badge variant="outline" className="text-[10px] px-1.5 h-5 flex gap-1 items-center bg-zinc-50/50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700">
-                <Lock className="h-2.5 w-2.5 text-zinc-400" />
-                <span className="text-zinc-500">{total === 0 ? "Empty" : "Locked"}</span>
+                <div className="w-3 h-3 flex items-center justify-center">
+                  <Lock className="h-2.5 w-2.5 text-zinc-400" />
+                </div>
+                <span className="text-zinc-500">Locked</span>
               </Badge>
             )}
 
@@ -160,12 +164,13 @@ export default function RewardCard({
         
         {isPrize && !isClaimed && (
           <div className="pt-2">
-            <Button variant="contained" size="default" className="w-full h-8 text-[10px] font-black uppercase tracking-widest">
+            <Button variant="contained" className="w-full text-[10px] font-black uppercase tracking-widest">
               Redeem Prize
             </Button>
           </div>
         )}
       </CardContent>
     </Card>
+
   );
 }

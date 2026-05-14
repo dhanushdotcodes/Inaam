@@ -94,7 +94,7 @@
         "processing"
       ],
       "rules": {
-        "height": "h-[48px]",
+        "height": "h-10",
         "borderRadius": "rounded-xl",
         "borderWidth": "border-[1.5px]",
         "paddingTextOnly": "px-[30px]",
@@ -157,8 +157,8 @@
   },
   "ai_enforcement_rules": {
     "avoid": [
-      "Using arbitrary h-10 or h-12 sizes for forms (MUST be 56px / h-[56px])",
-      "Using standard shadcn button heights (MUST be 48px / h-[48px])",
+      "Using arbitrary h-12 sizes for forms (MUST be 56px / h-[56px])",
+      "Using non-standard button heights (MUST be 40px / h-10)",
       "Using true black #000000 (MUST use woodsmoke-900 / #131313)",
       "Inventing random padding values (MUST stick to 4px/8px scale)"
     ],
