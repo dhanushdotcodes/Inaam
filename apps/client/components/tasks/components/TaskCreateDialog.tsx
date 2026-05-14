@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2, PlusCircle, AlertCircle } from "lucide-react";
 import { createTask } from "@/lib/api";
+import { FormField } from "@/components/ui/form-field";
+
 
 interface TaskCreateDialogProps {
   open: boolean;
@@ -117,8 +119,7 @@ export default function TaskCreateDialog({ open, onOpenChange, onSuccess }: Task
           </DialogHeader>
 
           <div className="mt-6 space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Title</label>
+            <FormField label="Title" required>
               <Input
                 placeholder="e.g., Wash the Dragon (Dishes)"
                 value={formData.title}
@@ -126,27 +127,25 @@ export default function TaskCreateDialog({ open, onOpenChange, onSuccess }: Task
                 required
                 disabled={loading}
               />
-            </div>
+            </FormField>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Description</label>
+            <FormField label="Description">
               <Textarea
                 placeholder="What needs to be done?"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 disabled={loading}
               />
-            </div>
+            </FormField>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Difficulty</label>
+              <FormField label="Difficulty">
                 <Select
                   value={formData.difficulty}
                   onValueChange={handleDifficultyChange}
                   disabled={loading}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
                   <SelectContent>
@@ -157,15 +156,23 @@ export default function TaskCreateDialog({ open, onOpenChange, onSuccess }: Task
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </FormField>
 
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <label className="text-sm font-medium">Reward Points</label>
+              <FormField 
+                label="Reward Points"
+                required
+                rightElement={
                   <span className="text-[10px] font-bold text-primary/60 bg-primary/5 px-2 py-0.5 rounded-full">
                     {currentRange.min} - {currentRange.max}
                   </span>
-                </div>
+                }
+                error={validationError && (validationError.includes("Points") || validationError.includes("between")) && (
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-destructive/10 text-destructive text-[10px] font-medium w-fit mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <AlertCircle className="h-3 w-3 shrink-0" />
+                    <span>{validationError}</span>
+                  </div>
+                )}
+              >
                 <Input
                   type="number"
                   min={currentRange.min}
@@ -184,17 +191,12 @@ export default function TaskCreateDialog({ open, onOpenChange, onSuccess }: Task
                   required
                   disabled={loading}
                 />
-                {validationError && (validationError.includes("Points") || validationError.includes("between")) && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-destructive/10 text-destructive text-[10px] font-medium w-fit mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                    <AlertCircle className="h-3 w-3 shrink-0" />
-                    <span>{validationError}</span>
-                  </div>
-                )}
-              </div>
+              </FormField>
             </div>
+
           </div>
 
-          <DialogFooter className="mt-8 gap-3 sm:gap-0">
+          <DialogFooter className="mt-8 gap-4">
             <Button
               type="button"
               variant="outline"

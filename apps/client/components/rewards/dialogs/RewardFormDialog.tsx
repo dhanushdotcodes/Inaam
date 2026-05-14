@@ -23,6 +23,8 @@ import {
 import { createReward, updateReward } from "@/lib/api";
 import type { Reward } from "@/types";
 import { RewardType } from "@/types";
+import { FormField } from "@/components/ui/form-field";
+
 
 interface RewardFormDialogProps {
   reward?: Reward | null; // If provided, we are in edit mode
@@ -107,27 +109,7 @@ export default function RewardFormDialog({
           </DialogHeader>
 
           <div className="mt-6 space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Type</label>
-              <Select
-                value={rewardType}
-                onValueChange={(value) => setRewardType(value as RewardType)}
-                disabled={isEdit || submitting}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={RewardType.DIRECT}>Quest (Task-based)</SelectItem>
-                  <SelectItem value={RewardType.ECONOMY}>Prize (Points-based)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="reward-title" className="text-sm font-medium">
-                Title <span className="text-destructive">*</span>
-              </label>
+            <FormField label="Title" required>
               <Input
                 id="reward-title"
                 placeholder={rewardType === RewardType.DIRECT ? "e.g. Finish the Project" : "e.g. Buy a Pizza"}
@@ -137,12 +119,9 @@ export default function RewardFormDialog({
                 maxLength={255}
                 autoFocus
               />
-            </div>
+            </FormField>
 
-            <div className="space-y-2">
-              <label htmlFor="reward-description" className="text-sm font-medium">
-                Description
-              </label>
+            <FormField label="Description">
               <Textarea
                 id="reward-description"
                 placeholder="Details about this reward..."
@@ -152,22 +131,39 @@ export default function RewardFormDialog({
                 maxLength={1000}
                 rows={3}
               />
+            </FormField>
+
+
+            <div className="flex flex-col md:flex-row gap-4 w-full items-center justify-between">
+              <FormField label="Type" className="w-full">
+                <Select
+                  value={rewardType}
+                  onValueChange={(value) => setRewardType(value as RewardType)}
+                  disabled={isEdit || submitting}
+                >
+                  <SelectTrigger className={"w-full"}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={RewardType.DIRECT}>Quest (Task-based)</SelectItem>
+                    <SelectItem value={RewardType.ECONOMY}>Prize (Points-based)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormField>
+
+              {rewardType === RewardType.ECONOMY && (
+                <FormField label="Points Cost" className="w-full">
+                  <Input
+                    id="cost-points"
+                    type="number"
+                    value={costPoints}
+                    onChange={(e) => setCostPoints(parseInt(e.target.value))}
+                    disabled={submitting}
+                  />
+                </FormField>
+              )}
             </div>
 
-            {rewardType === RewardType.ECONOMY && (
-              <div className="space-y-2">
-                <label htmlFor="cost-points" className="text-sm font-medium">
-                  Points Cost
-                </label>
-                <Input
-                  id="cost-points"
-                  type="number"
-                  value={costPoints}
-                  onChange={(e) => setCostPoints(parseInt(e.target.value))}
-                  disabled={submitting}
-                />
-              </div>
-            )}
 
             {error && (
               <p className="text-sm text-destructive" role="alert">
