@@ -111,7 +111,7 @@ export default function TransactionHistoryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[80vh] flex flex-col p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-md h-150 flex flex-col p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-2">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-xl font-bold tracking-tight">Points History</DialogTitle>
