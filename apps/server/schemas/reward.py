@@ -9,7 +9,7 @@ from models.enums import RewardType
 class RewardBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = Field(None, max_length=1000)
-    reward_type: RewardType = Field(default=RewardType.DIRECT)
+    reward_type: RewardType = Field(default=RewardType.QUEST)
     cost_points: int = Field(default=0, ge=0)
 
 

@@ -30,8 +30,9 @@ export default function RewardCard({
   onEdit,
   onDelete,
 }: RewardCardProps) {
-  const isQuest = reward.reward_type === RewardType.DIRECT;
-  const isPrize = reward.reward_type === RewardType.ECONOMY;
+  const isQuest = reward.reward_type === RewardType.QUEST;
+  const isPrize = reward.reward_type === RewardType.PRIZE;
+
   
   const total = reward.tasks.length;
   const completed = reward.tasks.filter((t) => t.completed).length;

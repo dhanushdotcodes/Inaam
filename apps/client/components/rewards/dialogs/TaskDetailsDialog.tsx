@@ -41,7 +41,7 @@ export default function TaskDetailsDialog({
 
   if (!reward) return null;
 
-  const isQuest = reward.reward_type === RewardType.DIRECT;
+  const isQuest = reward.reward_type === RewardType.QUEST;
 
   const handleTaskAdded = (newTask: Task) => {
     onUpdate({

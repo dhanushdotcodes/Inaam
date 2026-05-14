@@ -79,8 +79,8 @@ async def claim_reward(db: AsyncSession, reward_id: UUID) -> Optional[Reward]:
     if reward.claimed_at:
         return reward
         
-    # If ECONOMY, check points
-    if reward.reward_type == RewardType.ECONOMY:
+    # If PRIZE, check points
+    if reward.reward_type == RewardType.PRIZE:
         user_points = await transaction_service.get_user_points(db)
         if user_points < reward.cost_points:
             raise ValueError(f"Insufficient points to claim reward. Need {reward.cost_points}, have {user_points}")

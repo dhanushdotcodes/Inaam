@@ -76,8 +76,9 @@ export default function RewardsOverview() {
   };
 
   // Filter rewards
-  const quests = rewards.filter(r => r.reward_type === RewardType.DIRECT && !r.claimed_at);
-  const prizes = rewards.filter(r => r.reward_type === RewardType.ECONOMY && !r.claimed_at);
+  const quests = rewards.filter(r => r.reward_type === RewardType.QUEST && !r.claimed_at);
+  const prizes = rewards.filter(r => r.reward_type === RewardType.PRIZE && !r.claimed_at);
+
   
   const readyToClaimQuests = quests.filter(q => {
     const total = q.tasks.length;

@@ -31,8 +31,8 @@ export enum TaskType {
  * Reward Type.
  */
 export enum RewardType {
-  DIRECT = "DIRECT",
-  ECONOMY = "ECONOMY",
+  QUEST = "QUEST",
+  PRIZE = "PRIZE",
 }
 
 /**

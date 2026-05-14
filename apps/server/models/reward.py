@@ -19,7 +19,7 @@ class Reward(Base, TimestampMixin):
     id: Mapped[pk_uuid]
     title: Mapped[str] = mapped_column(String(255))
     description: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
-    reward_type: Mapped[RewardType] = mapped_column(SQLEnum(RewardType), default=RewardType.DIRECT)
+    reward_type: Mapped[RewardType] = mapped_column(SQLEnum(RewardType, name="reward_type_v2"), default=RewardType.QUEST)
     cost_points: Mapped[int] = mapped_column(Integer, default=0)
     claimed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 

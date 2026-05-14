@@ -20,10 +20,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createReward, updateReward } from "@/lib/api";
-import type { Reward } from "@/types";
+import { createReward, updateReward, getRewardTasks, deleteTask, updateTask } from "@/lib/api";
+import type { Reward, Task } from "@/types";
 import { RewardType } from "@/types";
 import { FormField } from "@/components/ui/form-field";
+import TaskList from "../tasks/TaskList";
+import TaskForm from "../tasks/TaskForm";
+import { useEffect } from "react";
+
 
 
 interface RewardFormDialogProps {
@@ -44,12 +48,37 @@ export default function RewardFormDialog({
 }: RewardFormDialogProps) {
   const [title, setTitle] = useState(reward?.title || "");
   const [description, setDescription] = useState(reward?.description || "");
-  const [rewardType, setRewardType] = useState<RewardType>(reward?.reward_type || RewardType.DIRECT);
+  const [rewardType, setRewardType] = useState<RewardType>(reward?.reward_type || RewardType.QUEST);
   const [costPoints, setCostPoints] = useState(reward?.cost_points || 0);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loadingTasks, setLoadingTasks] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isEdit = !!reward;
+
+  const fetchTasks = async () => {
+    if (!reward?.id) return;
+    try {
+      setLoadingTasks(true);
+      const data = await getRewardTasks(reward.id);
+      setTasks(data);
+    } catch (err) {
+      console.error("Failed to fetch tasks:", err);
+    } finally {
+      setLoadingTasks(false);
+    }
+  };
+
+  useEffect(() => {
+    if (open && isEdit && rewardType === RewardType.QUEST) {
+      fetchTasks();
+    } else if (!open) {
+      // Reset tasks when dialog closes
+      setTasks([]);
+    }
+  }, [open, isEdit, reward?.id, rewardType]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,8 +97,9 @@ export default function RewardFormDialog({
         title: trimmedTitle,
         description: description.trim() || undefined,
         reward_type: rewardType,
-        cost_points: rewardType === RewardType.ECONOMY ? costPoints : 0,
+        cost_points: rewardType === RewardType.PRIZE ? costPoints : 0,
       };
+
 
       if (isEdit && reward) {
         await updateReward(reward.id, payload);
@@ -80,10 +110,12 @@ export default function RewardFormDialog({
       /* Reset and close */
       setTitle("");
       setDescription("");
-      setRewardType(RewardType.DIRECT);
+      setRewardType(RewardType.QUEST);
       setCostPoints(0);
+      setTasks([]);
       onOpenChange(false);
       onSuccess();
+
     } catch (err) {
       setError(
         err instanceof Error
@@ -108,11 +140,12 @@ export default function RewardFormDialog({
             </DialogDescription>
           </DialogHeader>
 
+
           <div className="mt-6 space-y-4">
             <FormField label="Title" required>
               <Input
                 id="reward-title"
-                placeholder={rewardType === RewardType.DIRECT ? "e.g. Finish the Project" : "e.g. Buy a Pizza"}
+                placeholder={rewardType === RewardType.QUEST ? "e.g. Finish the Project" : "e.g. Buy a Pizza"}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 disabled={submitting}
@@ -120,6 +153,7 @@ export default function RewardFormDialog({
                 autoFocus
               />
             </FormField>
+
 
             <FormField label="Description">
               <Textarea
@@ -145,13 +179,14 @@ export default function RewardFormDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={RewardType.DIRECT}>Quest (Task-based)</SelectItem>
-                    <SelectItem value={RewardType.ECONOMY}>Prize (Points-based)</SelectItem>
+                    <SelectItem value={RewardType.QUEST}>Quest (Task-based)</SelectItem>
+                    <SelectItem value={RewardType.PRIZE}>Prize (Points-based)</SelectItem>
                   </SelectContent>
+
                 </Select>
               </FormField>
 
-              {rewardType === RewardType.ECONOMY && (
+              {rewardType === RewardType.PRIZE && (
                 <FormField label="Points Cost" className="w-full">
                   <Input
                     id="cost-points"
@@ -163,6 +198,49 @@ export default function RewardFormDialog({
                 </FormField>
               )}
             </div>
+
+            {rewardType === RewardType.QUEST && isEdit && reward && (
+              <div className="space-y-4 pt-4 border-t">
+                <div className="flex flex-col gap-3">
+                  <TaskList
+                    rewardId={reward.id}
+                    tasks={tasks}
+                    onTaskUpdate={(updated) => {
+                      setTasks(tasks.map(t => t.id === updated.id ? updated : t));
+                      onSuccess(); // Refresh main view to update progress
+                    }}
+                    onTaskDeleteRequest={async (taskId) => {
+                      if (confirm("Are you sure you want to delete this objective?")) {
+                        await deleteTask(taskId, reward.id);
+                        setTasks(tasks.filter(t => t.id !== taskId));
+                        onSuccess();
+                      }
+                    }}
+                  />
+                  <div className="pt-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2 pl-1">
+                      Add Objective
+                    </p>
+                    <TaskForm
+                      rewardId={reward.id}
+                      onTaskAdded={(newTask) => {
+                        setTasks([...tasks, newTask]);
+                        onSuccess();
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {rewardType === RewardType.QUEST && !isEdit && (
+              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-dashed text-center">
+                <p className="text-xs text-muted-foreground">
+                  You can add objectives after creating the quest.
+                </p>
+              </div>
+            )}
+
 
 
             {error && (
@@ -189,7 +267,8 @@ export default function RewardFormDialog({
               {submitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {isEdit ? "Save Changes" : `Create ${rewardType === RewardType.DIRECT ? "Quest" : "Prize"}`}
+              {isEdit ? "Save Changes" : `Create ${rewardType === RewardType.QUEST ? "Quest" : "Prize"}`}
+
             </Button>
           </DialogFooter>
         </form>

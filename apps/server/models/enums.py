@@ -3,8 +3,8 @@ import enum
 
 class RewardType(str, enum.Enum):
     """Type of reward."""
-    DIRECT = "DIRECT"
-    ECONOMY = "ECONOMY"
+    QUEST = "QUEST"
+    PRIZE = "PRIZE"
 
 
 class TransactionType(str, enum.Enum):

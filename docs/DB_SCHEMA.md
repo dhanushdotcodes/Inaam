@@ -23,8 +23,8 @@
 | id | uuid | Primary Key | Unique identifier for the reward |
 | title | varchar | | Reward Title |
 | description | varchar | Optional | Reward description |
-| reward_type | varchar | Enum: DIRECT, ECONOMY | Type of reward unlock logic |
-| cost_points | integer | Default: 0 | Points required for ECONOMY rewards |
+| reward_type | varchar | Enum: QUEST, PRIZE | Type of reward unlock logic |
+| cost_points | integer | Default: 0 | Points required for PRIZE rewards |
 | claimed_at | timestamp | Optional | When the reward was claimed |
 | created_at | timestamp | | Creation timestamp |
 | updated_at | timestamp | | Last update timestamp |
