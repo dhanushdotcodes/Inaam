@@ -180,7 +180,7 @@ export default function TransactionHistoryDialog({
                       {getIcon(tx.type)}
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold leading-none tracking-tight w-60 break-all">
+                      <span className="text-xs font-bold w-66 break-all leading-3.7">
                         {tx.description}
                       </span>
                       <span className="text-[10px] text-muted-foreground mt-1.5 flex items-center gap-1 font-medium uppercase tracking-wider">
