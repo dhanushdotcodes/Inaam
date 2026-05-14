@@ -4,8 +4,8 @@ This document tracks all active `SKILL.md` files used for AI agent automation.
 
 ## Summary
 
-- **Total Skills**: 9
-- **Last Updated**: 2026-05-09
+- **Total Skills**: 13
+- **Last Updated**: 2026-05-14
 
 ## Active Skills
 
@@ -20,8 +20,13 @@ This document tracks all active `SKILL.md` files used for AI agent automation.
 | `nextjs-page` | Creates Next.js App Router pages, layouts, loading/error states, and SEO metadata | `.agents/skills/nextjs-page` | "create page", "new route", "add layout" | Active | @user |
 | `nextjs-component` | Builds reusable React components with typed props and Tailwind CSS v4 styling | `.agents/skills/nextjs-component` | "new component", "build component", "UI element" | Active | @user |
 | `nextjs-api-client` | Builds API client functions, TypeScript types, and client-side form handling | `.agents/skills/nextjs-api-client` | "API client", "fetch function", "add types", "form handling" | Active | @user |
+| `doc-client-components` | Maps and documents component relationships and data flow | `.agents/skills/doc-client-components` | "map components", "component hierarchy" | Active | @user |
+| `audit-styling` | Audits styling inconsistencies and design system deviations | `.agents/skills/audit-styling` | "audit styling", "UI consistency" | Active | @user |
+| `audit-code-quality` | Audits code for structure, DRY, and KISS violations | `.agents/skills/audit-code-quality` | "audit code", "DRY audit", "KISS audit" | Active | @user |
+| `doc-client-context` | Documents high-level business logic and client context | `.agents/skills/doc-client-context` | "client context", "business logic" | Active | @user |
 
 ## Skill Audit Log
+- **2026-05-14** Added 4 new skills for client documentation and auditing: `doc-client-components`, `audit-styling`, `audit-code-quality`, `doc-client-context`.
 - **2026-05-09** Replaced monolithic `next.js` skill with 3 focused sub-skills: `nextjs-page`, `nextjs-component`, `nextjs-api-client`.
 - **2026-05-08** Added `fastapi-api` and `next.js` skills to the registry.
 - **2026-05-08** Synchronized registry with `.agents/skills/` directory.
