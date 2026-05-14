@@ -85,16 +85,19 @@ export default function RewardsOverview() {
   };
 
   // Filter rewards
-  const quests = rewards.filter(r => {
-    if (r.reward_type !== RewardType.QUEST || r.claimed_at) return false;
-    if (r.tasksLoading) return false; // Wait for tasks to load before deciding
-    const total = r.tasks.length;
-    const completed = r.tasks.filter(t => t.completed).length;
-    // Show if all tasks are completed (no objectives left) and there's at least one task
-    return total > 0 && completed === total;
-  });
+  const quests = rewards
+    .filter(r => {
+      if (r.reward_type !== RewardType.QUEST || r.claimed_at) return false;
+      if (r.tasksLoading) return false;
+      const total = r.tasks.length;
+      const completed = r.tasks.filter(t => t.completed).length;
+      return total > 0 && completed === total;
+    })
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  const prizes = rewards.filter(r => r.reward_type === RewardType.PRIZE && !r.claimed_at);
+  const prizes = rewards
+    .filter(r => r.reward_type === RewardType.PRIZE && !r.claimed_at)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   return (
     <>

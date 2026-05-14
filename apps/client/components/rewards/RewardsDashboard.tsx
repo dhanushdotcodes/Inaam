@@ -170,18 +170,33 @@ export default function RewardsDashboard() {
         {/* Rewards Grid */}
         {!loading && !error && rewards.length > 0 && (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {rewards.map((reward) => (
-              <RewardCard 
-                key={reward.id} 
-                reward={reward} 
-                onClick={() => {
-                  setSelectedReward(reward);
-                  setObjectiveDialogOpen(true);
-                }}
-                onEdit={handleEditReward}
-                onDelete={(id) => setRewardToDelete(id)}
-              />
-            ))}
+            {[...rewards]
+              .sort((a, b) => {
+                // 1. Claimed rewards at the bottom
+                const isAClaimed = !!a.claimed_at;
+                const isBClaimed = !!b.claimed_at;
+                if (isAClaimed !== isBClaimed) {
+                  return isAClaimed ? 1 : -1;
+                }
+                // 2. If both unclaimed, sort by created_at desc
+                if (!isAClaimed) {
+                  return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                }
+                // 3. If both claimed, sort by claimed_at desc
+                return new Date(b.claimed_at!).getTime() - new Date(a.claimed_at!).getTime();
+              })
+              .map((reward) => (
+                <RewardCard 
+                  key={reward.id} 
+                  reward={reward} 
+                  onClick={() => {
+                    setSelectedReward(reward);
+                    setObjectiveDialogOpen(true);
+                  }}
+                  onEdit={handleEditReward}
+                  onDelete={(id) => setRewardToDelete(id)}
+                />
+              ))}
           </div>
         )}
 

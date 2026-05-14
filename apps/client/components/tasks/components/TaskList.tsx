@@ -21,8 +21,18 @@ export default function TaskList({ tasks, rewards, onToggle }: TaskListProps) {
   }
 
   const sortedTasks = [...tasks].sort((a, b) => {
-    if (a.completed === b.completed) return 0;
-    return a.completed ? 1 : -1;
+    // 1. Uncompleted tasks first
+    if (a.completed !== b.completed) {
+      return a.completed ? 1 : -1;
+    }
+    // 2. If both uncompleted, sort by created_at desc
+    if (!a.completed) {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    }
+    // 3. If both completed, sort by completed_at desc
+    const timeA = a.completed_at ? new Date(a.completed_at).getTime() : new Date(a.updated_at).getTime();
+    const timeB = b.completed_at ? new Date(b.completed_at).getTime() : new Date(b.updated_at).getTime();
+    return timeB - timeA;
   });
 
   const getRewardTitle = (rewardId: string | null) => {
