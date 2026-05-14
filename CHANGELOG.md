@@ -45,6 +45,13 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Updated `SidebarContext` to implement responsive "Persistent vs. Drawer" behavior based on device size.
 - Modularized project rules by splitting `.agents/rules/rules.md` into domain-specific files (`backend.md`, `frontend.md`, etc.).
 - Created a centralized root `rules.md` acting as a registry for both project rules and `docs/` documentation.
+- Refined **`RewardsOverview`** quest filtering logic: now only displays quests that are fully completed (no objectives left) and have at least one task.
+- Integrated **`AlertDialog`** for a confirmed and secure reward claiming and prize redemption flow.
+- Standardized UI across the Rewards page to align with the project's minimalist aesthetics:
+    - Updated **`RewardCard`** with `rounded-[24px]` radius and optimized icon containers.
+    - Synchronized all dashboard button heights to **`h-10`** (40px) for consistent interaction feel.
+    - Added high-contrast clinical readability tracking (`tracking-[-0.02em]`) to all major UI titles.
+- Updated **`.context/ui-guidelines.json`** to reflect the standardized `h-10` button height across the dashboard.
 
 ### Removed
 - Permanently deleted `ButtonPreview.tsx` component.
