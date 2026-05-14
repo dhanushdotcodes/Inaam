@@ -11,7 +11,7 @@ import type { Reward, RewardWithTasks } from "@/types";
 import RewardsHeader from "./RewardsHeader";
 import RewardCard from "./RewardCard";
 import RewardFormDialog from "./dialogs/RewardFormDialog";
-import TaskDetailsDialog from "./dialogs/TaskDetailsDialog";
+import ObjectiveDetailsDialog from "./dialogs/ObjectiveDetailsDialog";
 import EmptyRewardsState from "./EmptyRewardsState";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 
@@ -26,7 +26,7 @@ export default function RewardsDashboard() {
 
   /* Dialog states */
   const [formDialogOpen, setFormDialogOpen] = useState(false);
-  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+  const [objectiveDialogOpen, setObjectiveDialogOpen] = useState(false);
   const [selectedReward, setSelectedReward] = useState<RewardWithTasks | null>(null);
   const [rewardToEdit, setRewardToEdit] = useState<Reward | null>(null);
 
@@ -120,7 +120,7 @@ export default function RewardsDashboard() {
       await deleteReward(rewardToDelete);
       setRewards((prev) => prev.filter((r) => r.id !== rewardToDelete));
       if (selectedReward?.id === rewardToDelete) {
-        setTaskDialogOpen(false);
+        setObjectiveDialogOpen(false);
         setSelectedReward(null);
       }
       setRewardToDelete(null);
@@ -176,7 +176,7 @@ export default function RewardsDashboard() {
                 reward={reward} 
                 onClick={() => {
                   setSelectedReward(reward);
-                  setTaskDialogOpen(true);
+                  setObjectiveDialogOpen(true);
                 }}
                 onEdit={handleEditReward}
                 onDelete={(id) => setRewardToDelete(id)}
@@ -194,10 +194,10 @@ export default function RewardsDashboard() {
           onSuccess={fetchRewards}
         />
 
-        <TaskDetailsDialog 
+        <ObjectiveDetailsDialog 
           reward={selectedReward}
-          open={taskDialogOpen}
-          onOpenChange={setTaskDialogOpen}
+          open={objectiveDialogOpen}
+          onOpenChange={setObjectiveDialogOpen}
           onUpdate={handleRewardUpdate}
         />
 

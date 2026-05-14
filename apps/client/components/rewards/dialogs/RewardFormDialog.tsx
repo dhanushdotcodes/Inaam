@@ -24,8 +24,8 @@ import { createReward, updateReward, getRewardTasks, deleteTask, updateTask } fr
 import type { Reward, Task } from "@/types";
 import { RewardType } from "@/types";
 import { FormField } from "@/components/ui/form-field";
-import TaskList from "../tasks/TaskList";
-import TaskForm from "../tasks/TaskForm";
+import ObjectiveList from "../objectives/ObjectiveList";
+import ObjectiveForm from "../objectives/ObjectiveForm";
 import { useEffect } from "react";
 
 
@@ -50,32 +50,32 @@ export default function RewardFormDialog({
   const [description, setDescription] = useState(reward?.description || "");
   const [rewardType, setRewardType] = useState<RewardType>(reward?.reward_type || RewardType.QUEST);
   const [costPoints, setCostPoints] = useState(reward?.cost_points || 0);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loadingTasks, setLoadingTasks] = useState(false);
+  const [objectives, setObjectives] = useState<Task[]>([]);
+  const [loadingObjectives, setLoadingObjectives] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isEdit = !!reward;
 
-  const fetchTasks = async () => {
+  const fetchObjectives = async () => {
     if (!reward?.id) return;
     try {
-      setLoadingTasks(true);
+      setLoadingObjectives(true);
       const data = await getRewardTasks(reward.id);
-      setTasks(data);
+      setObjectives(data);
     } catch (err) {
-      console.error("Failed to fetch tasks:", err);
+      console.error("Failed to fetch objectives:", err);
     } finally {
-      setLoadingTasks(false);
+      setLoadingObjectives(false);
     }
   };
 
   useEffect(() => {
     if (open && isEdit && rewardType === RewardType.QUEST) {
-      fetchTasks();
+      fetchObjectives();
     } else if (!open) {
-      // Reset tasks when dialog closes
-      setTasks([]);
+      // Reset objectives when dialog closes
+      setObjectives([]);
     }
   }, [open, isEdit, reward?.id, rewardType]);
 
@@ -112,7 +112,7 @@ export default function RewardFormDialog({
       setDescription("");
       setRewardType(RewardType.QUEST);
       setCostPoints(0);
-      setTasks([]);
+      setObjectives([]);
       onOpenChange(false);
       onSuccess();
 
@@ -202,17 +202,17 @@ export default function RewardFormDialog({
             {rewardType === RewardType.QUEST && isEdit && reward && (
               <div className="space-y-4 pt-4 border-t">
                 <div className="flex flex-col gap-3">
-                  <TaskList
+                  <ObjectiveList
                     rewardId={reward.id}
-                    tasks={tasks}
-                    onTaskUpdate={(updated) => {
-                      setTasks(tasks.map(t => t.id === updated.id ? updated : t));
+                    tasks={objectives}
+                    onObjectiveUpdate={(updated) => {
+                      setObjectives(objectives.map(t => t.id === updated.id ? updated : t));
                       onSuccess(); // Refresh main view to update progress
                     }}
-                    onTaskDeleteRequest={async (taskId) => {
+                    onObjectiveDeleteRequest={async (taskId) => {
                       if (confirm("Are you sure you want to delete this objective?")) {
                         await deleteTask(taskId, reward.id);
-                        setTasks(tasks.filter(t => t.id !== taskId));
+                        setObjectives(objectives.filter(t => t.id !== taskId));
                         onSuccess();
                       }
                     }}
@@ -221,10 +221,10 @@ export default function RewardFormDialog({
                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2 pl-1">
                       Add Objective
                     </p>
-                    <TaskForm
+                    <ObjectiveForm
                       rewardId={reward.id}
-                      onTaskAdded={(newTask) => {
-                        setTasks([...tasks, newTask]);
+                      onObjectiveAdded={(newTask) => {
+                        setObjectives([...objectives, newTask]);
                         onSuccess();
                       }}
                     />
@@ -232,16 +232,6 @@ export default function RewardFormDialog({
                 </div>
               </div>
             )}
-
-            {rewardType === RewardType.QUEST && !isEdit && (
-              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-dashed text-center">
-                <p className="text-xs text-muted-foreground">
-                  You can add objectives after creating the quest.
-                </p>
-              </div>
-            )}
-
-
 
             {error && (
               <p className="text-sm text-destructive" role="alert">

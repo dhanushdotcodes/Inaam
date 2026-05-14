@@ -16,10 +16,10 @@ import { deleteTask } from "@/lib/api";
 import type { RewardWithTasks, Task } from "@/types";
 import { RewardType, TaskType } from "@/types";
 
-import TaskForm from "../tasks/TaskForm";
-import TaskList from "../tasks/TaskList";
+import ObjectiveForm from "../objectives/ObjectiveForm";
+import ObjectiveList from "../objectives/ObjectiveList";
 
-interface TaskDetailsDialogProps {
+interface ObjectiveDetailsDialogProps {
   reward: RewardWithTasks | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -27,48 +27,48 @@ interface TaskDetailsDialogProps {
 }
 
 /**
- * TaskDetailsDialog component — Orchestrates objective management UI for a specific Quest.
+ * ObjectiveDetailsDialog component — Orchestrates objective management UI for a specific Quest.
  */
-export default function TaskDetailsDialog({
+export default function ObjectiveDetailsDialog({
   reward,
   open,
   onOpenChange,
   onUpdate,
-}: TaskDetailsDialogProps) {
-  /* Task deletion confirmation state */
-  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
-  const [isDeletingTask, setIsDeletingTask] = useState(false);
+}: ObjectiveDetailsDialogProps) {
+  /* Objective deletion confirmation state */
+  const [objectiveToDelete, setObjectiveToDelete] = useState<string | null>(null);
+  const [isDeletingObjective, setIsDeletingObjective] = useState(false);
 
   if (!reward) return null;
 
   const isQuest = reward.reward_type === RewardType.QUEST;
 
-  const handleTaskAdded = (newTask: Task) => {
+  const handleObjectiveAdded = (newTask: Task) => {
     onUpdate({
       ...reward,
       tasks: [...reward.tasks, newTask],
     });
   };
 
-  const handleTaskUpdate = (updatedTask: Task) => {
+  const handleObjectiveUpdate = (updatedTask: Task) => {
     const updatedTasks = reward.tasks.map((t) =>
       t.id === updatedTask.id ? updatedTask : t,
     );
     onUpdate({ ...reward, tasks: updatedTasks });
   };
 
-  const handleDeleteTask = async () => {
-    if (!taskToDelete || !reward) return;
+  const handleDeleteObjective = async () => {
+    if (!objectiveToDelete || !reward) return;
     try {
-      setIsDeletingTask(true);
-      await deleteTask(reward.id, taskToDelete);
-      const updatedTasks = reward.tasks.filter((t) => t.id !== taskToDelete);
+      setIsDeletingObjective(true);
+      await deleteTask(reward.id, objectiveToDelete);
+      const updatedTasks = reward.tasks.filter((t) => t.id !== objectiveToDelete);
       onUpdate({ ...reward, tasks: updatedTasks });
-      setTaskToDelete(null);
+      setObjectiveToDelete(null);
     } catch (err) {
-      console.error("Failed to delete task:", err);
+      console.error("Failed to delete objective:", err);
     } finally {
-      setIsDeletingTask(false);
+      setIsDeletingObjective(false);
     }
   };
 
@@ -104,13 +104,17 @@ export default function TaskDetailsDialog({
 
           {isQuest ? (
             <div className="mt-4 space-y-6">
-              <TaskForm rewardId={reward.id} taskType={TaskType.OBJECTIVE} onTaskAdded={handleTaskAdded} />
+              <ObjectiveForm 
+                rewardId={reward.id} 
+                taskType={TaskType.OBJECTIVE} 
+                onObjectiveAdded={handleObjectiveAdded} 
+              />
 
-              <TaskList
+              <ObjectiveList
                 rewardId={reward.id}
                 tasks={reward.tasks}
-                onTaskUpdate={handleTaskUpdate}
-                onTaskDeleteRequest={setTaskToDelete}
+                onObjectiveUpdate={handleObjectiveUpdate}
+                onObjectiveDeleteRequest={setObjectiveToDelete}
               />
             </div>
           ) : (
@@ -147,14 +151,14 @@ export default function TaskDetailsDialog({
       </Dialog>
 
       <AlertDialog
-        open={!!taskToDelete}
-        onOpenChange={(open) => !open && setTaskToDelete(null)}
+        open={!!objectiveToDelete}
+        onOpenChange={(open) => !open && setObjectiveToDelete(null)}
         title="Delete Objective"
         description="Are you sure you want to delete this objective? This action cannot be undone."
         confirmText="Delete"
-        onConfirm={handleDeleteTask}
+        onConfirm={handleDeleteObjective}
         variant="destructive"
-        isLoading={isDeletingTask}
+        isLoading={isDeletingObjective}
       />
     </>
   );

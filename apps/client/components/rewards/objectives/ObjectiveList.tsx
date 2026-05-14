@@ -1,28 +1,28 @@
 "use client";
 
 import type { Task } from "@/types";
-import TaskItem from "./TaskItem";
+import ObjectiveItem from "./ObjectiveItem";
 
-interface TaskListProps {
+interface ObjectiveListProps {
   rewardId: string;
   tasks: Task[];
-  onTaskUpdate: (updatedTask: Task) => void;
-  onTaskDeleteRequest: (taskId: string) => void;
+  onObjectiveUpdate: (updatedTask: Task) => void;
+  onObjectiveDeleteRequest: (taskId: string) => void;
 }
 
 /**
- * TaskList component — Manages the display of tasks for a reward.
+ * ObjectiveList component — Manages the display of objectives for a Quest.
  */
-export default function TaskList({
+export default function ObjectiveList({
   rewardId,
   tasks,
-  onTaskUpdate,
-  onTaskDeleteRequest,
-}: TaskListProps) {
+  onObjectiveUpdate,
+  onObjectiveDeleteRequest,
+}: ObjectiveListProps) {
   if (tasks.length === 0) {
     return (
       <div className="text-center py-8 rounded-xl border border-dashed">
-        <p className="text-sm text-muted-foreground">No tasks yet.</p>
+        <p className="text-sm text-muted-foreground">No objectives yet.</p>
       </div>
     );
   }
@@ -34,17 +34,18 @@ export default function TaskList({
 
   return (
     <div className="space-y-2 w-full overflow-hidden">
-      <h4 className="font-medium text-muted-foreground uppercase tracking-wider text-[10px]">
+      
+      <h4 className="font-medium text-muted-foreground uppercase tracking-wider text-[10px] px-1">
         Objectives
       </h4>
       <ul className="space-y-1">
         {sortedTasks.map((task) => (
-          <TaskItem
+          <ObjectiveItem
             key={task.id}
             rewardId={rewardId}
             task={task}
-            onUpdate={onTaskUpdate}
-            onDeleteRequest={onTaskDeleteRequest}
+            onUpdate={onObjectiveUpdate}
+            onDeleteRequest={onObjectiveDeleteRequest}
           />
         ))}
       </ul>

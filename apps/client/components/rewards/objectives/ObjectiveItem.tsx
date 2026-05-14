@@ -16,7 +16,7 @@ import { updateTask, completeTask } from "@/lib/api";
 import type { Task } from "@/types";
 import { motion } from "motion/react";
 
-interface TaskItemProps {
+interface ObjectiveItemProps {
   rewardId: string;
   task: Task;
   onUpdate: (updatedTask: Task) => void;
@@ -24,14 +24,14 @@ interface TaskItemProps {
 }
 
 /**
- * TaskItem component — Represents a single task with toggle, edit, and delete actions.
+ * ObjectiveItem component — Represents a single objective with toggle, edit, and delete actions.
  */
-export default function TaskItem({
+export default function ObjectiveItem({
   rewardId,
   task,
   onUpdate,
   onDeleteRequest,
-}: TaskItemProps) {
+}: ObjectiveItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editingTitle, setEditingTitle] = useState(task.title);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -45,7 +45,7 @@ export default function TaskItem({
       // Dispatch refreshPoints event
       window.dispatchEvent(new CustomEvent("refreshPoints"));
     } catch (err) {
-      console.error("Failed to complete task:", err);
+      console.error("Failed to complete objective:", err);
     }
   };
 
@@ -63,7 +63,7 @@ export default function TaskItem({
       onUpdate(updated);
       setIsEditing(false);
     } catch (err) {
-      console.error("Failed to update task:", err);
+      console.error("Failed to update objective:", err);
     } finally {
       setIsUpdating(false);
     }
@@ -122,15 +122,15 @@ export default function TaskItem({
             </Button>
           </div>
         ) : (
-          <span
-            className={`text-sm wrap-break-word whitespace-normal break-all max-w-full ${
-              task.completed
-                ? "text-muted-foreground line-through"
-                : "text-foreground font-medium"
-            }`}
-          >
-            {task.title}
-          </span>
+        <span
+          className={`text-sm wrap-break-word whitespace-normal break-all max-w-full ${
+            task.completed
+              ? "text-muted-foreground line-through"
+              : "text-foreground font-medium"
+          }`}
+        >
+          {task.title}
+        </span>
         )}
       </div>
 

@@ -8,16 +8,16 @@ import { createRewardTask } from "@/lib/api";
 import type { Task } from "@/types";
 import { TaskType } from "@/types";
 
-interface TaskFormProps {
+interface ObjectiveFormProps {
   rewardId: string;
   taskType?: TaskType;
-  onTaskAdded: (task: Task) => void;
+  onObjectiveAdded: (task: Task) => void;
 }
 
 /**
- * TaskForm component — Inline form for adding objectives to a Quest.
+ * ObjectiveForm component — Inline form for adding objectives to a Quest.
  */
-export default function TaskForm({ rewardId, taskType = TaskType.OBJECTIVE, onTaskAdded }: TaskFormProps) {
+export default function ObjectiveForm({ rewardId, taskType = TaskType.OBJECTIVE, onObjectiveAdded }: ObjectiveFormProps) {
   const [title, setTitle] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +35,7 @@ export default function TaskForm({ rewardId, taskType = TaskType.OBJECTIVE, onTa
         task_type: taskType
       });
 
-      onTaskAdded(newTask);
+      onObjectiveAdded(newTask);
       setTitle("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add objective");

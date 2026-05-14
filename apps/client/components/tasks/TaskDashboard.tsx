@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import TaskHeader from "./components/TaskHeader";
 import TaskFilters from "./components/TaskFilters";
 import TaskList from "./components/TaskList";
-import TaskCreateDialog from "./components/TaskCreateDialog";
+import TaskCreateDialog from "./components/BountyCreateDialog";
 import { getAllTasks, getRewards, completeTask } from "@/lib/api";
 import type { Task, Reward } from "@/types";
+import UnclaimedPoints from "@/components/tasks/components/UnclaimedPoints";
 
 /**
  * TaskDashboard component — Orchestrates the display and completion of all tasks (Bounties & Objectives).
@@ -114,6 +115,8 @@ export default function TaskDashboard() {
           filter={filter} 
           onFilterChange={setFilter} 
         />
+
+        <UnclaimedPoints tasks={tasks} />
 
         <TaskList 
           tasks={filteredTasks} 
