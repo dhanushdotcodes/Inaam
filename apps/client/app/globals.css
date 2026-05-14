@@ -137,11 +137,11 @@
   [data-slot="input"],
   [data-slot="textarea"],
   [data-slot="select-trigger"] {
-    @apply h-[56px] rounded-2xl px-4 border-[1.5px] border-border bg-transparent text-foreground transition-all flex items-center;
+    @apply h-14 rounded-2xl px-4 border-[1.5px] border-border bg-transparent text-foreground transition-all flex items-center;
   }
 
   [data-slot="textarea"] {
-    @apply py-3 min-h-[56px] items-start;
+    @apply py-3 min-h-14 items-start;
   }
 
   [data-slot="select-trigger"] {
@@ -169,4 +169,16 @@
   [data-slot="card-footer"] {
     @apply rounded-b-[24px];
   }
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

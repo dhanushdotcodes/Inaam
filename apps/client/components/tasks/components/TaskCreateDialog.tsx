@@ -172,21 +172,26 @@ export default function TaskCreateDialog({ open, onOpenChange, onSuccess }: Task
                   max={currentRange.max}
                   value={formData.points}
                   onChange={(e) => {
-                    setFormData({ ...formData, points: parseInt(e.target.value) || 0 });
-                    setValidationError(null);
+                    const val = parseInt(e.target.value) || 0;
+                    setFormData({ ...formData, points: val });
+                    
+                    if (val < currentRange.min || val > currentRange.max) {
+                      setValidationError(`Points must be between ${currentRange.min} and ${currentRange.max}`);
+                    } else {
+                      setValidationError(null);
+                    }
                   }}
                   required
                   disabled={loading}
                 />
+                {validationError && (validationError.includes("Points") || validationError.includes("between")) && (
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-destructive/10 text-destructive text-[10px] font-medium w-fit mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <AlertCircle className="h-3 w-3 shrink-0" />
+                    <span>{validationError}</span>
+                  </div>
+                )}
               </div>
             </div>
-
-            {validationError && (
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs font-medium">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                <p>{validationError}</p>
-              </div>
-            )}
           </div>
 
           <DialogFooter className="mt-8 gap-3 sm:gap-0">
@@ -202,7 +207,7 @@ export default function TaskCreateDialog({ open, onOpenChange, onSuccess }: Task
               type="submit"
               variant="contained"
               disabled={loading}
-              className="min-w-[120px]"
+              className="min-w-30"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

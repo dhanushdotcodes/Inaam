@@ -162,9 +162,8 @@ export default function RewardFormDialog({
                 <Input
                   id="cost-points"
                   type="number"
-                  min="0"
                   value={costPoints}
-                  onChange={(e) => setCostPoints(parseInt(e.target.value) || 0)}
+                  onChange={(e) => setCostPoints(parseInt(e.target.value))}
                   disabled={submitting}
                 />
               </div>
