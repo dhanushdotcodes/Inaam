@@ -42,7 +42,7 @@ export default function VerifyAccessForm() {
 
       const result = await verifyKey(trimmedKey);
       setToken(result.access_token);
-      router.push("/rewards");
+      router.push("/quests");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Verification failed"

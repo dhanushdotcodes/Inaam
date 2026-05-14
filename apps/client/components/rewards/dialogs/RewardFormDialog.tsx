@@ -32,6 +32,7 @@ import { useEffect } from "react";
 
 interface RewardFormDialogProps {
   reward?: Reward | null; // If provided, we are in edit mode
+  defaultType?: RewardType; // Default type for new rewards
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
@@ -42,13 +43,14 @@ interface RewardFormDialogProps {
  */
 export default function RewardFormDialog({
   reward,
+  defaultType,
   open,
   onOpenChange,
   onSuccess,
 }: RewardFormDialogProps) {
   const [title, setTitle] = useState(reward?.title || "");
   const [description, setDescription] = useState(reward?.description || "");
-  const [rewardType, setRewardType] = useState<RewardType>(reward?.reward_type || RewardType.QUEST);
+  const [rewardType, setRewardType] = useState<RewardType>(reward?.reward_type || defaultType || RewardType.QUEST);
   const [costPoints, setCostPoints] = useState(reward?.cost_points || 10);
   const [objectives, setObjectives] = useState<Task[]>([]);
   const [loadingObjectives, setLoadingObjectives] = useState(false);

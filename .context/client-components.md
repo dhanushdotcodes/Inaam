@@ -14,16 +14,18 @@ graph TD
     Sidebar --> NavItems[NAV_ITEMS]
     
     PageContent --> TasksPage[Tasks Dashboard]
-    PageContent --> RewardsPage[Rewards Overview]
-    PageContent --> VaultPage[Vault]
+    PageContent --> QuestsPage[Quests Dashboard]
+    PageContent --> PrizesPage[Prizes Shop]
     
     TasksPage --> TaskItem[TaskItem]
     TasksPage --> TaskFormDialog[TaskFormDialog]
     
-    RewardsPage --> RewardCard[RewardCard]
-    RewardsPage --> RewardsHeader[RewardsHeader]
-    RewardsPage --> PointsDisplay[PointsDisplay]
-    RewardsPage --> AlertDialog[AlertDialog]
+    QuestsPage --> RewardCard[RewardCard]
+    PrizesPage --> RewardCard[RewardCard]
+    QuestsPage --> DashboardHeader[DashboardHeader]
+    PrizesPage --> DashboardHeader[DashboardHeader]
+    QuestsPage --> PointsDisplay[PointsDisplay]
+    PrizesPage --> PointsDisplay[PointsDisplay]
     
     RewardCard --> Badge[Badge]
     RewardCard --> Button[Button]
@@ -51,7 +53,8 @@ graph TD
 ### 2. Feature Components (Rewards)
 | Component | Responsibility | Props |
 | :--- | :--- | :--- |
-| `RewardsOverview` | Container for Quests and Prizes. Handles data fetching. | `none` |
+| `QuestsDashboard` | Container for Quests. Handles data fetching and sorting. | `none` |
+| `PrizesDashboard` | Container for Prizes. Handles data fetching and redemption. | `none` |
 | `RewardCard` | Displays individual reward details (Quest/Prize). | `reward`, `onClick` |
 | `PointsDisplay` | Shows the user's current point balance. | `none` (fetches balance) |
 

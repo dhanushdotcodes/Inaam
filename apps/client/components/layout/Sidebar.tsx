@@ -4,12 +4,10 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
-  Gift, 
+  Trophy,
+  ShoppingBag,
   Compass, 
-  Wallet, 
   LogOut,
-  Menu,
-  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,14 +24,14 @@ const NAV_ITEMS = [
     icon: Compass,
   },
   {
-    label: "Vault",
-    href: "/vault",
-    icon: Wallet,
+    label: "Quests",
+    href: "/quests",
+    icon: Trophy,
   },
   {
-    label: "Rewards",
-    href: "/rewards",
-    icon: Gift,
+    label: "Prizes",
+    href: "/prizes",
+    icon: ShoppingBag,
   },
 ];
 

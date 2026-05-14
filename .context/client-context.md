@@ -23,15 +23,12 @@ Inaam is a Progressive Web Application (PWA) designed to help users track and cl
   - **Objectives**: Tasks that are specifically linked to a Quest.
 
 ### 3. Reward Management (Quests & Prizes)
-- **Location**: `apps/client/app/(dashboard)/rewards` and `apps/client/components/rewards`
+- **Location**: `apps/client/app/(dashboard)/quests`, `apps/client/app/(dashboard)/prizes` and `apps/client/components/rewards`
 - **Purpose**: The core "value" of the app. Users work towards unlocking Quests or saving up for Prizes.
 - **Concepts**:
-  - **Quests**: Rewards that require all linked Objectives to be completed before they can be claimed.
-  - **Prizes**: Rewards that are purchased using points earned from Bounties/Objectives.
+  - **Quests**: Rewards that require all linked Objectives to be completed before they can be claimed. Managed in the **Quests** dashboard.
+  - **Prizes**: Rewards that are purchased using points earned from Bounties/Objectives. Managed in the **Prizes** shop.
 
-### 4. Vault
-- **Location**: `apps/client/app/(dashboard)/vault`
-- **Purpose**: Stores claimed rewards and transaction history.
 
 ---
 
@@ -45,16 +42,15 @@ Inaam is a Progressive Web Application (PWA) designed to help users track and cl
 5. Points are added to the user's balance.
 
 ### Flow 2: Quest Progression
-1. User identifies a **Quest** they want to unlock in the **Rewards** dashboard.
+1. User identifies a **Quest** they want to unlock in the **Quests** dashboard.
 2. User views the **Objectives** linked to that Quest.
 3. User completes Objectives progressively.
 4. The Quest progress bar updates in real-time.
 5. Once 100% complete, the Quest becomes "Ready to Claim".
 
 ### Flow 3: Reward Redemption
-1. User navigates to **Vault**. 
-2. User spends earned points on a **Prize** OR claims a completed **Quest**.
-3. The reward is moved to the **Vault** as "Claimed".
+1. User navigates to **Quests** to claim a completed Quest OR navigates to **Prizes** to spend points.
+2. The reward is marked as "Claimed".
 
 ---
 
