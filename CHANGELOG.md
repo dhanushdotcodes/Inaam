@@ -8,61 +8,29 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
-- Introduced **`task_type`** (`BOUNTY` | `OBJECTIVE`) to the task model to differentiate between independent tasks and reward-linked tasks.
-- Added **`TaskType`** enum in the backend (`models/enums.py`) and frontend (`types/index.ts`).
-- Created a custom Alembic migration to handle PostgreSQL Enum creation and data migration for existing tasks.
-- Implemented a comprehensive **Points System** and transaction ledger to track user progress and reward claiming.
-- Created **`transaction_service`** in the backend to manage point history (`EARNED`, `SPENT`, `BONUS`, `PENALTY`) and calculate balances.
-- Added **`PointsDisplay`** component to the frontend, providing real-time balance updates across Quests, Rewards, and Vault pages.
-- Implemented **Economy Rewards** support: claiming rewards of type `ECONOMY` now deducts points and validates balance.
-- Added new API endpoints: `GET /api/v1/points`, `GET /api/v1/transactions`, and `POST /api/v1/transactions`.
-- Integrated automatic point earning: completing a task now automatically generates an `EARNED` transaction.
+- Created four specialized documentation and audit skills:
+    - **`doc-client-components`**: Maps component hierarchies and data flow using Mermaid diagrams.
+    - **`audit-styling`**: Audits the UI for inconsistencies against design guidelines.
+    - **`audit-code-quality`**: Identifies DRY and KISS violations and structural technical debt.
+    - **`doc-client-context`**: Documents high-level business logic and feature domains.
+- Added comprehensive client-side documentation in the `.context/` directory:
+    - **`client-context.md`**: High-level overview of feature domains and user flows.
+    - **`client-components.md`**: Interactive Mermaid map of component relationships.
+    - **`audit-styling-results.md`**: Detailed report on design system alignment.
+    - **`audit-quality-results.md`**: Audit of code patterns and architectural integrity.
+- Introduced **`Sorting Logic`** section to the client documentation to formalize item ordering rules.
 
 ### Changed
-- Refactored terminology across the entire project for better domain alignment:
-    - **Quests**: Task-based rewards (formerly `DIRECT`).
-    - **Prizes**: Economy-based rewards (formerly `ECONOMY`).
-    - **Bounties**: Independent tasks.
-    - **Objectives**: Tasks linked to a Quest.
-- Renamed the primary task management route from `/quests` to **`/tasks`**.
-- Refactored frontend components to use the new nomenclature: **`TaskDashboard`**, **`TaskHeader`**, **`TaskList`**, **`TaskItem`**, and **`TaskCreateForm`**.
-- Updated **`RewardCard`** and **`RewardsOverview`** to explicitly distinguish between Quest progress and Prize redemption.
-- Enhanced **`RewardFormDialog`** to support creating both Quests and Prizes with appropriate inputs (e.g., points cost for prizes).
-- Updated project documentation (`PRD.md`, `DB_SCHEMA.md`, `API_SPEC.md`) to reflect the new architecture.
-- Refactored task completion logic: transitioned from boolean `completed` to `completed_at` timestamp for better audit trails.
-- Differentiated task creation APIs: introduced `createRewardTask` to distinguish from standalone `createTask`.
-- Switched to `completeTask` API for all task completion actions to ensure point transactions are triggered.
-- Updated **`QuestDashboard`**, **`RewardsOverview`**, and **`TaskItem`** to react to a custom `refreshPoints` event for immediate UI updates.
-- Refined **`Button`** component sizes and variants to align with the latest minimalist design standards.
-- Aligned core primary theme tokens: mapped `--primary` to `#131313` (`brand-night`) and `--primary-foreground` to `#F3F3F3` (`brand-white-smoke`) for native minimalist Apple/Vercel-like profile adaptivity.
-- Redesigned **Quests** dashboard components (`QuestItem`, `QuestFilters`, `QuestHeader`, `QuestCreateForm`) with Framer Motion `layoutId` active indicator pill micro-animations, glassmorphism borders, and unconstrained input foundations compliance.
-- Refactored `button.tsx` core variants to natively pull from synchronized global CSS primary/foreground styling classes.
-- Renamed the Rewards (items) route to **`/vault`** and the Treasury (stats) route to **`/rewards`** for better domain alignment.
-- Aligned Sidebar layout with EOS UI guidelines (w-[264px] width, h-[48px] items, px-6 py-9 padding) and implemented 24px square active indicators for collapsed states.
-- Refactored `rewards/page.tsx` and `vault/page.tsx` into clean, component-based entry points.
-- Aligned global UI tokens: standardized inputs/buttons to `h-10` height and `rounded-xl` border radius.
-- Enhanced layout animations using `motion/react` and `AnimatePresence` with `popLayout` for smooth reordering.
-- Updated `SidebarContext` to implement responsive "Persistent vs. Drawer" behavior based on device size.
-- Modularized project rules by splitting `.agents/rules/rules.md` into domain-specific files (`backend.md`, `frontend.md`, etc.).
-- Created a centralized root `rules.md` acting as a registry for both project rules and `docs/` documentation.
-- Refined **`RewardsOverview`** quest filtering logic: now only displays quests that are fully completed (no objectives left) and have at least one task.
-- Integrated **`AlertDialog`** for a confirmed and secure reward claiming and prize redemption flow.
-- Standardized UI across the Rewards page to align with the project's minimalist aesthetics:
-    - Updated **`RewardCard`** with `rounded-[24px]` radius and optimized icon containers.
-    - Synchronized all dashboard button heights to **`h-10`** (40px) for consistent interaction feel.
-    - Added high-contrast clinical readability tracking (`tracking-[-0.02em]`) to all major UI titles.
-- Updated **`.context/ui-guidelines.json`** to reflect the standardized `h-10` button height across the dashboard.
-
-### Removed
-- Permanently deleted `ButtonPreview.tsx` component.
+- Implemented **completion-aware sorting** across all major dashboards:
+    - Active tasks and unclaimed rewards are prioritized at the top of lists.
+    - Within groups, items are sorted chronologically (latest first).
+    - Completed tasks and claimed rewards are pushed to the bottom and sorted by their completion/claimed timestamp.
+- Updated **`TaskList`**, **`ObjectiveList`**, **`RewardsOverview`**, and **`RewardsDashboard`** to support the new sorting logic.
+- Synchronized the **`SKILL.md`** registry to include the 4 new specialized documentation skills.
 
 ### Fixed
-- Resolved a TypeScript error in `TaskDashboard.tsx` where string literals were used instead of `TaskType` enum members.
-- Corrected the parameter order for `updateTask` in the reward task management UI.
-- Standardized dashboard-wide horizontal spacing using a unified `<main>` container with responsive padding.
-- Corrected sidebar icon mapping (Vault = Wallet, Rewards = Gift) to match the new naming conventions.
-- Fixed the missing `updateTask` import in the Quest dashboard.
-- Resolved inconsistent header heights by standardizing the `DashboardHeader` usage.
+- Added `min-h-0` to the primary dashboard layout container to prevent layout overflow issues and ensure smooth scrolling.
+- Replaced the deprecated `.context/dashboard-context.md` with the more comprehensive `client-context.md`.
 
 
 
