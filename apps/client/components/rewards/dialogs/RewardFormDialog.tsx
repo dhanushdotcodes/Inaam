@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -49,7 +49,7 @@ export default function RewardFormDialog({
   const [title, setTitle] = useState(reward?.title || "");
   const [description, setDescription] = useState(reward?.description || "");
   const [rewardType, setRewardType] = useState<RewardType>(reward?.reward_type || RewardType.QUEST);
-  const [costPoints, setCostPoints] = useState(reward?.cost_points || 0);
+  const [costPoints, setCostPoints] = useState(reward?.cost_points || 10);
   const [objectives, setObjectives] = useState<Task[]>([]);
   const [loadingObjectives, setLoadingObjectives] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -87,6 +87,11 @@ export default function RewardFormDialog({
     const trimmedTitle = title.trim();
     if (!trimmedTitle) {
       setError("Title is required.");
+      return;
+    }
+
+    if (rewardType === RewardType.PRIZE && costPoints < 10) {
+      setError("Points cost must be at least 10.");
       return;
     }
 
@@ -168,7 +173,7 @@ export default function RewardFormDialog({
             </FormField>
 
 
-            <div className="flex flex-col md:flex-row gap-4 w-full items-center justify-between">
+            <div className="grid grid-cols-2 gap-4 w-full items-start">
               <FormField label="Type" className="w-full">
                 <Select
                   value={rewardType}
@@ -187,12 +192,26 @@ export default function RewardFormDialog({
               </FormField>
 
               {rewardType === RewardType.PRIZE && (
-                <FormField label="Points Cost" className="w-full">
+                <FormField 
+                  label="Points Cost" 
+                  className="w-full"
+                  error={costPoints < 10 && (
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-destructive/10 text-destructive text-[10px] font-medium w-fit mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <AlertCircle className="h-3 w-3 shrink-0" />
+                      <span>Points must be at least 10</span>
+                    </div>
+                  )}
+                >
                   <Input
                     id="cost-points"
                     type="number"
+                    min={10}
                     value={costPoints}
-                    onChange={(e) => setCostPoints(parseInt(e.target.value))}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || 0;
+                      setCostPoints(val);
+                      if (val >= 10) setError(null);
+                    }}
                     disabled={submitting}
                   />
                 </FormField>
