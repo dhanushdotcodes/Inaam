@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, AlertCircle, ShoppingBag, RefreshCcw, Plus } from "lucide-react";
+import { Loader2, AlertCircle, ShoppingBag, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getRewards, getRewardTasks, deleteReward, claimReward } from "@/lib/api";
 import type { Reward, RewardWithTasks } from "@/types";
@@ -12,7 +12,6 @@ import RewardCard from "./RewardCard";
 import RewardFormDialog from "./dialogs/RewardFormDialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import PointsDisplay from "../shared/PointsDisplay";
-import { cn } from "@/lib/utils";
 
 /**
  * PrizesDashboard component — Specialized view for Prizes (economy-based rewards).
@@ -153,22 +152,14 @@ export default function PrizesDashboard() {
   });
 
   return (
-    <>
+    <div className="pb-20 lg:pb-8">
       <DashboardHeader 
         title="Prizes"
         description="Redeem your earned points for exclusive prizes."
       >
-        <div className="flex items-center gap-3">
+        <div className="flex w-full gap-2 items-center justify-between">
           <PointsDisplay />
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 rounded-xl"
-            onClick={fetchPrizes}
-            disabled={loading}
-          >
-            <RefreshCcw className={cn("h-4 w-4", loading && "animate-spin")} />
-          </Button>
+
           <Button 
             variant="contained"
             onClick={openCreateDialog} 
@@ -179,7 +170,7 @@ export default function PrizesDashboard() {
         </div>
       </DashboardHeader>
 
-      <main className="flex-1 px-8 lg:px-12 py-4">
+      <main className="flex-1 px-8 lg:px-12">
         {loading && rewards.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
             <Loader2 className="mb-4 h-8 w-8 animate-spin" />
@@ -251,6 +242,6 @@ export default function PrizesDashboard() {
           />
         )}
       </main>
-    </>
+    </div>
   );
 }

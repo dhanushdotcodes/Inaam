@@ -41,7 +41,7 @@ export default function TaskList({ tasks, rewards, onToggle }: TaskListProps) {
   };
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 w-full overflow-clip">
       <AnimatePresence mode="popLayout">
         {sortedTasks.map((task) => (
           <TaskItem 

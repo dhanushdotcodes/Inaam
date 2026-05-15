@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, AlertCircle, Trophy, RefreshCcw, Plus } from "lucide-react";
+import { Loader2, AlertCircle, Trophy, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getRewards, getRewardTasks, deleteReward, claimReward } from "@/lib/api";
 import type { Reward, RewardWithTasks } from "@/types";
@@ -13,7 +13,6 @@ import RewardFormDialog from "./dialogs/RewardFormDialog";
 import ObjectiveDetailsDialog from "./dialogs/ObjectiveDetailsDialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import PointsDisplay from "../shared/PointsDisplay";
-import { cn } from "@/lib/utils";
 
 /**
  * QuestsDashboard component — Specialized view for Quests (task-based rewards).
@@ -194,22 +193,14 @@ export default function QuestsDashboard() {
   });
 
   return (
-    <>
+    <div className="pb-20 lg:pb-8">
       <DashboardHeader 
         title="Quests"
         description="Master your objectives and unlock epic rewards."
       >
-        <div className="flex items-center gap-3">
+        <div className="flex w-full gap-2 items-center justify-between">
           <PointsDisplay />
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 rounded-xl"
-            onClick={fetchQuests}
-            disabled={loading}
-          >
-            <RefreshCcw className={cn("h-4 w-4", loading && "animate-spin")} />
-          </Button>
+
           <Button 
             variant="contained"
             onClick={openCreateDialog} 
@@ -220,7 +211,7 @@ export default function QuestsDashboard() {
         </div>
       </DashboardHeader>
 
-      <main className="flex-1 px-8 lg:px-12 py-4">
+      <main className="flex-1 px-8 lg:px-12">
         {loading && rewards.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
             <Loader2 className="mb-4 h-8 w-8 animate-spin" />
@@ -306,6 +297,6 @@ export default function QuestsDashboard() {
           />
         )}
       </main>
-    </>
+    </div>
   );
 }

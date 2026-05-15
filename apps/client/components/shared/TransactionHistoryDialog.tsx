@@ -111,9 +111,9 @@ export default function TransactionHistoryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md h-150 flex flex-col p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-md h-150 flex flex-col p-0 overflow-hidden gap-0">
         <DialogHeader className="p-6 pb-2">
-          <div className="flex items-center justify-between">
+          <div className="flex w-full justify-between flex-col sm:flex-row gap-3 sm:gap-0 items-start sm:items-center">
             <DialogTitle className="text-xl font-bold tracking-tight">Points History</DialogTitle>
             <div className="flex items-center gap-2 pr-8">
               <button 
@@ -180,7 +180,7 @@ export default function TransactionHistoryDialog({
                       {getIcon(tx.type)}
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold w-66 break-all leading-3.7">
+                      <span className="text-xs font-bold max-w-40 md:max-w-66 break-all leading-3.7">
                         {tx.description}
                       </span>
                       <span className="text-[10px] text-muted-foreground mt-1.5 flex items-center gap-1 font-medium uppercase tracking-wider">

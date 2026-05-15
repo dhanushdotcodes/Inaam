@@ -25,7 +25,7 @@ export default function TaskItem({ task, rewardTitle, onToggle }: TaskItemProps)
       whileHover={{ scale: 1.01 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
       className={cn(
-        "flex items-center justify-between p-5 rounded-2xl bg-card border border-border shadow-sm hover:shadow-md transition-all group cursor-pointer",
+        "flex items-center justify-between p-5 rounded-2xl bg-card border border-border shadow-sm hover:shadow-md transition-all group cursor-pointer min-w-1",
         task.completed && "opacity-60 bg-muted/20 shadow-none hover:shadow-none"
       )}
       onClick={() => onToggle(task)}
