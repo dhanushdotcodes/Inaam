@@ -42,10 +42,10 @@ export default function RewardCard({
   return (
     <Card
       className={cn(
-        "transition-all w-full group overflow-hidden min-w-64 border-zinc-100 dark:border-zinc-800 rounded-[24px]",
+        "transition-all w-full group overflow-hidden min-w-64 border-neutral-100 dark:border-neutral-800 rounded-[24px]",
         isClaimed 
-          ? "grayscale opacity-60 cursor-not-allowed bg-zinc-50/50 dark:bg-zinc-900/50" 
-          : "hover:shadow-md cursor-pointer hover:border-primary/50 bg-white dark:bg-zinc-900"
+          ? "grayscale opacity-60 cursor-not-allowed bg-neutral-50/50 dark:bg-neutral-900/50" 
+          : "hover:shadow-md cursor-pointer hover:border-primary/50 bg-card dark:bg-neutral-900"
       )}
       onClick={isClaimed ? undefined : onClick}
     >
@@ -55,7 +55,7 @@ export default function RewardCard({
             <div className="flex items-center gap-1.5 mb-1">
               <div className="w-5 h-5 flex items-center justify-center">
                 {isQuest ? (
-                  <Trophy className="h-4 w-4 text-amber-500" />
+                  <Trophy className="h-4 w-4 text-brand-gold" />
                 ) : (
                   <ShoppingBag className="h-4 w-4 text-primary" />
                 )}
@@ -65,7 +65,7 @@ export default function RewardCard({
               </span>
             </div>
             <CardTitle className={cn(
-              "text-base truncate max-w-40 break-all tracking-[-0.02em]",
+              "text-base truncate max-w-40 break-all tracking-tight",
               isClaimed && "text-muted-foreground"
             )}>
               {reward.title}
@@ -78,7 +78,7 @@ export default function RewardCard({
           </div>
           <div className="flex flex-col items-end gap-2">
             {isClaimed ? (
-              <Badge variant="secondary" className="bg-zinc-200 dark:bg-zinc-800 text-zinc-500">Claimed</Badge>
+              <Badge variant="secondary" className="bg-neutral-200 dark:bg-neutral-800 text-neutral-500">Claimed</Badge>
             ) : isQuest && allDone ? (
               <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10">
                 Ready
@@ -88,11 +88,11 @@ export default function RewardCard({
                 {reward.cost_points} Pts
               </Badge>
             ) : (
-              <Badge variant="outline" className="text-[10px] px-1.5 h-5 flex gap-1 items-center bg-zinc-50/50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700">
+              <Badge variant="outline" className="text-[10px] px-1.5 h-5 flex gap-1 items-center bg-neutral-50/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700">
                 <div className="w-3 h-3 flex items-center justify-center">
-                  <Lock className="h-2.5 w-2.5 text-zinc-400" />
+                  <Lock className="h-2.5 w-2.5 text-neutral-400" />
                 </div>
-                <span className="text-zinc-500">Locked</span>
+                <span className="text-neutral-500">Locked</span>
               </Badge>
             )}
 
@@ -140,18 +140,18 @@ export default function RewardCard({
           ) : (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className={cn("font-medium", isClaimed && "text-zinc-400")}>
+                <span className={cn("font-medium", isClaimed && "text-neutral-400")}>
                   {total === 0 ? "No objectives" : `${completed}/${total} objectives`}
                 </span>
-                <span className={isClaimed ? "text-zinc-400" : ""}>
+                <span className={isClaimed ? "text-neutral-400" : ""}>
                   {total > 0 ? Math.round((completed / total) * 100) : 0}%
                 </span>
               </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                 <div
                   className={cn(
                     "h-full rounded-full transition-all duration-500",
-                    isClaimed ? "bg-zinc-300 dark:bg-zinc-700" : "bg-primary"
+                    isClaimed ? "bg-neutral-300 dark:bg-neutral-700" : "bg-primary"
                   )}
                   style={{
                     width: `${total > 0 ? (completed / total) * 100 : 0}%`,

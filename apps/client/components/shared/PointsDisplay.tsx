@@ -37,11 +37,11 @@ export default function PointsDisplay({ className, showLabel = true }: PointsDis
       <div 
         onClick={() => setHistoryOpen(true)}
         className={cn(
-          "flex items-center gap-2 px-4 h-10 rounded-xl bg-woodsmoke-50 dark:bg-woodsmoke-800 border border-woodsmoke-200 dark:border-woodsmoke-800 transition-all cursor-pointer hover:bg-woodsmoke-100 dark:hover:bg-woodsmoke-700 active:scale-95 group",
+          "flex items-center gap-2 px-4 h-10 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 transition-all cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 active:scale-95 group",
           className
         )}
       >
-        <div className="flex items-center justify-center w-5 h-5 text-brand-primary transition-transform group-hover:scale-110">
+        <div className="flex items-center justify-center w-5 h-5 text-brand-blue transition-transform group-hover:scale-110">
           {loading ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : (

@@ -190,7 +190,7 @@ export default function Sidebar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-zinc-900/20 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-brand-dark/20 backdrop-blur-sm z-40"
               onClick={() => setIsOpen(false)}
             />
             <motion.aside
@@ -198,7 +198,7 @@ export default function Sidebar() {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 bottom-0 w-72 bg-white dark:bg-zinc-950 z-50 border-r border-zinc-100 dark:border-zinc-800 shadow-xl"
+              className="fixed top-0 left-0 bottom-0 w-72 bg-card z-50 border-r border-border shadow-xl"
             >
               <NavContent />
             </motion.aside>

@@ -60,7 +60,7 @@ export default function TaskItem({ task, rewardTitle, onToggle }: TaskItemProps)
           <div className="flex items-center gap-2 flex-wrap">
             <span className={cn(
               "text-[11px] font-bold uppercase tracking-widest",
-              isObjective ? "text-neutral-500" : "text-zinc-500"
+              isObjective ? "text-neutral-500" : "text-neutral-500"
             )}>
               {isObjective ? `Objective related to: ${rewardTitle || "Quest"}` : "Bounty"}
             </span>

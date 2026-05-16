@@ -26,17 +26,17 @@ export default function UnclaimedPoints({ tasks }: UnclaimedPointsProps) {
     <motion.div 
       initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-brand-primary/5 border border-brand-primary/10 shadow-xs"
+      className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-brand-blue/5 border border-brand-blue/10 shadow-xs"
     >
-      <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-brand-primary text-white shadow-sm">
+      <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-brand-blue text-white shadow-sm">
         <Coins className="w-4 h-4 stroke-[2px]" />
       </div>
       <div className="flex flex-col">
-        <span className="text-[10px] font-black uppercase tracking-widest text-brand-primary/70 leading-none mb-1">
+        <span className="text-[10px] font-black uppercase tracking-widest text-brand-blue/70 leading-none mb-1">
           Unclaimed Bounty
         </span>
         <div className="flex items-baseline gap-1">
-          <span className="text-lg font-bold text-brand-night dark:text-brand-white-smoke leading-none">
+          <span className="text-lg font-bold text-brand-dark dark:text-brand-light leading-none">
             {unclaimedPoints.toLocaleString()}
           </span>
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Points</span>

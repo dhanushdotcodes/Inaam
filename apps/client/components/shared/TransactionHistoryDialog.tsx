@@ -68,7 +68,7 @@ export default function TransactionHistoryDialog({
       case TransactionType.SPENT:
         return <TrendingDown className="size-4 text-rose-500" />;
       case TransactionType.BONUS:
-        return <Gift className="size-4 text-brand-primary" />;
+        return <Gift className="size-4 text-brand-blue" />;
       case TransactionType.PENALTY:
         return <AlertTriangle className="size-4 text-amber-500" />;
       default:

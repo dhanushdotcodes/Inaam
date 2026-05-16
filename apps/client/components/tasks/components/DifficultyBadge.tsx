@@ -11,23 +11,23 @@ interface DifficultyBadgeProps {
 const difficultyConfig = {
   [TaskDifficulty.TINY]: {
     label: "Tiny",
-    color: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+    color: "bg-difficulty-tiny/10 text-difficulty-tiny border-difficulty-tiny/20",
   },
   [TaskDifficulty.SMALL]: {
     label: "Small",
-    color: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+    color: "bg-difficulty-small/10 text-difficulty-small border-difficulty-small/20",
   },
   [TaskDifficulty.MEDIUM]: {
     label: "Medium",
-    color: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+    color: "bg-difficulty-medium/10 text-difficulty-medium border-difficulty-medium/20",
   },
   [TaskDifficulty.HARD]: {
     label: "Hard",
-    color: "bg-orange-500/10 text-orange-500 border-orange-500/20",
+    color: "bg-difficulty-hard/10 text-difficulty-hard border-difficulty-hard/20",
   },
   [TaskDifficulty.EXTREME]: {
     label: "Extreme",
-    color: "bg-rose-500/10 text-rose-500 border-rose-500/20",
+    color: "bg-difficulty-extreme/10 text-difficulty-extreme border-difficulty-extreme/20",
   },
 };
 
