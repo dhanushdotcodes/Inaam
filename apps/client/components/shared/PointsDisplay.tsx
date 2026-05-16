@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Coins, Loader2 } from "lucide-react";
-import { getPoints } from "@/lib/api";
+import { useAppStore } from "@/hooks/store";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import TransactionHistoryDialog from "./TransactionHistoryDialog";
@@ -17,21 +17,8 @@ interface PointsDisplayProps {
  * Follows EOS design guidelines with state-driven UI and Woodsmoke neutral scaling.
  */
 export default function PointsDisplay({ className, showLabel = true }: PointsDisplayProps) {
-  const [points, setPoints] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { balance: points, loading, fetchPoints } = useAppStore((state) => state.points);
   const [historyOpen, setHistoryOpen] = useState(false);
-
-  const fetchPoints = useCallback(async () => {
-    try {
-      setLoading(true);
-      const balance = await getPoints();
-      setPoints(balance);
-    } catch (error) {
-      console.error("Failed to fetch points:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
     fetchPoints();

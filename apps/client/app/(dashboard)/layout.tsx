@@ -6,7 +6,7 @@ import { isAuthenticated } from '@/lib/auth';
 import { Loader2 } from 'lucide-react';
 
 import Sidebar from '@/components/layout/Sidebar';
-import { SidebarProvider } from '@/context/SidebarContext';
+import { useSidebarInit } from '@/hooks/useSidebarInit';
 
 export default function DashboardLayout({
   children,
@@ -15,6 +15,8 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
+
+  useSidebarInit();
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -33,15 +35,13 @@ export default function DashboardLayout({
   }
 
   return (
-    <SidebarProvider>
-      <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950 font-sans overflow-hidden">
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto pt-6 min-h-0">
-          <div className="mx-auto max-w-7xl">
-            {children}
-          </div>
-        </main>
-      </div>
-    </SidebarProvider>
+    <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950 font-sans overflow-hidden">
+      <Sidebar />
+      <main className="flex-1 overflow-y-auto pt-6 min-h-0">
+        <div className="mx-auto max-w-7xl">
+          {children}
+        </div>
+      </main>
+    </div>
   );
 }

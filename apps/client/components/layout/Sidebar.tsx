@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { removeToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
-import { useSidebar } from "@/context/SidebarContext";
+import { useAppStore } from "@/hooks/store";
 import { motion, AnimatePresence } from "motion/react";
 
 const NAV_ITEMS = [
@@ -38,7 +38,7 @@ const NAV_ITEMS = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isOpen, setIsOpen, isDesktop } = useSidebar();
+  const { isOpen, setIsOpen, isDesktop } = useAppStore((state) => state.sidebar);
 
   const handleLogout = () => {
     removeToken();

@@ -3,7 +3,7 @@
 import React from "react";
 import { Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSidebar } from "@/context/SidebarContext";
+import { useAppStore } from "@/hooks/store";
 import { motion } from "motion/react";
 
 interface DashboardHeaderProps {
@@ -21,7 +21,7 @@ export default function DashboardHeader({
   description,
   children,
 }: DashboardHeaderProps) {
-  const { toggle, isOpen, isDesktop } = useSidebar();
+  const { toggle, isOpen, isDesktop } = useAppStore((state) => state.sidebar);
 
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-8">

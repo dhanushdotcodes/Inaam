@@ -1,10 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Loader2, AlertCircle, ShoppingBag, Plus } from "lucide-react";
+import { useState } from "react";
+import { Plus, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getRewards, getRewardTasks, deleteReward, claimReward } from "@/lib/api";
-import type { Reward, RewardWithTasks } from "@/types";
+import type { Reward } from "@/types";
 import { RewardType } from "@/types";
 
 import DashboardHeader from "@/components/layout/DashboardHeader";
@@ -13,13 +12,31 @@ import RewardFormDialog from "./dialogs/RewardFormDialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import PointsDisplay from "../shared/PointsDisplay";
 
+import { useRewards } from "@/hooks/useRewards";
+import { useRewardActions } from "@/hooks/useRewardActions";
+import PageShell, { PageContent } from "@/components/layout/PageShell";
+import DashboardLoader from "@/components/shared/DashboardLoader";
+import StatusError from "@/components/shared/StatusError";
+import EmptyState from "@/components/shared/EmptyState";
+
 /**
  * PrizesDashboard component — Specialized view for Prizes (economy-based rewards).
  */
 export default function PrizesDashboard() {
-  const [rewards, setRewards] = useState<RewardWithTasks[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { 
+    rewards, 
+    loading, 
+    error, 
+    refresh, 
+    setRewards 
+  } = useRewards(RewardType.PRIZE);
+
+  const { 
+    deleteRewardAction, 
+    claimRewardAction, 
+    isDeleting, 
+    isClaiming 
+  } = useRewardActions();
 
   /* Dialog states */
   const [formDialogOpen, setFormDialogOpen] = useState(false);
@@ -27,69 +44,7 @@ export default function PrizesDashboard() {
 
   /* Reward deletion & claiming state */
   const [rewardToDelete, setRewardToDelete] = useState<string | null>(null);
-  const [isDeletingReward, setIsDeletingReward] = useState(false);
-  const [claimingReward, setClaimingReward] = useState<RewardWithTasks | null>(null);
-  const [isClaiming, setIsClaiming] = useState(false);
-
-  /**
-   * Fetch all rewards and filter for Prizes.
-   */
-  const fetchPrizes = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await getRewards();
-
-      if (!Array.isArray(data)) {
-        setRewards([]);
-        setLoading(false);
-        return;
-      }
-
-      // Filter for Prizes immediately
-      const prizeData = data.filter(r => r.reward_type === RewardType.PRIZE);
-
-      if (prizeData.length === 0) {
-        setRewards([]);
-        setLoading(false);
-        return;
-      }
-
-      // Prizes don't usually have tasks, but we fetch them just in case or for consistency
-      const prizesWithTasks: RewardWithTasks[] = prizeData.map((r) => ({
-        ...r,
-        tasks: [],
-        tasksLoading: true,
-      }));
-      setRewards(prizesWithTasks);
-      setLoading(false);
-
-      const taskResults = await Promise.allSettled(
-        prizeData.map((r) => getRewardTasks(r.id))
-      );
-
-      setRewards((prev) =>
-        prev.map((reward, index) => {
-          const result = taskResults[index];
-          return {
-            ...reward,
-            tasks: result.status === "fulfilled" ? result.value : [],
-            tasksLoading: false,
-          };
-        })
-      );
-    } catch (err) {
-      console.error("Fetch prizes error:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch prizes");
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPrizes();
-  }, [fetchPrizes]);
+  const [claimingReward, setClaimingReward] = useState<Reward | null>(null);
 
   const openCreateDialog = () => {
     setRewardToEdit(null);
@@ -103,32 +58,18 @@ export default function PrizesDashboard() {
 
   const handleDeleteReward = async () => {
     if (!rewardToDelete) return;
-    try {
-      setIsDeletingReward(true);
-      await deleteReward(rewardToDelete);
+    await deleteRewardAction(rewardToDelete, () => {
       setRewards((prev) => prev.filter((r) => r.id !== rewardToDelete));
       setRewardToDelete(null);
-    } catch (err) {
-      console.error("Failed to delete prize:", err);
-    } finally {
-      setIsDeletingReward(false);
-    }
+    });
   };
 
   const handleClaim = async () => {
     if (!claimingReward) return;
-    try {
-      setIsClaiming(true);
-      await claimReward(claimingReward.id);
+    await claimRewardAction(claimingReward.id, () => {
       setClaimingReward(null);
-      fetchPrizes();
-      window.dispatchEvent(new CustomEvent("refreshPoints"));
-    } catch (err) {
-      console.error("Redeem error:", err);
-      setError(err instanceof Error ? err.message : "Failed to redeem prize");
-    } finally {
-      setIsClaiming(false);
-    }
+      refresh();
+    });
   };
 
   /**
@@ -152,7 +93,7 @@ export default function PrizesDashboard() {
   });
 
   return (
-    <div className="pb-20 lg:pb-8">
+    <PageShell>
       <DashboardHeader 
         title="Prizes"
         description="Redeem your earned points for exclusive prizes."
@@ -170,29 +111,22 @@ export default function PrizesDashboard() {
         </div>
       </DashboardHeader>
 
-      <main className="flex-1 px-8 lg:px-12">
+      <PageContent>
         {loading && rewards.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
-            <Loader2 className="mb-4 h-8 w-8 animate-spin" />
-            <p className="text-sm font-medium">Syncing prize shop...</p>
-          </div>
+          <DashboardLoader message="Syncing prize shop..." />
         )}
 
         {!loading && error && (
-          <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-destructive/20 bg-destructive/5 p-8 text-center">
-            <AlertCircle className="h-8 w-8 text-destructive" />
-            <p className="font-medium text-destructive">{error}</p>
-            <Button variant="outline" onClick={fetchPrizes}>Try Again</Button>
-          </div>
+          <StatusError error={error} onRetry={refresh} />
         )}
 
         {!loading && !error && rewards.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <ShoppingBag className="h-12 w-12 text-zinc-200 mb-4" />
-            <h3 className="text-lg font-bold mb-2">Prize Shop Empty</h3>
-            <p className="text-sm text-muted-foreground mb-6">There are no prizes available for redemption at the moment.</p>
-            <Button onClick={openCreateDialog}>Add Prize</Button>
-          </div>
+          <EmptyState 
+            icon={ShoppingBag}
+            title="Prize Shop Empty"
+            description="There are no prizes available for redemption at the moment."
+            action={{ label: "Add Prize", onClick: openCreateDialog }}
+          />
         )}
 
         {!loading && !error && rewards.length > 0 && (
@@ -216,7 +150,7 @@ export default function PrizesDashboard() {
           defaultType={RewardType.PRIZE}
           open={formDialogOpen} 
           onOpenChange={setFormDialogOpen} 
-          onSuccess={fetchPrizes}
+          onSuccess={refresh}
         />
 
         <AlertDialog
@@ -227,7 +161,7 @@ export default function PrizesDashboard() {
           confirmText="Delete"
           onConfirm={handleDeleteReward}
           variant="destructive"
-          isLoading={isDeletingReward}
+          isLoading={isDeleting}
         />
 
         {claimingReward && (
@@ -241,7 +175,7 @@ export default function PrizesDashboard() {
             isLoading={isClaiming}
           />
         )}
-      </main>
-    </div>
+      </PageContent>
+    </PageShell>
   );
 }
