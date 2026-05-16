@@ -22,11 +22,10 @@ export default function TaskItem({ task, rewardTitle, onToggle }: TaskItemProps)
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      whileHover={{ scale: 1.01 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
       className={cn(
-        "flex items-center justify-between p-5 rounded-2xl bg-card border border-border shadow-sm hover:shadow-md transition-all group cursor-pointer min-w-1",
-        task.completed && "opacity-60 bg-muted/20 shadow-none hover:shadow-none"
+        "flex items-center justify-between p-5 rounded-2xl bg-card border border-border shadow-sm transition-all group cursor-pointer min-w-1",
+        task.completed && "opacity-60 bg-muted/20 shadow-none"
       )}
       onClick={() => onToggle(task)}
     >
@@ -37,7 +36,7 @@ export default function TaskItem({ task, rewardTitle, onToggle }: TaskItemProps)
               <CheckCircle2 className="size-5 text-emerald-500" />
             </div>
           ) : (
-            <div className="p-1 rounded-full bg-muted border border-border group-hover:border-primary transition-colors">
+            <div className="p-1 rounded-full bg-muted border border-border transition-colors">
               <Circle className="size-5 text-transparent" />
             </div>
           )}
@@ -50,7 +49,7 @@ export default function TaskItem({ task, rewardTitle, onToggle }: TaskItemProps)
                 "text-base font-bold transition-all tracking-tight",
                 task.completed
                   ? "text-muted-foreground line-through"
-                  : "text-foreground group-hover:text-primary"
+                  : "text-foreground"
               )}
             >
               {task.title}
