@@ -16,8 +16,8 @@ import { deleteTask } from "@/lib/api";
 import type { RewardWithTasks, Task } from "@/types";
 import { RewardType, TaskType } from "@/types";
 
-import ObjectiveForm from "../objectives/ObjectiveForm";
-import ObjectiveList from "../objectives/ObjectiveList";
+import ObjectiveForm from "../components/objectives/ObjectiveForm";
+import ObjectiveList from "../components/objectives/ObjectiveList";
 
 interface ObjectiveDetailsDialogProps {
   reward: RewardWithTasks | null;

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
+import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar";
 
 
 const boldonse = localFont({

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import TaskHeader from "./components/TaskHeader";
 import TaskFilters from "./components/TaskFilters";
 import TaskList from "./components/TaskList";
-import TaskCreateDialog from "./components/BountyCreateDialog";
+import TaskFormDialog from "./dialogs/TaskFormDialog";
 import UnclaimedPoints from "@/components/tasks/components/UnclaimedPoints";
 
 import { useTasks } from "@/hooks/useTasks";
@@ -70,7 +70,7 @@ export default function TaskDashboard() {
         )}
       </PageContent>
 
-      <TaskCreateDialog 
+      <TaskFormDialog 
         open={isCreateDialogOpen} 
         onOpenChange={setIsCreateDialogOpen} 
         onSuccess={refresh}

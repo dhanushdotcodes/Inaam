@@ -1,5 +1,6 @@
 import React from "react";
 import { TaskDifficulty } from "@/types";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface DifficultyBadgeProps {
@@ -34,14 +35,15 @@ export default function DifficultyBadge({ difficulty, className }: DifficultyBad
   const config = difficultyConfig[difficulty] || difficultyConfig[TaskDifficulty.MEDIUM];
 
   return (
-    <span
+    <Badge
+      variant="outline"
       className={cn(
-        "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
+        "px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
         config.color,
         className
       )}
     >
       {config.label}
-    </span>
+    </Badge>
   );
 }

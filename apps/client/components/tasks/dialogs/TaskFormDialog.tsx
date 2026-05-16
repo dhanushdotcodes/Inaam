@@ -25,7 +25,7 @@ import { createTask } from "@/lib/api";
 import { FormField } from "@/components/ui/form-field";
 
 
-interface TaskCreateDialogProps {
+interface TaskFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
@@ -39,7 +39,7 @@ const DIFFICULTY_RANGES: Record<TaskDifficulty, { min: number; max: number }> = 
   [TaskDifficulty.EXTREME]: { min: 300, max: 500 },
 };
 
-export default function TaskCreateDialog({ open, onOpenChange, onSuccess }: TaskCreateDialogProps) {
+export default function TaskFormDialog({ open, onOpenChange, onSuccess }: TaskFormDialogProps) {
   const [loading, setLoading] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [formData, setFormData] = useState<TaskCreatePayload>({

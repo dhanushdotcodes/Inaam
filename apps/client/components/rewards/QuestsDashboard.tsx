@@ -7,7 +7,7 @@ import type { Reward, RewardWithTasks } from "@/types";
 import { RewardType } from "@/types";
 
 import DashboardHeader from "@/components/layout/DashboardHeader";
-import RewardCard from "./RewardCard";
+import RewardCard from "./components/RewardCard";
 import RewardFormDialog from "./dialogs/RewardFormDialog";
 import ObjectiveDetailsDialog from "./dialogs/ObjectiveDetailsDialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
