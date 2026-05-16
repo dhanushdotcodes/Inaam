@@ -1,10 +1,11 @@
 "use client";
 
 import React from "react";
-import { Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/hooks/store";
 import { motion } from "motion/react";
+import { ThemeToggle } from "../shared/ThemeToggle";
 
 interface DashboardHeaderProps {
   title: string;
@@ -21,17 +22,17 @@ export default function DashboardHeader({
   description,
   children,
 }: DashboardHeaderProps) {
-  const { toggle, isOpen, isDesktop } = useAppStore((state) => state.sidebar);
+  const { toggle, isOpen } = useAppStore((state) => state.sidebar);
 
   return (
-    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-8">
+    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-8 pt-8">
       <div className="flex items-center gap-4 min-w-0 flex-1">
         {/* Toggle Button for Desktop */}
         <Button
           variant="ghost"
           size="icon"
           onClick={toggle}
-          className="hidden lg:flex h-9 w-9 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors"
+          className="hidden lg:flex h-9 w-9 text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors"
           title={isOpen ? "Close Sidebar" : "Open Sidebar"}
         >
           <motion.div
@@ -56,6 +57,7 @@ export default function DashboardHeader({
 
       <div className="flex items-center gap-2">
         {children}
+        <ThemeToggle />
       </div>
     </div>
   );

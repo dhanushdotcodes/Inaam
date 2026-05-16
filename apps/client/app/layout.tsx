@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar";
-
+import { ThemeProvider } from "@/components/shared/ThemeProvider";
 
 const boldonse = localFont({
   src: "../fonts/Boldonse/Boldonse-Regular.ttf",
@@ -34,11 +34,19 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${boldonse.variable} ${castoro.className} ${hankenGrotesk.className} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <ServiceWorkerRegistrar />
-        {children}
+      <body className="min-h-full flex flex-col transition-colors duration-300">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          <ServiceWorkerRegistrar />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
