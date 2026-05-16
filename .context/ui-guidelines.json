@@ -15,57 +15,7 @@
       "Pixel-perfect component sizing"
     ]
   },
-  "design_tokens": {
-    "borderRadius": {
-      "sm": "rounded-md",
-      "default": "rounded-xl",
-      "input": "rounded-2xl",
-      "card": "rounded-[24px]"
-    },
-    "spacing": {
-      "1": "4px",
-      "2": "8px",
-      "3": "12px",
-      "4": "16px",
-      "6": "24px",
-      "8": "32px",
-      "10": "40px",
-      "12": "48px",
-      "14": "56px"
-    },
-    "typography": {
-      "fontFamily": "Aeonik",
-      "scales": {
-        "h1-h3": "tracking-[-0.02em]",
-        "lineHeights": "Must be divisible by 4px"
-      }
-    },
-    "colors": {
-      "brand": {
-        "primary": "#2A52BE",
-        "night": "#131313",
-        "onyx": "#3C3C3C",
-        "silver": "#B5B5B5",
-        "white_smoke": "#F3F3F3"
-      },
-      "woodsmoke": {
-        "50": "#FAFAFA",
-        "100": "#F5F5F5",
-        "200": "#E6E6E6",
-        "500": "#727272",
-        "800": "#272727",
-        "900": "#131313"
-      }
-    },
-    "iconography": {
-      "sizes": {
-        "sm": "w-4 h-4",
-        "md": "w-5 h-5",
-        "lg": "w-6 h-6"
-      },
-      "strokeWidth": "stroke-[1.5px]"
-    }
-  },
+
   "layout_system": {
     "grid_pattern": {
       "desktop": "grid-cols-12 gap-6 max-w-[1440px] px-[80px]",

@@ -24,6 +24,7 @@ This document tracks all active `SKILL.md` files used for AI agent automation.
 | `audit-styling` | Audits styling inconsistencies and design system deviations | `.agents/skills/audit-styling` | "audit styling", "UI consistency" | Active | @user |
 | `audit-code-quality` | Audits code for structure, DRY, and KISS violations | `.agents/skills/audit-code-quality` | "audit code", "DRY audit", "KISS audit" | Active | @user |
 | `doc-client-context` | Documents high-level business logic and client context | `.agents/skills/doc-client-context` | "client context", "business logic" | Active | @user |
+| `audit-client-arch` | Analyzes component hierarchy, hooks, state, and missing abstractions | `.agents/skills/audit-client-arch` | "audit architecture", "analyze hierarchy", "find missing components" | Active | @user |
 
 ## Skill Audit Log
 - **2026-05-14** Added 4 new skills for client documentation and auditing: `doc-client-components`, `audit-styling`, `audit-code-quality`, `doc-client-context`.
