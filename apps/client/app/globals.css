@@ -7,10 +7,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-hanken-grotesk);
   --font-mono: var(--font-geist-mono);
   --font-poppins: var(--font-poppins);
-  --font-heading: var(--font-sans);
+  --font-brand: var(--font-boldonse);
+  --font-display: var(--font-castoro);
+  --font-heading: var(--font-hanken-grotesk);
 
   /* Brand Colors */
   --color-brand-primary: #2A52BE;

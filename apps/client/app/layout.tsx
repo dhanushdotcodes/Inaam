@@ -1,22 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Poppins } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+
+const boldonse = localFont({
+  src: "../fonts/Boldonse/Boldonse-Regular.ttf",
+  variable: "--font-boldonse",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const castoro = localFont({
+  src: "../fonts/Castoro/Castoro-Regular.ttf",
+  variable: "--font-castoro",
+  weight: "400",
 });
 
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const hankenGrotesk = localFont({
+  src: "../fonts/Hanken_Grotesk/HankenGrotesk-VariableFont_wght.ttf",
+  variable: "--font-hanken-grotesk",
 });
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} h-full antialiased`}
+      className={`${boldonse.variable} ${castoro.className} ${hankenGrotesk.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ServiceWorkerRegistrar />
