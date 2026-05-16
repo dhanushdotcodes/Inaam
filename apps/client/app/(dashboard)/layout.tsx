@@ -28,16 +28,16 @@ export default function DashboardLayout({
 
   if (!isReady) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-zinc-50 dark:bg-black">
-        <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950 font-sans overflow-hidden">
+    <div className="flex h-screen bg-background font-sans overflow-hidden">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto pt-6 min-h-0">
+      <main className="flex-1 overflow-y-auto min-h-0">
         <div className="mx-auto max-w-7xl">
           {children}
         </div>
