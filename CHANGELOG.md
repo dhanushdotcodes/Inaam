@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Introduced **`Sorting Logic`** section to the client documentation to formalize item ordering rules.
 
 ### Changed
+- Removed redundant Active/Completed capsules from **`TaskItem`** to streamline visual information hierarchy, utilizing distinct completed states (green checked circle, muted line-through titles, opacity reduction).
+- Restructured **`TaskItem`** columns into a hyper-clean `[40px_1fr_220px_80px]` layout, grouping the delete button and Chevron dropdown trigger as a premium compact actions button cluster on the right-hand side.
+- Refactored task list reordering and expansion animations in **`TaskItem`** from spring to tween (`easeInOut`, `0.25s` duration) to eliminate layout jumps and component overlapping.
+- Positioned the Chevron bulge trigger inside the animated `<motion.div>` for perfect alignment during layout transitions.
+- Adjusted paddings and margins on the task description accordion to make the expanded state more compact, wrapping it in a zero-padded outer motion container to guarantee smooth collapse height transitions all the way to 0px without sudden layout pops.
 - Implemented **completion-aware sorting** across all major dashboards:
     - Active tasks and unclaimed rewards are prioritized at the top of lists.
     - Within groups, items are sorted chronologically (latest first).

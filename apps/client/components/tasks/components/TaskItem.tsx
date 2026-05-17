@@ -66,10 +66,17 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
       <motion.div
         layout
         variants={itemVariants}
+        transition={{
+          layout: {
+            type: "tween",
+            ease: "easeInOut",
+            duration: 0.25
+          }
+        }}
         className={cn(
           "w-full bg-card border border-border shadow-sm transition-all group cursor-pointer select-none relative",
           // Desktop Grid Layout (md viewport and up)
-          "md:grid md:grid-cols-[40px_1fr_220px_120px] md:gap-6 md:items-center md:min-h-22 md:px-6 md:py-4 md:rounded-[24px]",
+          "md:grid md:grid-cols-[40px_1fr_220px_80px] md:gap-x-6 md:gap-y-0 md:items-center md:min-h-22 md:px-6 md:py-4 md:rounded-[24px]",
           // Mobile Stacked Layout (below md viewport)
           "flex flex-col gap-3 p-4 rounded-[24px]",
           // Completion/Inactive state
@@ -115,7 +122,6 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           </div>
 
         </div>
-
         {/* 2. Metadata Column (Difficulty badge, Reward Tag, and Quest association) */}
         <div className="flex items-center gap-2 flex-wrap md:w-55 md:shrink-0 md:justify-start md:pl-0 pl-13">
           <DifficultyBadge difficulty={task.difficulty} />
@@ -123,25 +129,53 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
             {isObjective ? "Objective" : "Bounty"}
           </span>
-
+ 
           <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
             {task.points} Pts
           </span>
         </div>
+        {/* 3. Actions Column */}
+        <div className="flex items-center gap-2 md:w-20 md:justify-end md:pl-0 pl-13 md:shrink-0">
+          {/* Delete Action Button (Circular & Premium, hidden for completed tasks) */}
+          {!task.completed && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent completing the task
+                setIsDeleteDialogOpen(true);
+              }}
+              className="h-7 w-7 rounded-xl border border-destructive/20 bg-destructive/5 hover:bg-destructive text-destructive hover:text-white flex items-center justify-center transition-all duration-300 outline-none cursor-pointer shrink-0"
+              title={`Delete ${isObjective ? "Objective" : "Bounty"}`}
+            >
+              <Trash2 className="size-3.5" />
+            </button>
+          )}
+ 
+          {/* Chevron Accordion Trigger Button (Only rendered if description exists) */}
+          {hasDescription && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent completing the task
+                setIsExpanded(!isExpanded);
+              }}
+              className={cn(
+                "h-7 w-7 rounded-xl border border-border bg-card hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-all duration-300 outline-none cursor-pointer shrink-0",
+                isExpanded && "bg-muted text-primary border-primary/20"
+              )}
+              title={isExpanded ? "Collapse Details" : "Expand Details"}
+            >
+              <ChevronDown className={cn(
+                "size-3.5 transition-transform duration-300",
+                isExpanded && "rotate-180 text-primary"
+              )} />
+            </button>
+          )}
+        </div>
 
-        {/* 3. Status Column (Status Pill primitive) */}
-        <div className="flex items-center md:w-30 md:justify-center md:pl-0 pl-13 md:shrink-0">
-          <span className={cn(
-            "h-8 px-3.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center justify-center border transition-all duration-300",
-            task.completed 
-              ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" 
-              : "bg-primary/5 text-primary border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"
-          )}>
-            {task.completed ? "Completed" : "Active"}
-          </span>
-        </div>        {/* 4. Description Accordion Container (Full width across all grid columns) */}
+        {/* 4. Description Accordion Container (Only visible if task has description) */}
         <AnimatePresence initial={false}>
-          {isExpanded && (
+          {isExpanded && hasDescription && (
             <motion.div
               key="description-accordion"
               initial={{ height: 0, opacity: 0 }}
@@ -150,11 +184,11 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
                 opacity: 1,
                 transition: {
                   height: {
-                    type: "spring",
-                    stiffness: 400,
-                    damping: 35
+                    type: "tween",
+                    ease: "easeInOut",
+                    duration: 0.25
                   },
-                  opacity: { duration: 0.2 }
+                  opacity: { duration: 0.15 }
                 }
               }}
               exit={{ 
@@ -162,65 +196,27 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
                 opacity: 0,
                 transition: {
                   height: {
-                    type: "spring",
-                    stiffness: 500,
-                    damping: 40
+                    type: "tween",
+                    ease: "easeInOut",
+                    duration: 0.2
                   },
-                  opacity: { duration: 0.15 }
+                  opacity: { duration: 0.1 }
                 }
               }}
-              className="col-span-full overflow-hidden border-t border-border/60 bg-muted/10 -mx-4 -mb-4 mt-3 p-4 md:-mx-6 md:-mb-4 md:mt-4 md:px-6 md:py-4 md:pl-16 rounded-b-[24px]"
+              // Outer container: ZERO padding, margins, or borders! Only col-span-full and overflow-hidden.
+              className="col-span-full overflow-hidden"
             >
-              <div className="flex flex-col sm:flex-row gap-4 items-start w-full">
-                {/* Description Text */}
-                <p className={cn(
-                  "text-xs leading-relaxed flex-1 font-medium whitespace-pre-wrap",
-                  task.description?.trim() ? "text-muted-foreground" : "text-muted-foreground/60 italic"
-                )}>
-                  {task.description?.trim() || "No description provided for this task."}
+              {/* Inner container: holds the background, border, padding, and negative margins to align with card boundary */}
+              <div className="border-t border-border/60 bg-muted/10 -mx-4 -mb-4 mt-1.5 p-3 md:-mx-6 md:-mb-4 md:mt-2 md:px-6 md:py-2.5 md:pl-16 rounded-b-[24px]">
+                <p className="text-xs leading-relaxed text-muted-foreground font-medium whitespace-pre-wrap">
+                  {task.description}
                 </p>
- 
-                {/* Accordion Actions (Delete Button) */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent completing the task
-                    setIsDeleteDialogOpen(true);
-                  }}
-                  className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-destructive/20 bg-destructive/5 hover:bg-destructive text-destructive hover:text-white text-[10px] font-black uppercase tracking-wider transition-all duration-300 shrink-0 outline-none cursor-pointer"
-                  )}
-                >
-                  <Trash2 className="size-3.5" />
-                  <span>Delete {isObjective ? "Objective" : "Bounty"}</span>
-                </button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
- 
-      {/* 5. Saturn Chevron Bulge Trigger Button (Center-aligned on the bottom border) */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation(); // Prevent completing the task
-          setIsExpanded(!isExpanded);
-        }}
-        className={cn(
-          "absolute -bottom-1 right-12 translate-y-1/2 z-30 group/saturn",
-          "flex items-center justify-center w-12 h-4 rounded-b-full border border-t-0 border-border bg-card shadow-md",
-          " transition-all duration-300 cursor-pointer outline-none overflow-visible"
-        )}
-      >
 
-        {/* Planet Core (Chevron Icon) */}
-        <ChevronDown className={cn(
-          "size-3 text-muted-foreground transition-all duration-500 z-10 mt-0.5",
-          "group-hover/saturn:text-primary group-hover/saturn:scale-110",
-          isExpanded && "rotate-180 text-primary"
-        )} />
-      </button>
+      </motion.div>
 
       {/* 6. Custom Alert Confirmation Dialog */}
       <AlertDialog
