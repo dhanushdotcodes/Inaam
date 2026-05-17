@@ -88,17 +88,22 @@ export default function TaskItem({ task, rewardTitle, onToggle }: TaskItemProps)
         </div>
 
         {/* Content Column (Title Hierarchy) */}
-        <div className="flex-1 min-w-0 md:flex md:flex-col md:gap-1">
+        <div className="flex-1 min-w-0 md:flex md:flex-col md:gap-0.5">
           <span
             className={cn(
               "text-base font-bold transition-all tracking-tight leading-snug line-clamp-2",
               task.completed
                 ? "text-muted-foreground line-through"
-                : "text-foreground group-hover:text-primary transition-colors"
+                : "text-foreground transition-colors"
             )}
           >
             {task.title}
           </span>
+          {isObjective && rewardTitle && (
+            <span className="text-xs font-medium text-neutral-400 tracking-tight block mt-0.5">
+              Quest: {rewardTitle}
+            </span>
+          )}
         </div>
 
       </div>
@@ -111,14 +116,7 @@ export default function TaskItem({ task, rewardTitle, onToggle }: TaskItemProps)
           {isObjective ? "Objective" : "Bounty"}
         </span>
 
-        {isObjective ? (
-          <span 
-            className="text-[10px] font-bold text-muted-foreground max-w-25 truncate" 
-            title={rewardTitle || "Quest"}
-          >
-            {rewardTitle || "Quest"}
-          </span>
-        ) : (
+        {isObjective ? null : (
           <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
             {task.points} Pts
           </span>

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { getAllTasks, getRewards, completeTask } from "@/lib/api";
 import type { Task, Reward } from "@/types";
+import { TaskDifficulty } from "@/types";
 
 type TaskFilter = "all" | "active" | "completed";
 
@@ -16,6 +17,7 @@ export function useTasks() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState<TaskFilter>("all");
+  const [difficultyFilter, setDifficultyFilter] = useState<TaskDifficulty | "all">("all");
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -62,14 +64,26 @@ export function useTasks() {
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
-      const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
+      // Find associated quest (reward) title
+      const associatedReward = task.reward_id 
+        ? rewards.find((r) => r.id === task.reward_id)
+        : null;
+      const questTitle = associatedReward ? associatedReward.title : "";
+
+      const matchesSearch = 
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        questTitle.toLowerCase().includes(searchQuery.toLowerCase());
+
       const matchesFilter = 
         filter === "all" || 
         (filter === "active" && !task.completed) || 
         (filter === "completed" && task.completed);
-      return matchesSearch && matchesFilter;
+      const matchesDifficulty = 
+        difficultyFilter === "all" || 
+        task.difficulty === difficultyFilter;
+      return matchesSearch && matchesFilter && matchesDifficulty;
     });
-  }, [tasks, searchQuery, filter]);
+  }, [tasks, rewards, searchQuery, filter, difficultyFilter]);
 
   const stats = useMemo(() => ({
     total: tasks.length,
@@ -84,8 +98,10 @@ export function useTasks() {
     error,
     searchQuery,
     filter,
+    difficultyFilter,
     setSearchQuery,
     setFilter,
+    setDifficultyFilter,
     toggleComplete,
     refresh: fetchTasks,
     stats

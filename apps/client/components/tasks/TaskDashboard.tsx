@@ -24,8 +24,10 @@ export default function TaskDashboard() {
     error,
     searchQuery,
     filter,
+    difficultyFilter,
     setSearchQuery,
     setFilter,
+    setDifficultyFilter,
     toggleComplete,
     refresh,
     stats
@@ -47,6 +49,8 @@ export default function TaskDashboard() {
           onSearchChange={setSearchQuery} 
           filter={filter} 
           onFilterChange={setFilter} 
+          difficultyFilter={difficultyFilter}
+          onDifficultyChange={setDifficultyFilter}
         />
 
         {loading && tasks.length === 0 && (
@@ -65,7 +69,7 @@ export default function TaskDashboard() {
               tasks={filteredTasks} 
               rewards={rewards} 
               onToggle={toggleComplete} 
-              filter={filter}
+              filter={`${filter}-${difficultyFilter}`}
             />
           </>
         )}

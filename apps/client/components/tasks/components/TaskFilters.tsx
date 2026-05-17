@@ -5,12 +5,22 @@ import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { motion } from "motion/react";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { TaskDifficulty } from "@/types";
 
 interface TaskFiltersProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   filter: "all" | "active" | "completed";
   onFilterChange: (filter: "all" | "active" | "completed") => void;
+  difficultyFilter: TaskDifficulty | "all";
+  onDifficultyChange: (difficulty: TaskDifficulty | "all") => void;
 }
 
 export default function TaskFilters({
@@ -18,9 +28,11 @@ export default function TaskFilters({
   onSearchChange,
   filter,
   onFilterChange,
+  difficultyFilter,
+  onDifficultyChange,
 }: TaskFiltersProps) {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-center">
+    <div className="flex flex-col sm:flex-row gap-4 items-center w-full">
       {/* Search Input Container with dynamic focus-within styling */}
       <div className="relative flex-1 w-full group">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground transition-colors duration-300 group-focus-within:text-primary" />
@@ -30,6 +42,30 @@ export default function TaskFilters({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
         />
+      </div>
+
+      {/* Difficulty Dropdown Filter */}
+      <div className="w-full sm:w-48 shrink-0">
+        <Select
+          value={difficultyFilter as any}
+          onValueChange={(val) => onDifficultyChange(val as any)}
+        >
+          <SelectTrigger className="w-full relative h-12 rounded-2xl">
+            <SelectValue placeholder="All Difficulties">
+              {difficultyFilter === "all" 
+                ? "All Difficulties" 
+                : (difficultyFilter.charAt(0) + difficultyFilter.slice(1).toLowerCase())}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent className={"absolute top-0 -left-24"}>
+            <SelectItem value="all">All Difficulties</SelectItem>
+            {Object.values(TaskDifficulty).map((diff) => (
+              <SelectItem key={diff} value={diff}>
+                {diff.charAt(0) + diff.slice(1).toLowerCase()}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Filter Tabs Container: Sized to exactly h-12 to align with Input */}
