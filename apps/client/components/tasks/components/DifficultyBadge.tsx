@@ -38,7 +38,7 @@ export default function DifficultyBadge({ difficulty, className }: DifficultyBad
     <Badge
       variant="outline"
       className={cn(
-        "px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+        "text-[10px] font-bold uppercase tracking-wider",
         config.color,
         className
       )}

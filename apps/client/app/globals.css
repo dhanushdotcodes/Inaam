@@ -168,15 +168,15 @@
 
   /* Global Implementation of EOS UI Guidelines Overrides */
   
-  /* Forms: h-[56px], rounded-2xl, px-4, vertical centering */
+  /* Forms: h-[48px], rounded-2xl, px-4, vertical centering */
   [data-slot="input"],
   [data-slot="textarea"],
   [data-slot="select-trigger"] {
-    @apply h-14 rounded-2xl px-4 border-[1.5px] border-border bg-transparent text-foreground transition-all flex items-center;
+    @apply h-12 rounded-2xl px-4 border-[1.5px] border-border bg-transparent text-foreground transition-all flex items-center;
   }
 
   [data-slot="textarea"] {
-    @apply py-3 min-h-14 items-start;
+    @apply py-3 min-h-12 items-start;
   }
 
   [data-slot="select-trigger"] {
