@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { 
   Trophy,
@@ -47,15 +48,41 @@ export default function Sidebar() {
 
   const NavContent = () => (
     <div className="flex flex-col h-full px-6 py-9">
-      <div className="mb-10 h-8 flex items-center">
-        {isOpen && (
-          <motion.h1 
+      {/* Brand Header: Uses logo.png and font-brand (Boldonse) */}
+      <div className="mb-10 h-10 flex items-center justify-center lg:justify-start">
+        {isOpen ? (
+          <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-2xl font-bold tracking-tighter text-foreground"
+            className="flex items-center gap-2 select-none"
           >
-            Inaam
-          </motion.h1>
+            <Image 
+              src="/logo.png" 
+              alt="Inaam Logo" 
+              width={32} 
+              height={32} 
+              className="size-8 object-contain shrink-0"
+              priority
+            />
+            <h1 className="text-3xl font-brand tracking-tight text-foreground">
+              Inaam
+            </h1>
+          </motion.div>
+        ) : (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center justify-center w-10 h-10 shrink-0 select-none"
+          >
+            <Image 
+              src="/logo.png" 
+              alt="Inaam Logo" 
+              width={32} 
+              height={32} 
+              className="size-8 object-contain"
+              priority
+            />
+          </motion.div>
         )}
       </div>
 
@@ -71,21 +98,22 @@ export default function Sidebar() {
                 isOpen ? "px-3 gap-3" : "justify-center"
               )}
             >
-              {/* Background Pill for both Open and Closed states */}
+              {/* Background active pill morph animation */}
               {isActive && (
                 <motion.div
                   layoutId="sidebarActiveIndicator"
                   className={cn(
                     "absolute bg-primary -z-10",
-                    isOpen ? "inset-0 rounded-xl" : "size-6 rounded-md"
+                    isOpen ? "inset-0 rounded-xl" : "size-10 rounded-xl"
                   )}
                   transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
                 />
               )}
 
+              {/* Icon Container: Sized to size-10 (40px) when closed for standard visual breathing room */}
               <div className={cn(
                 "flex items-center justify-center transition-colors duration-300",
-                !isOpen && "size-6"
+                !isOpen && "size-10 shrink-0"
               )}>
                 <item.icon className={cn(
                   "size-5 shrink-0 transition-all duration-300",
@@ -113,17 +141,18 @@ export default function Sidebar() {
         })}
       </nav>
 
+      {/* Logout Action Area */}
       <div className="mt-auto pt-6 border-t border-border">
         <button
           onClick={handleLogout}
           className={cn(
-            "group relative flex items-center transition-all duration-300 h-12 select-none outline-none rounded-xl w-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive",
+            "group relative flex items-center transition-all duration-300 h-12 select-none outline-none rounded-xl w-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer",
             isOpen ? "px-3 gap-3" : "justify-center"
           )}
         >
           <div className={cn(
             "flex items-center justify-center transition-colors duration-300",
-            !isOpen && "size-6"
+            !isOpen && "size-10 shrink-0"
           )}>
             <LogOut className="size-5 shrink-0" />
           </div>
@@ -163,14 +192,14 @@ export default function Sidebar() {
         })}
         <button
           onClick={handleLogout}
-          className="flex flex-col items-center gap-1 p-2 rounded-xl text-muted-foreground hover:text-destructive transition-colors"
+          className="flex flex-col items-center gap-1 p-2 rounded-xl text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
         >
           <LogOut className="size-5" />
           <span className="text-[10px] font-bold uppercase tracking-wider">Logout</span>
         </button>
       </nav>
 
-      {/* Desktop Sidebar (Animated) */}
+      {/* Desktop Sidebar (Animated Width) */}
       <motion.aside
         initial={false}
         animate={{ 
@@ -182,7 +211,7 @@ export default function Sidebar() {
         <NavContent />
       </motion.aside>
 
-      {/* Mobile Drawer (Optional - Toggleable via Header) */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {!isDesktop && isOpen && (
           <>
