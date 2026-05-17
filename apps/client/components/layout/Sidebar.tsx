@@ -9,9 +9,9 @@ import {
   ShoppingBag,
   Compass, 
   LogOut,
+  ChevronLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { removeToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
@@ -39,7 +39,7 @@ const NAV_ITEMS = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isOpen, setIsOpen, isDesktop } = useAppStore((state) => state.sidebar);
+  const { isOpen, setIsOpen, isDesktop, toggle } = useAppStore((state) => state.sidebar);
 
   const handleLogout = () => {
     removeToken();
@@ -49,41 +49,27 @@ export default function Sidebar() {
   const NavContent = () => (
     <div className="flex flex-col h-full px-6 py-9">
       {/* Brand Header: Uses logo.png and font-brand (Boldonse) */}
-      <div className="mb-10 h-10 flex items-center justify-center lg:justify-start">
-        {isOpen ? (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center gap-2 select-none"
-          >
-            <Image 
-              src="/logo.png" 
-              alt="Inaam Logo" 
-              width={32} 
-              height={32} 
-              className="size-8 object-contain shrink-0"
-              priority
-            />
-            <h1 className="text-3xl font-brand tracking-tight text-foreground">
-              Inaam
-            </h1>
-          </motion.div>
-        ) : (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center justify-center w-10 h-10 shrink-0 select-none"
-          >
-            <Image 
-              src="/logo.png" 
-              alt="Inaam Logo" 
-              width={32} 
-              height={32} 
-              className="size-8 object-contain"
-              priority
-            />
-          </motion.div>
-        )}
+      {/* Transition padding-left and gap smoothly over 400ms to avoid justify jumps */}
+      <div className={cn(
+        "mb-10 h-10 flex items-center select-none transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)]",
+        isOpen ? "pl-0 gap-2" : "pl-1 gap-0"
+      )}>
+        <Image 
+          src="/logo.png" 
+          alt="Inaam Logo" 
+          width={32} 
+          height={32} 
+          className="size-8 object-contain shrink-0"
+          priority
+        />
+        <span
+          className={cn(
+            "text-3xl font-brand tracking-tight text-foreground transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] whitespace-nowrap overflow-hidden",
+            isOpen ? "opacity-100 max-w-45 translate-x-0" : "opacity-0 max-w-0 -translate-x-4 pointer-events-none"
+          )}
+        >
+          Inaam
+        </span>
       </div>
 
       <nav className="flex-1 space-y-4">
@@ -94,11 +80,11 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "group relative flex items-center transition-all duration-300 h-12 select-none outline-none rounded-xl",
-                isOpen ? "px-3 gap-3" : "justify-center"
+                "group relative flex items-center transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] h-12 select-none outline-none rounded-xl w-full",
+                isOpen ? "px-3 gap-3" : "px-0 gap-0"
               )}
             >
-              {/* Background active pill morph animation */}
+              {/* Background active indicator morph animation */}
               {isActive && (
                 <motion.div
                   layoutId="sidebarActiveIndicator"
@@ -112,30 +98,27 @@ export default function Sidebar() {
 
               {/* Icon Container: Sized to size-10 (40px) when closed for standard visual breathing room */}
               <div className={cn(
-                "flex items-center justify-center transition-colors duration-300",
+                "flex items-center justify-center transition-colors duration-400 ease-[cubic-bezier(0.25,1,0.5,1)]",
                 !isOpen && "size-10 shrink-0"
               )}>
                 <item.icon className={cn(
-                  "size-5 shrink-0 transition-all duration-300",
+                  "size-5 shrink-0 transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)]",
                   isActive 
                     ? "text-primary-foreground" 
                     : "text-muted-foreground group-hover:text-foreground group-hover:scale-110"
                 )} />
               </div>
 
-              {isOpen && (
-                <motion.span
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -8 }}
-                  className={cn(
-                    "truncate text-sm font-bold tracking-tight transition-colors duration-300",
-                    isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
-                  )}
-                >
-                  {item.label}
-                </motion.span>
-              )}
+              {/* Text Label: Fades, slides and shrinks in perfect sync with the sidebar width transition */}
+              <span
+                className={cn(
+                  "truncate text-sm font-bold tracking-tight transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] whitespace-nowrap overflow-hidden",
+                  isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground",
+                  isOpen ? "opacity-100 max-w-45 translate-x-0" : "opacity-0 max-w-0 -translate-x-4 pointer-events-none"
+                )}
+              >
+                {item.label}
+              </span>
             </Link>
           );
         })}
@@ -146,19 +129,26 @@ export default function Sidebar() {
         <button
           onClick={handleLogout}
           className={cn(
-            "group relative flex items-center transition-all duration-300 h-12 select-none outline-none rounded-xl w-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer",
-            isOpen ? "px-3 gap-3" : "justify-center"
+            "group relative flex items-center transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] h-12 select-none outline-none rounded-xl w-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer",
+            isOpen ? "px-3 gap-3" : "px-0 gap-0"
           )}
         >
           <div className={cn(
-            "flex items-center justify-center transition-colors duration-300",
+            "flex items-center justify-center transition-colors duration-400 ease-[cubic-bezier(0.25,1,0.5,1)]",
             !isOpen && "size-10 shrink-0"
           )}>
             <LogOut className="size-5 shrink-0" />
           </div>
-          {isOpen && (
-            <span className="text-sm font-bold tracking-tight">Logout</span>
-          )}
+          
+          {/* Logout Text: Collapses and slides left smoothly on closed state */}
+          <span
+            className={cn(
+              "text-sm font-bold tracking-tight transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] whitespace-nowrap overflow-hidden",
+              isOpen ? "opacity-100 max-w-30 translate-x-0" : "opacity-0 max-w-0 -translate-x-4 pointer-events-none"
+            )}
+          >
+            Logout
+          </span>
         </button>
       </div>
     </div>
@@ -199,16 +189,34 @@ export default function Sidebar() {
         </button>
       </nav>
 
-      {/* Desktop Sidebar (Animated Width) */}
+      {/* Desktop Sidebar (Animated Width slowed to 400ms for premium ease) */}
       <motion.aside
         initial={false}
         animate={{ 
           width: isOpen ? 264 : 88,
         }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="hidden lg:flex flex-col h-screen sticky top-0 bg-background border-r border-border shrink-0 shadow-sm overflow-hidden"
+        transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+        className="hidden lg:flex flex-col h-screen sticky top-0 bg-background border-r border-border shrink-0 shadow-sm z-40"
       >
-        <NavContent />
+        {/* NavContent wrapper with overflow-hidden to clip contents cleanly during width morph animation */}
+        <div className="w-full h-full flex flex-col overflow-hidden">
+          <NavContent />
+        </div>
+
+        {/* Beautiful border bulge toggle button */}
+        <button
+          onClick={toggle}
+          className="absolute -right-3.5 top-14 -translate-y-1/2 z-50 flex items-center justify-center w-7 h-7 rounded-full bg-background border border-border shadow-md hover:shadow-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-all cursor-pointer group select-none"
+          title={isOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+        >
+          <motion.div
+            animate={{ rotate: isOpen ? 0 : 180 }}
+            transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+            className="flex items-center justify-center"
+          >
+            <ChevronLeft className="size-4 stroke-[2.5px] transition-transform group-hover:scale-110" />
+          </motion.div>
+        </button>
       </motion.aside>
 
       {/* Mobile Drawer */}
