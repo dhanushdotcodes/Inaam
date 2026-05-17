@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { AnimatePresence, motion } from "motion/react";
 import type { Task, Reward } from "@/types";
 import TaskItem from "./TaskItem";
@@ -9,6 +8,7 @@ interface TaskListProps {
   tasks: Task[];
   rewards: Reward[];
   onToggle: (task: Task) => void;
+  onDelete: (task: Task) => Promise<void>;
   filter: string;
 }
 
@@ -32,7 +32,7 @@ const containerVariants = {
   }
 };
 
-export default function TaskList({ tasks, rewards, onToggle, filter }: TaskListProps) {
+export default function TaskList({ tasks, rewards, onToggle, onDelete, filter }: TaskListProps) {
   const sortedTasks = [...tasks].sort((a, b) => {
     // 1. Uncompleted tasks first
     if (a.completed !== b.completed) {
@@ -70,6 +70,7 @@ export default function TaskList({ tasks, rewards, onToggle, filter }: TaskListP
               task={task} 
               rewardTitle={getRewardTitle(task.reward_id)} 
               onToggle={onToggle} 
+              onDelete={onDelete}
             />
           ))
         ) : (

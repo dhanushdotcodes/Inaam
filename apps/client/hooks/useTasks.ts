@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useMemo } from "react";
-import { getAllTasks, getRewards, completeTask } from "@/lib/api";
+import { getAllTasks, getRewards, completeTask, deleteTask } from "@/lib/api";
 import type { Task, Reward } from "@/types";
 import { TaskDifficulty } from "@/types";
 
@@ -62,6 +62,19 @@ export function useTasks() {
     }
   };
 
+  const removeTask = async (taskId: string, rewardId?: string | null) => {
+    try {
+      await deleteTask(taskId, rewardId);
+      setTasks((prev) => prev.filter((t) => t.id !== taskId));
+      
+      // Dispatch refreshPoints event
+      window.dispatchEvent(new CustomEvent("refreshPoints"));
+    } catch (err) {
+      console.error("Delete task error:", err);
+      throw err;
+    }
+  };
+
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
       // Find associated quest (reward) title
@@ -103,6 +116,7 @@ export function useTasks() {
     setFilter,
     setDifficultyFilter,
     toggleComplete,
+    deleteTask: removeTask,
     refresh: fetchTasks,
     stats
   };
