@@ -1,0 +1,19 @@
+{
+  "component": "checkbox-less-select-dropdown",
+
+  "trigger": {
+    "height": 48,
+    "paddingX": 16,
+    "borderRadius": 16,
+    "width": "w-full",
+    "focusRing": "focus-visible:ring-primary/20 focus-visible:border-primary",
+    "transitions": "transition-colors"
+  },
+
+  "items": {
+    "selectionIndicator": "none (remove checkbox icons and SelectPrimitive.ItemIndicator)",
+    "highlight": "bg-accent/70 on active/selected items",
+    "padding": "px-3.5 py-2 symmetrical padding",
+    "hover": "hover:bg-accent/50 hover:text-accent-foreground"
+  }
+}

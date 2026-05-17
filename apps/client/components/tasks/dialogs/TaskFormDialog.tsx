@@ -145,8 +145,10 @@ export default function TaskFormDialog({ open, onOpenChange, onSuccess }: TaskFo
                   onValueChange={handleDifficultyChange}
                   disabled={loading}
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select difficulty" />
+                  <SelectTrigger className="w-full relative">
+                    <SelectValue placeholder="Select difficulty">
+                      {formData.difficulty ? (formData.difficulty.charAt(0) + formData.difficulty.slice(1).toLowerCase()) : undefined}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {Object.values(TaskDifficulty).map((diff) => (

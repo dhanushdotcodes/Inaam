@@ -17,16 +17,47 @@ interface TaskItemProps {
  * TaskItem component — Displays an individual task (Bounty or Quest Objective) in a premium,
  * highly-structured interactive row conforming to the new-ui-rules.json specifications.
  */
+const itemVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: -16, 
+    scale: 0.98 
+  },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: {
+      type: "spring" as const,
+      stiffness: 400,
+      damping: 32
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.95,
+    height: 0,
+    marginTop: 0,
+    marginBottom: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
+    borderWidth: 0,
+    overflow: "hidden",
+    transition: {
+      type: "spring" as const,
+      stiffness: 500,
+      damping: 38
+    }
+  }
+};
+
 export default function TaskItem({ task, rewardTitle, onToggle }: TaskItemProps) {
   const isObjective = task.reward_id !== null;
   
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+      variants={itemVariants}
       className={cn(
         "w-full bg-card border border-border shadow-sm transition-all group cursor-pointer select-none",
         // Desktop Grid Layout (md viewport and up)

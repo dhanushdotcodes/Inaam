@@ -1,0 +1,43 @@
+{
+  "component": "bounty-summary-row",
+
+  "layout": {
+    "minHeight": 88,
+    "paddingX": 24,
+    "paddingY": 20,
+    "display": "grid",
+    "columns": [
+      "48px",
+      "1fr",
+      "auto"
+    ],
+    "columnGap": 16,
+    "alignItems": "center"
+  },
+
+  "contentHierarchy": {
+    "primary": "points-value",
+    "secondary": "summary-label",
+    "tertiary": "supporting-metadata"
+  },
+
+  "spacingRhythm": {
+    "outerPadding": 24,
+    "internalGap": 8,
+    "sectionGap": 16
+  },
+
+  "consistencyRules": [
+    "match task row border radius",
+    "match task row horizontal rhythm",
+    "match task row padding system",
+    "match task row vertical density",
+    "align icon region with task checkbox region"
+  ],
+
+  "interactionRules": [
+    "Include a lightweight, styled close button on the right-hand action zone",
+    "Manage the active visibility state locally (dismissible banner)",
+    "Do NOT add any 'claim all' primary action buttons"
+  ]
+}

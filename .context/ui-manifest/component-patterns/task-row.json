@@ -1,0 +1,213 @@
+{
+  "component": "structured-interactive-row",
+
+  "layout": {
+    "display": "grid",
+    "minHeight": 88,
+    "paddingX": 24,
+    "paddingY": 16,
+    "borderRadius": 24,
+    "columnStructure": [
+      {
+        "name": "selection",
+        "width": 40
+      },
+      {
+        "name": "content",
+        "width": "1fr"
+      },
+      {
+        "name": "metadata",
+        "width": 220
+      },
+      {
+        "name": "status",
+        "width": 120
+      },
+      {
+        "name": "actions",
+        "width": 48
+      }
+    ],
+    "columnGap": 24,
+    "alignItems": "center"
+  },
+
+  "semanticRegions": {
+    "selection": {
+      "purpose": "task selection and completion control",
+      "layoutRules": [
+        "fixed width region",
+        "vertically centered",
+        "never shrinks",
+        "maintains circular interaction rhythm"
+      ]
+    },
+
+    "content": {
+      "purpose": "primary information hierarchy",
+      "structure": [
+        "title-row",
+        "metadata-row"
+      ],
+      "layoutRules": [
+        "occupies remaining horizontal space",
+        "text alignment consistent across all rows",
+        "supports flexible content growth",
+        "maintains stable vertical rhythm"
+      ]
+    },
+
+    "metadata": {
+      "purpose": "structured supporting information",
+      "layoutRules": [
+        "dedicated horizontal region",
+        "uses inline metadata grouping",
+        "maintains equal spacing between metadata items",
+        "never visually dominates title"
+      ]
+    },
+
+    "status": {
+      "purpose": "task state display",
+      "layoutRules": [
+        "fixed-width alignment zone",
+        "center aligned",
+        "uses soft visual emphasis",
+        "must not resemble primary CTA button"
+      ]
+    },
+
+    "actions": {
+      "purpose": "row actions and contextual menus",
+      "layoutRules": [
+        "fixed interaction region",
+        "icons remain centered",
+        "hover interactions remain bounded",
+        "supports expandable actions"
+      ]
+    }
+  },
+
+  "contentHierarchy": {
+    "priorityOrder": [
+      "title",
+      "progress/state",
+      "reward",
+      "difficulty",
+      "actions"
+    ],
+
+    "rules": [
+      "Title is always visually dominant",
+      "Metadata remains visually secondary",
+      "Badges should not compete with title hierarchy",
+      "Status should communicate state quietly",
+      "Action regions should remain visually lightweight"
+    ]
+  },
+
+  "titleRegion": {
+    "layout": {
+      "direction": "vertical",
+      "gap": 8
+    },
+
+    "title": {
+      "maxLines": 2,
+      "overflow": "truncate",
+      "alignment": "left"
+    },
+
+    "metadataRow": {
+      "display": "flex",
+      "gap": 8,
+      "wrap": true,
+      "alignment": "center"
+    }
+  },
+
+  "metadataPatterns": {
+    "preferredFormat": [
+      "[difficulty]",
+      "[reward]",
+      "[category]"
+    ],
+
+    "rules": [
+      "metadata should use consistent pill rhythm",
+      "metadata items maintain equal vertical alignment",
+      "metadata uses subdued emphasis",
+      "metadata remains scannable but secondary"
+    ]
+  },
+
+  "statusPatterns": {
+    "rules": [
+      "status uses soft background treatment",
+      "status avoids heavy saturation",
+      "status should not visually overpower task title",
+      "status pills maintain consistent width rhythm",
+      "status alignment remains fixed across all rows"
+    ]
+  },
+
+  "interactionRules": {
+    "hover": {
+      "backgroundShift": "subtle",
+      "borderVisibility": "slightly elevated",
+      "actionVisibility": "enhanced"
+    },
+
+    "focus": {
+      "maintainLayoutIntegrity": true,
+      "avoidContentShift": true
+    },
+
+    "clickTargets": {
+      "minimumHeight": 44,
+      "fullRowClickable": false,
+      "dedicatedActionZones": true
+    }
+  },
+
+  "alignmentRules": [
+    "all rows align to shared column system",
+    "metadata aligns consistently across rows",
+    "status alignment remains fixed",
+    "checkbox alignment remains optically centered",
+    "actions align vertically across list",
+    "title baseline remains consistent"
+  ],
+
+  "responsiveRules": {
+    "desktop": {
+      "layout": "multi-column structured row",
+      "metadata": "inline"
+    },
+
+    "tablet": {
+      "layout": "compressed columns",
+      "metadata": "wrappable"
+    },
+
+    "mobile": {
+      "layout": "stacked vertical regions",
+      "status": "moves below content",
+      "actions": "collapsed into menu",
+      "paddingX": 16,
+      "rowGap": 12
+    }
+  },
+
+  "consistencyRules": [
+    "all rows use identical padding rhythm",
+    "all badges use shared height system",
+    "all interactive regions follow same sizing primitives",
+    "all spacing derives from spacing system",
+    "all columns align consistently",
+    "all rows maintain equal minimum height",
+    "all metadata pills use shared component rules",
+    "all actions follow shared interaction patterns"
+  ]
+}

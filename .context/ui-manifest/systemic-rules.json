@@ -1,0 +1,89 @@
+{
+  "system": {
+    "name": "structured-task-row-system",
+    "goal": "Create highly consistent, scanable, reusable task row components with strong spacing rhythm, predictable alignment, and scalable layout behavior.",
+    "designPrinciples": [
+      "Prioritize structure over decoration",
+      "Use shared spatial primitives across all components",
+      "Maintain consistent layout rhythm",
+      "Create predictable scanning patterns",
+      "Separate semantic regions clearly",
+      "Avoid visually dominant secondary information",
+      "Prefer reusable layout rules over component-specific styling",
+      "Ensure every component follows the same spacing scale",
+      "Maintain stable interaction zones",
+      "Optimize for scalability and AI generation consistency"
+    ]
+  },
+
+  "spacingSystem": {
+    "baseUnit": 4,
+    "allowedSpacing": [4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 72],
+    "rules": {
+      "microGap": 4,
+      "smallGap": 8,
+      "mediumGap": 16,
+      "largeGap": 24,
+      "sectionGap": 32,
+      "cardPadding": 24,
+      "rowHeight": 72,
+      "interactiveHeight": 40,
+      "inputHeight": 48,
+      "iconRegion": 24,
+      "touchTargetMinimum": 44
+    }
+  },
+
+  "layoutRhythm": {
+    "principles": [
+      "All interactive rows should follow a predictable vertical rhythm",
+      "Rows should maintain consistent internal alignment regardless of content",
+      "Visual grouping should rely on spacing instead of borders",
+      "Horizontal layout should use dedicated semantic columns",
+      "Text and actions should never compete visually",
+      "Secondary metadata should remain visually quieter than primary content"
+    ]
+  },
+
+  "sharedComponentPrimitives": {
+    "badge": {
+      "height": 24,
+      "paddingX": 10,
+      "radius": "full",
+      "alignment": "center"
+    },
+
+    "interactiveIcon": {
+      "size": 20,
+      "touchTarget": 40,
+      "alignment": "center"
+    },
+
+    "checkbox": {
+      "size": 24,
+      "touchTarget": 40,
+      "shape": "circle"
+    },
+
+    "statusPill": {
+      "height": 32,
+      "paddingX": 14,
+      "visualWeight": "soft"
+    }
+  },
+
+  "aiGenerationRules": [
+    "Prefer structure over visual effects",
+    "Maintain strict spacing rhythm",
+    "Never place metadata randomly around title",
+    "Use dedicated semantic regions",
+    "Preserve predictable alignment",
+    "Keep interaction zones stable",
+    "Avoid oversized status indicators",
+    "Ensure title remains dominant",
+    "Reuse layout primitives consistently",
+    "Avoid component-specific spacing hacks",
+    "Use shared sizing tokens across all components",
+    "Ensure scanability at all viewport widths"
+  ]
+}

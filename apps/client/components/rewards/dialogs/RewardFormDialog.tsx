@@ -191,10 +191,12 @@ export default function RewardFormDialog({
                     onValueChange={(value) => setRewardType(value as RewardType)}
                     disabled={isEdit || submitting}
                   >
-                    <SelectTrigger className={"w-full"}>
-                      <SelectValue />
+                    <SelectTrigger className="w-full relative">
+                      <SelectValue>
+                        {rewardType === RewardType.QUEST ? "Quest (Task-based)" : "Prize (Points-based)"}
+                      </SelectValue>
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="absolute top-0 left-0 -translate-x-25">
                       <SelectItem value={RewardType.QUEST}>Quest (Task-based)</SelectItem>
                       <SelectItem value={RewardType.PRIZE}>Prize (Points-based)</SelectItem>
                     </SelectContent>

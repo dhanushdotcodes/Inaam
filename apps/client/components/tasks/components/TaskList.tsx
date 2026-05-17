@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import type { Task, Reward } from "@/types";
 import TaskItem from "./TaskItem";
 
@@ -9,17 +9,30 @@ interface TaskListProps {
   tasks: Task[];
   rewards: Reward[];
   onToggle: (task: Task) => void;
+  filter: string;
 }
 
-export default function TaskList({ tasks, rewards, onToggle }: TaskListProps) {
-  if (tasks.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50">
-        <p className="text-sm text-zinc-500">No tasks found matching your criteria.</p>
-      </div>
-    );
+// Container variants to stagger child entrances from top to bottom
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05, // 50ms stagger waterfall cascade
+      delayChildren: 0.02
+    }
+  },
+  exit: {
+    opacity: 0,
+    y: 16, // Slides down smoothly on exit
+    transition: {
+      duration: 0.2,
+      ease: "easeInOut" as const
+    }
   }
+};
 
+export default function TaskList({ tasks, rewards, onToggle, filter }: TaskListProps) {
   const sortedTasks = [...tasks].sort((a, b) => {
     // 1. Uncompleted tasks first
     if (a.completed !== b.completed) {
@@ -41,17 +54,39 @@ export default function TaskList({ tasks, rewards, onToggle }: TaskListProps) {
   };
 
   return (
-    <div className="grid gap-4 w-full overflow-clip">
-      <AnimatePresence mode="popLayout">
-        {sortedTasks.map((task) => (
-          <TaskItem 
-            key={task.id} 
-            task={task} 
-            rewardTitle={getRewardTitle(task.reward_id)} 
-            onToggle={onToggle} 
-          />
-        ))}
-      </AnimatePresence>
-    </div>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={filter}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className="grid gap-4 w-full relative"
+      >
+        {sortedTasks.length > 0 ? (
+          sortedTasks.map((task) => (
+            <TaskItem 
+              key={task.id} 
+              task={task} 
+              rewardTitle={getRewardTitle(task.reward_id)} 
+              onToggle={onToggle} 
+            />
+          ))
+        ) : (
+          <motion.div 
+            variants={{
+              hidden: { opacity: 0, y: -12 },
+              visible: { opacity: 1, y: 0 },
+              exit: { opacity: 0 }
+            }}
+            className="flex flex-col items-center justify-center py-20 rounded-[24px] border border-dashed border-border bg-card/50 select-none"
+          >
+            <p className="text-sm text-muted-foreground font-bold tracking-tight">
+              No tasks found matching your criteria.
+            </p>
+          </motion.div>
+        )}
+      </motion.div>
+    </AnimatePresence>
   );
 }

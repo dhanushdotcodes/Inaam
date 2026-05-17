@@ -1,0 +1,35 @@
+{
+  "component": "collapsible-sidebar",
+
+  "layout": {
+    "openWidth": 240,
+    "collapsedWidth": 72,
+    "headerHeight": 56,
+    "paddingOpen": "px-3 gap-3",
+    "paddingCollapsed": "px-0 gap-0",
+    "transitionDuration": 400,
+    "transitionCurve": "cubic-bezier(0.25, 1, 0.5, 1)"
+  },
+
+  "brandHeader": {
+    "font": "font-brand (Boldonse typeface)",
+    "logoSize": 32,
+    "openPadding": "pl-0 gap-2",
+    "collapsedPadding": "pl-1 gap-0"
+  },
+
+  "collapseToggle": {
+    "style": "semi-circular border bulge",
+    "position": "absolute top-[56px] -translate-y-1/2 -right-3.5",
+    "dimensions": "w-7 h-7",
+    "iconRotation": "0deg when open, 180deg when collapsed"
+  },
+
+  "animationRules": [
+    "Keep text nodes in the DOM and animate width/opacity to prevent layout snapping",
+    "Smoothly animate max-width, opacity, and translate-x over 400ms",
+    "Ensure parent container does not use overflow-hidden to allow bulge to emerge",
+    "Wrap interior links in an overflow-hidden container for clipping during collapses",
+    "Transition spacing properties (px, gaps) instead of flex alignments (justify-content)"
+  ]
+}

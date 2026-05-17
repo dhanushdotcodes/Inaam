@@ -1,0 +1,11 @@
+{
+  "component": "standard-text-input",
+
+  "layout": {
+    "height": 48,
+    "paddingX": 16,
+    "borderRadius": 16,
+    "focusRing": "focus-visible:ring-primary/20 focus-visible:border-primary",
+    "transitions": "transition-all duration-300"
+  }
+}
