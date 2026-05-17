@@ -6,6 +6,7 @@
     "paddingX": 16,
     "borderRadius": 16,
     "width": "w-full",
+    "position": "relative",
     "focusRing": "focus-visible:ring-primary/20 focus-visible:border-primary",
     "transitions": "transition-colors"
   },
@@ -15,5 +16,20 @@
     "highlight": "bg-accent/70 on active/selected items",
     "padding": "px-3.5 py-2 symmetrical padding",
     "hover": "hover:bg-accent/50 hover:text-accent-foreground"
-  }
+  },
+
+  "formIntegrationRules": [
+    {
+      "rule": "Trigger Casing Formatter",
+      "description": "Provide a mapping block inside `<SelectValue>` to convert uppercase backend enum strings to Title-Case (e.g. `formData.difficulty ? (formData.difficulty.charAt(0) + formData.difficulty.slice(1).toLowerCase()) : undefined`). This prevents lazy-load Portal fallbacks showing raw all-caps text."
+    },
+    {
+      "rule": "Anchor Positioning",
+      "description": "Do NOT apply hacky static margins or class offsets (like `absolute top-0 -left-28`) on `<SelectContent>`. Rely on Base UI's auto-calculated anchored placements by ensuring the parent trigger has the `relative` class."
+    },
+    {
+      "rule": "Grid Alignment Sizing",
+      "description": "Select triggers inside forms must always use `w-full` class to stretch symmetrically and maintain identical height and width alignment with parallel standard text inputs."
+    }
+  ]
 }

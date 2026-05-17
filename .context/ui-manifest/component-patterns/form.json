@@ -1,0 +1,30 @@
+{
+  "patternName": "standard-dialog-form",
+
+  "layout": {
+    "container": "DialogContent with responsive width boundaries (e.g. sm:max-w-lg or sm:max-w-md)",
+    "spacing": "mt-6 space-y-6 (or space-y-4) for section groups",
+    "grids": "grid grid-cols-1 md:grid-cols-2 gap-6 (or gap-4) for parallel input elements"
+  },
+
+  "formField": {
+    "component": "FormField component wrapper",
+    "requiredIndicator": "Red asterisk adjacent to label text when required",
+    "supportingBadges": "rightElement (e.g. points min/max bounds) styled as a small, bold uppercase badge with primary/5 bg",
+    "errorHandling": {
+      "element": "Soft-bg alert banner below input",
+      "style": "bg-destructive/10 text-destructive text-[10px] font-medium px-3 py-1 rounded-full w-fit mt-1.5 flex items-center gap-1.5",
+      "animations": "animate-in fade-in slide-in-from-top-1 duration-200"
+    }
+  },
+
+  "controls": {
+    "textInputs": "standard inputs (h-12 height, rounded-2xl border, px-4 padding)",
+    "dropdownSelectors": "standard select triggers (w-full relative, h-12 height, rounded-2xl border, px-4 padding, Title-Case formatting)",
+    "textareas": "standard multiline textareas (rounded-2xl, px-4 padding)",
+    "submitButtons": {
+      "element": "DialogFooter with Cancel (outline) and Action (contained) buttons",
+      "loadingState": "Renders spinning Loader2 icon, disables buttons, and shows loading feedback during async submission"
+    }
+  }
+}
