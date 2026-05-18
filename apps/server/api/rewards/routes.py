@@ -7,7 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from services import reward as reward_service
 from services import task as task_service
 from core.database import get_db
-from core.security import verify_token
+from core.security import get_current_user
+from models.user import User
 from schemas.base import ApiResponse
 from schemas.reward import RewardCreate, RewardResponse, RewardUpdate
 from schemas.task import TaskCreate, TaskResponse, TaskUpdate
@@ -15,38 +16,41 @@ from schemas.task import TaskCreate, TaskResponse, TaskUpdate
 router = APIRouter(
     prefix="/rewards", 
     tags=["Rewards"],
-    dependencies=[Depends(verify_token)]
+    dependencies=[Depends(get_current_user)]
 )
 
 
 @router.get("", response_model=ApiResponse[List[RewardResponse]])
 async def list_rewards(
     status: Optional[str] = None, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Get all rewards with optional status filtering."""
-    rewards = await reward_service.get_rewards(db, status)
+    rewards = await reward_service.get_rewards(db, status, current_user.id)
     return ApiResponse.success(data=rewards)
 
 
 @router.post("", response_model=ApiResponse[RewardResponse], status_code=status.HTTP_201_CREATED)
 async def create_reward(
     payload: RewardCreate, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Create a new reward."""
-    async with db.begin():
-        reward = await reward_service.create_reward(db, payload)
+    reward = await reward_service.create_reward(db, payload, current_user.id)
+    await db.commit()
     return ApiResponse.success(data=reward)
 
 
 @router.get("/{id}", response_model=ApiResponse[RewardResponse])
 async def get_reward(
     id: UUID, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Get a specific reward."""
-    reward = await reward_service.get_reward(db, id)
+    reward = await reward_service.get_reward(db, id, current_user.id)
     if not reward:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
@@ -59,56 +63,57 @@ async def get_reward(
 async def update_reward(
     id: UUID, 
     payload: RewardUpdate, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Update a specific reward."""
-    async with db.begin():
-        reward = await reward_service.update_reward(db, id, payload)
-    
+    reward = await reward_service.update_reward(db, id, payload, current_user.id)
     if not reward:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
             detail=f"Reward with id {id} not found"
         )
+    await db.commit()
     return ApiResponse.success(data=reward)
 
 
 @router.delete("/{id}", response_model=ApiResponse[bool])
 async def delete_reward(
     id: UUID, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Delete a specific reward."""
-    async with db.begin():
-        success = await reward_service.delete_reward(db, id)
-    
+    success = await reward_service.delete_reward(db, id, current_user.id)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
             detail=f"Reward with id {id} not found"
         )
+    await db.commit()
     return ApiResponse.success(data=True)
 
 
 @router.patch("/{id}/claim", response_model=ApiResponse[RewardResponse])
 async def claim_reward(
     id: UUID, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Claim a specific reward."""
     try:
-        async with db.begin():
-            reward = await reward_service.claim_reward(db, id)
+        reward = await reward_service.claim_reward(db, id, current_user.id)
+        if not reward:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, 
+                detail=f"Reward with id {id} not found"
+            )
+        await db.commit()
     except ValueError as e:
+        await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
-        )
-    
-    if not reward:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"Reward with id {id} not found"
         )
     return ApiResponse.success(data=reward)
 
@@ -118,10 +123,18 @@ async def claim_reward(
 @router.get("/{id}/tasks", response_model=ApiResponse[List[TaskResponse]])
 async def list_reward_tasks(
     id: UUID, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Get all tasks for a specific reward."""
-    tasks = await task_service.get_tasks(db, reward_id=id)
+    # Ensure reward exists and belongs to user
+    reward = await reward_service.get_reward(db, id, current_user.id)
+    if not reward:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f"Reward with id {id} not found"
+        )
+    tasks = await task_service.get_tasks(db, reward_id=id, user_id=current_user.id)
     return ApiResponse.success(data=tasks)
 
 
@@ -129,11 +142,19 @@ async def list_reward_tasks(
 async def create_reward_task(
     id: UUID, 
     payload: TaskCreate, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Create a new task for a specific reward."""
-    async with db.begin():
-        task = await task_service.create_task(db, payload, reward_id=id)
+    # Ensure reward exists and belongs to user
+    reward = await reward_service.get_reward(db, id, current_user.id)
+    if not reward:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f"Reward with id {id} not found"
+        )
+    task = await task_service.create_task(db, payload, reward_id=id, user_id=current_user.id)
+    await db.commit()
     return ApiResponse.success(data=task)
 
 
@@ -141,10 +162,11 @@ async def create_reward_task(
 async def get_reward_task(
     id: UUID, 
     task_id: UUID, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Get a specific task for a reward."""
-    task = await task_service.get_task(db, task_id, reward_id=id)
+    task = await task_service.get_task(db, task_id, reward_id=id, user_id=current_user.id)
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
@@ -158,17 +180,17 @@ async def update_reward_task(
     id: UUID, 
     task_id: UUID, 
     payload: TaskUpdate, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Update a specific task for a reward."""
-    async with db.begin():
-        task = await task_service.update_task(db, task_id, payload, reward_id=id)
-    
+    task = await task_service.update_task(db, task_id, payload, reward_id=id, user_id=current_user.id)
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
             detail=f"Task with id {task_id} not found for reward {id}"
         )
+    await db.commit()
     return ApiResponse.success(data=task)
 
 
@@ -176,17 +198,17 @@ async def update_reward_task(
 async def delete_reward_task(
     id: UUID, 
     task_id: UUID, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Delete a specific task for a reward."""
-    async with db.begin():
-        success = await task_service.delete_task(db, task_id, reward_id=id)
-    
+    success = await task_service.delete_task(db, task_id, reward_id=id, user_id=current_user.id)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
             detail=f"Task with id {task_id} not found for reward {id}"
         )
+    await db.commit()
     return ApiResponse.success(data=True)
 
 
@@ -194,15 +216,15 @@ async def delete_reward_task(
 async def complete_reward_task(
     id: UUID, 
     task_id: UUID, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """Complete a specific task for a reward."""
-    async with db.begin():
-        task = await task_service.complete_task(db, task_id, reward_id=id)
-    
+    task = await task_service.complete_task(db, task_id, reward_id=id, user_id=current_user.id)
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
             detail=f"Task with id {task_id} not found for reward {id}"
         )
+    await db.commit()
     return ApiResponse.success(data=task)

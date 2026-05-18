@@ -10,6 +10,7 @@ from models.enums import TaskDifficulty, TaskType
 
 if TYPE_CHECKING:
     from models.reward import Reward
+    from models.user import User
 
 
 class Task(Base, TimestampMixin):
@@ -18,6 +19,7 @@ class Task(Base, TimestampMixin):
     __tablename__ = "tasks"
 
     id: Mapped[pk_uuid]
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     title: Mapped[str] = mapped_column(String(255))
     description: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
     task_type: Mapped[TaskType] = mapped_column(SQLEnum(TaskType), default=TaskType.BOUNTY)
@@ -28,4 +30,5 @@ class Task(Base, TimestampMixin):
     reward_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("rewards.id", ondelete="CASCADE"), nullable=True)
 
     # Relationships
+    user: Mapped["User"] = relationship()
     reward: Mapped[Optional["Reward"]] = relationship(back_populates="tasks")

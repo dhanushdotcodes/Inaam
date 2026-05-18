@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Implemented robust **Multi-User Data Separation** architecture on the FastAPI backend.
+- Added `user_id` foreign keys linking to the `users` table on `rewards`, `tasks`, and `point_transactions` SQL models with cascading deletes.
+- Created `get_current_user` JWT authentication dependency to extract claims and inject complete authenticated database User instances.
+- Authored a comprehensive multi-user isolation integration test suite (`tests/auth/test_isolation.py`) verifying strict resource gating, action isolation, and separate point ledger calculations.
+- Generated Alembic schema migration `7deccecb3d81_add_user_id_to_all_models.py` handling safe nullable-to-non-nullable migrations for pre-existing database records.
 - Implemented user signup endpoint `POST /api/v1/auth/signup` supporting username, email, and password validation.
 - Implemented email-based user login endpoint `POST /api/v1/auth/login` returning a JWT access token and user profile details.
 - Integrated `bcrypt` library for cryptographically secure password hashing and verification.
@@ -30,6 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 
 ### Changed
+- Refactored `reward`, `task`, and `transaction` service layers to strictly filter database operations by user ID.
+- Updated all API routes (`/rewards`, `/tasks`, `/points`) to inject the `get_current_user` dependency and enforce account boundaries.
+- Re-architected routing database transaction patterns from explicit `db.begin()` blocks to clean `await db.commit()` calls to prevent Session deadlock issues from pre-dependency queries.
 - Removed redundant Active/Completed capsules from **`TaskItem`** to streamline visual information hierarchy, utilizing distinct completed states (green checked circle, muted line-through titles, opacity reduction).
 - Restructured **`TaskItem`** columns into a hyper-clean `[40px_1fr_220px_80px]` layout, grouping the delete button and Chevron dropdown trigger as a premium compact actions button cluster on the right-hand side.
 - Refactored task list reordering and expansion animations in **`TaskItem`** from spring to tween (`easeInOut`, `0.25s` duration) to eliminate layout jumps and component overlapping.

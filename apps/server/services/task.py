@@ -14,10 +14,13 @@ from services import transaction as transaction_service
 
 async def get_tasks(
     db: AsyncSession, 
-    reward_id: Optional[UUID] = None
+    reward_id: Optional[UUID] = None,
+    user_id: Optional[UUID] = None
 ) -> Sequence[Task]:
-    """Get all tasks, optionally filtered by reward_id."""
+    """Get all tasks for a specific user, optionally filtered by reward_id."""
     query = select(Task)
+    if user_id:
+        query = query.where(Task.user_id == user_id)
     if reward_id:
         query = query.where(Task.reward_id == reward_id)
         
@@ -28,12 +31,15 @@ async def get_tasks(
 async def create_task(
     db: AsyncSession, 
     task_data: TaskCreate,
-    reward_id: Optional[UUID] = None
+    reward_id: Optional[UUID] = None,
+    user_id: Optional[UUID] = None
 ) -> Task:
-    """Create a new task."""
+    """Create a new task for a specific user."""
     data = task_data.model_dump()
     if reward_id:
         data["reward_id"] = reward_id
+    if user_id:
+        data["user_id"] = user_id
         
     task = Task(**data)
     db.add(task)
@@ -45,10 +51,13 @@ async def create_task(
 async def get_task(
     db: AsyncSession, 
     task_id: UUID, 
-    reward_id: Optional[UUID] = None
+    reward_id: Optional[UUID] = None,
+    user_id: Optional[UUID] = None
 ) -> Optional[Task]:
-    """Get a specific task."""
+    """Get a specific task by ID, user_id and optional reward_id."""
     query = select(Task).where(Task.id == task_id)
+    if user_id:
+        query = query.where(Task.user_id == user_id)
     if reward_id:
         query = query.where(Task.reward_id == reward_id)
         
@@ -60,14 +69,22 @@ async def update_task(
     db: AsyncSession, 
     task_id: UUID, 
     task_data: TaskUpdate,
-    reward_id: Optional[UUID] = None
+    reward_id: Optional[UUID] = None,
+    user_id: Optional[UUID] = None
 ) -> Optional[Task]:
     """Update a specific task."""
+    # Ensure task belongs to the user
+    task = await get_task(db, task_id, reward_id, user_id)
+    if not task:
+        return None
+
     update_data = task_data.model_dump(exclude_unset=True)
     if not update_data:
-        return await get_task(db, task_id, reward_id)
+        return task
         
     query = update(Task).where(Task.id == task_id)
+    if user_id:
+        query = query.where(Task.user_id == user_id)
     if reward_id:
         query = query.where(Task.reward_id == reward_id)
         
@@ -79,10 +96,13 @@ async def update_task(
 async def delete_task(
     db: AsyncSession, 
     task_id: UUID, 
-    reward_id: Optional[UUID] = None
+    reward_id: Optional[UUID] = None,
+    user_id: Optional[UUID] = None
 ) -> bool:
     """Delete a specific task."""
     query = delete(Task).where(Task.id == task_id)
+    if user_id:
+        query = query.where(Task.user_id == user_id)
     if reward_id:
         query = query.where(Task.reward_id == reward_id)
         
@@ -93,10 +113,11 @@ async def delete_task(
 async def complete_task(
     db: AsyncSession, 
     task_id: UUID,
-    reward_id: Optional[UUID] = None
+    reward_id: Optional[UUID] = None,
+    user_id: Optional[UUID] = None
 ) -> Optional[Task]:
-    """Complete a specific task."""
-    task = await get_task(db, task_id, reward_id)
+    """Complete a specific task and award points."""
+    task = await get_task(db, task_id, reward_id, user_id)
     if not task:
         return None
         
@@ -104,15 +125,17 @@ async def complete_task(
         return task
         
     # Create EARNED transaction
-    await transaction_service.create_transaction(
-        db,
-        TransactionCreate(
-            type=TransactionType.EARNED,
-            points=task.points,
-            description=f"Completed task: {task.title}",
-            task_id=task.id
+    if user_id:
+        await transaction_service.create_transaction(
+            db,
+            TransactionCreate(
+                type=TransactionType.EARNED,
+                points=task.points,
+                description=f"Completed task: {task.title}",
+                task_id=task.id
+            ),
+            user_id
         )
-    )
     
     task.completed = True
     task.completed_at = datetime.now()

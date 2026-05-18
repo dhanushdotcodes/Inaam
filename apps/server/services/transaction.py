@@ -1,4 +1,5 @@
 from typing import Sequence
+from uuid import UUID
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,18 +7,18 @@ from models.transaction import PointTransaction
 from schemas.transaction import TransactionCreate
 
 
-async def get_user_points(db: AsyncSession) -> int:
-    """Calculate the total points for the user (single user for now)."""
+async def get_user_points(db: AsyncSession, user_id: UUID) -> int:
+    """Calculate the total points for a specific user."""
     # Total points = sum of EARNED/BONUS - sum of SPENT/PENALTY
-    # But simpler: just sum all points where EARNED/BONUS are positive and SPENT/PENALTY are negative?
-    # Actually, the model doesn't store negative values, it uses TransactionType.
     
     # Let's sum EARNED + BONUS
     earned_query = select(func.sum(PointTransaction.points)).where(
+        PointTransaction.user_id == user_id,
         PointTransaction.type.in_(["EARNED", "BONUS"])
     )
     # Let's sum SPENT + PENALTY
     spent_query = select(func.sum(PointTransaction.points)).where(
+        PointTransaction.user_id == user_id,
         PointTransaction.type.in_(["SPENT", "PENALTY"])
     )
     
@@ -32,18 +33,25 @@ async def get_user_points(db: AsyncSession) -> int:
 
 async def create_transaction(
     db: AsyncSession, 
-    transaction_data: TransactionCreate
+    transaction_data: TransactionCreate,
+    user_id: UUID
 ) -> PointTransaction:
-    """Create a new point transaction."""
-    transaction = PointTransaction(**transaction_data.model_dump())
+    """Create a new point transaction for a specific user."""
+    data = transaction_data.model_dump()
+    data["user_id"] = user_id
+    transaction = PointTransaction(**data)
     db.add(transaction)
     await db.flush()
     await db.refresh(transaction)
     return transaction
 
 
-async def get_transactions(db: AsyncSession) -> Sequence[PointTransaction]:
-    """Get all point transactions."""
-    query = select(PointTransaction).order_by(PointTransaction.created_at.desc())
+async def get_transactions(db: AsyncSession, user_id: UUID) -> Sequence[PointTransaction]:
+    """Get all point transactions for a specific user."""
+    query = (
+        select(PointTransaction)
+        .where(PointTransaction.user_id == user_id)
+        .order_by(PointTransaction.created_at.desc())
+    )
     result = await db.execute(query)
     return result.scalars().all()
