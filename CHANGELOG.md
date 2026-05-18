@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Implemented **Undo Task Completion Feature** on the backend and frontend. Added `PATCH /tasks/{id}/incomplete` and `PATCH /rewards/{id}/task/{task_id}/incomplete` endpoints to revert completed standalone bounties and quest objectives.
+- Developed the **Uncomplete Task Service** to safely reset completion status, clear completion timestamps, and automatically delete the associated earned transaction to guarantee perfect point ledger consistency.
+- Introduced a lightweight, reactive **Zustand-based Toast Store** (`useToast.ts`) that manages real-time interactive notifications supporting custom action triggers.
+- Created an ultra-premium, glassmorphic **`ToastContainer` UI** utilizing Framer Motion (`motion/react`) with spring transitions, animated countdown progress bars, dismiss triggers, and interactive click-to-undo triggers.
+- Authored a comprehensive backend integration test suite (`tests/test_uncomplete_task.py`) covering complete/uncomplete actions for both standalone bounties and nested quest objectives.
 - Implemented the **Daily Bonus Points System** on the backend, awarding compounding threshold bonuses (+300 for 2,000 Pts, +500 for 3,000 Pts, +1,000 for 4,000 Pts, and +2,000 for 5,000 Pts).
 - Added dynamic timezone-aware calculation of daily earned points boundary utilizing client-passed timezone offsets.
 - Authored a comprehensive integration test suite (`tests/test_daily_bonuses.py`) validating compound milestone triggers, database isolation, and recursive infinite loop prevention.
@@ -32,13 +37,17 @@ and this project adheres to [Semantic Versioning](https://semver.org).
     - **`audit-styling-results.md`**: Detailed report on design system alignment.
     - **`audit-quality-results.md`**: Audit of code patterns and architectural integrity.
 - Introduced **`Sorting Logic`** section to the client documentation to formalize item ordering rules.
-
+ 
 ### Removed
 - Removed legacy key-based authentication (`verify_key`) from `services/auth.py` and key-based route branches from `/auth/login`.
 - Removed `SECRET_KEY` environment variable setting from Pydantic config model.
-
-
+ 
+ 
 ### Changed
+- Upgraded the client-side `useTasks` hook and `toggleComplete` logic to optimistically update completion states bidirectionally and trigger interactive success and reverted warning toasts.
+- Enhanced **`TaskItem.tsx`** to display the points badge directly inline next to the task title and render an animated, spinning/pulsing loading indicator inside the checkbox during flight.
+- Refactored **`ObjectiveItem.tsx`** to support full bidirectional toggle interaction with spinners and undo toast notifications.
+- Raised the global `ToastContainer` desktop positioning to `sm:bottom-24` (about 10% above the usual height) to clear navigation elements.
 - Refactored `reward`, `task`, and `transaction` service layers to strictly filter database operations by user ID.
 - Updated all API routes (`/rewards`, `/tasks`, `/points`) to inject the `get_current_user` dependency and enforce account boundaries.
 - Re-architected routing database transaction patterns from explicit `db.begin()` blocks to clean `await db.commit()` calls to prevent Session deadlock issues from pre-dependency queries.
