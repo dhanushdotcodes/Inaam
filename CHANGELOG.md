@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Implemented the **Daily Bonus Points System** on the backend, awarding compounding threshold bonuses (+300 for 2,000 Pts, +500 for 3,000 Pts, +1,000 for 4,000 Pts, and +2,000 for 5,000 Pts).
+- Added dynamic timezone-aware calculation of daily earned points boundary utilizing client-passed timezone offsets.
+- Authored a comprehensive integration test suite (`tests/test_daily_bonuses.py`) validating compound milestone triggers, database isolation, and recursive infinite loop prevention.
+- Developed a premium glassmorphic dashboard widget (`DailyBonusProgress.tsx`) featuring glowing gradient tracking, responsive milestone badges, micro-animations, and live update reactivity.
 - Implemented robust **Multi-User Data Separation** architecture on the FastAPI backend.
 - Added `user_id` foreign keys linking to the `users` table on `rewards`, `tasks`, and `point_transactions` SQL models with cascading deletes.
 - Created `get_current_user` JWT authentication dependency to extract claims and inject complete authenticated database User instances.

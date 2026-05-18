@@ -216,11 +216,12 @@ async def delete_reward_task(
 async def complete_reward_task(
     id: UUID, 
     task_id: UUID, 
+    tz_offset: int = 0,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Complete a specific task for a reward."""
-    task = await task_service.complete_task(db, task_id, reward_id=id, user_id=current_user.id)
+    task = await task_service.complete_task(db, task_id, reward_id=id, user_id=current_user.id, tz_offset=tz_offset)
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 

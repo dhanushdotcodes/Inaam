@@ -114,7 +114,8 @@ async def complete_task(
     db: AsyncSession, 
     task_id: UUID,
     reward_id: Optional[UUID] = None,
-    user_id: Optional[UUID] = None
+    user_id: Optional[UUID] = None,
+    tz_offset: int = 0
 ) -> Optional[Task]:
     """Complete a specific task and award points."""
     task = await get_task(db, task_id, reward_id, user_id)
@@ -135,6 +136,13 @@ async def complete_task(
                 task_id=task.id
             ),
             user_id
+        )
+        
+        # Check and award daily threshold bonuses
+        await transaction_service.check_and_award_daily_bonuses(
+            db=db,
+            user_id=user_id,
+            tz_offset=tz_offset
         )
     
     task.completed = True

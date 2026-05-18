@@ -6,6 +6,7 @@ import TaskFilters from "./components/TaskFilters";
 import TaskList from "./components/TaskList";
 import TaskFormDialog from "./dialogs/TaskFormDialog";
 import UnclaimedPoints from "@/components/tasks/components/UnclaimedPoints";
+import DailyBonusProgress from "@/components/tasks/components/DailyBonusProgress";
 
 import { useTasks } from "@/hooks/useTasks";
 import PageShell, { PageContent } from "@/components/layout/PageShell";
@@ -64,6 +65,7 @@ export default function TaskDashboard() {
 
         {!loading && !error && (
           <>
+            <DailyBonusProgress />
             <UnclaimedPoints tasks={tasks} />
 
             <TaskList 

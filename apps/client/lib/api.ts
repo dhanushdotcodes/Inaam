@@ -164,9 +164,10 @@ export async function completeTask(
   taskId: string,
   rewardId?: string | null
 ): Promise<Task> {
+  const tzOffset = -new Date().getTimezoneOffset();
   const path = rewardId 
-    ? `/rewards/${rewardId}/task/${taskId}/complete` 
-    : `/tasks/${taskId}/complete`;
+    ? `/rewards/${rewardId}/task/${taskId}/complete?tz_offset=${tzOffset}` 
+    : `/tasks/${taskId}/complete?tz_offset=${tzOffset}`;
   return apiFetch<Task>(path, {
     method: "PATCH",
   });

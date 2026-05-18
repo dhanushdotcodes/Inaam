@@ -61,11 +61,12 @@ async def update_independent_task(
 @router.patch("/{id}/complete", response_model=ApiResponse[TaskResponse])
 async def complete_independent_task(
     id: UUID, 
+    tz_offset: int = 0,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Complete a specific task for the current user."""
-    task = await task_service.complete_task(db, id, user_id=current_user.id)
+    task = await task_service.complete_task(db, id, user_id=current_user.id, tz_offset=tz_offset)
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
