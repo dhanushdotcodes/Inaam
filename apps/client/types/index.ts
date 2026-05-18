@@ -123,14 +123,29 @@ export interface RewardWithTasks extends Reward {
   tasksLoading: boolean;
 }
 
-/**
- * Login response from the auth endpoint.
- * Mirrors the backend `LoginResponse` schema from `apps/server/schemas/auth.py`.
- */
+export interface UserResponse {
+  id: string;
+  username: string;
+  email: string;
+}
+
+export interface UserSignupRequest {
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
 export interface LoginResponse {
   access_token: string;
   token_type: string;
+  user: UserResponse;
 }
+
 
 /**
  * Transaction Type.

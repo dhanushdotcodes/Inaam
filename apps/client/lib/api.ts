@@ -2,6 +2,9 @@ import { getToken } from "./auth";
 import type {
   ApiResponse,
   LoginResponse,
+  LoginRequest,
+  UserSignupRequest,
+  UserResponse,
   Reward,
   RewardCreatePayload,
   RewardUpdatePayload,
@@ -62,18 +65,17 @@ async function apiFetch<T>(
 }
 
 /**
- * Verify the secret key by calling the auth login endpoint.
- * Returns a LoginResponse with the JWT access token on success.
- * Throws an Error with the server's detail message on failure.
+ * Log in a user with email and password.
+ * Returns a LoginResponse with the access token and user info on success.
  */
-export async function verifyKey(key: string): Promise<LoginResponse> {
+export async function loginUser(payload: LoginRequest): Promise<LoginResponse> {
   const url = `${BASE_URL}${API_PREFIX}/auth/login`;
 
   const response = await fetch(url, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ key }),
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
@@ -81,11 +83,24 @@ export async function verifyKey(key: string): Promise<LoginResponse> {
     const message =
       errorBody?.detail ||
       errorBody?.message ||
-      `Verification failed with status ${response.status}`;
+      `Login failed with status ${response.status}`;
     throw new Error(message);
   }
 
   return response.json();
+}
+
+/**
+ * Register a new user with username, email, and password.
+ * Returns the created UserResponse on success.
+ */
+export async function signupUser(
+  payload: UserSignupRequest
+): Promise<UserResponse> {
+  return apiFetch<UserResponse>("/auth/signup", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 /**
