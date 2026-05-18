@@ -45,9 +45,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
  
 ### Changed
 - Upgraded the client-side `useTasks` hook and `toggleComplete` logic to optimistically update completion states bidirectionally and trigger interactive success and reverted warning toasts.
-- Enhanced **`TaskItem.tsx`** to display the points badge directly inline next to the task title and render an animated, spinning/pulsing loading indicator inside the checkbox during flight.
+- Enhanced **`TaskItem.tsx`** to render an animated, spinning/pulsing loading indicator inside the checkbox during in-flight toggle updates.
 - Refactored **`ObjectiveItem.tsx`** to support full bidirectional toggle interaction with spinners and undo toast notifications.
 - Raised the global `ToastContainer` desktop positioning to `sm:bottom-24` (about 10% above the usual height) to clear navigation elements.
+- Updated **`ToastContainer.tsx`** (`ToastItem`) to render points badges directly inline beside the toast completion message.
 - Refactored `reward`, `task`, and `transaction` service layers to strictly filter database operations by user ID.
 - Updated all API routes (`/rewards`, `/tasks`, `/points`) to inject the `get_current_user` dependency and enforce account boundaries.
 - Re-architected routing database transaction patterns from explicit `db.begin()` blocks to clean `await db.commit()` calls to prevent Session deadlock issues from pre-dependency queries.
