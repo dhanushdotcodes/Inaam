@@ -124,21 +124,16 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
 
           {/* Content Column (Title Hierarchy) */}
           <div className="flex-1 min-w-0 md:flex md:flex-col md:gap-0.5">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span
-                className={cn(
-                  "text-base font-bold transition-all tracking-tight leading-snug line-clamp-2",
-                  task.completed
-                    ? "text-muted-foreground line-through"
-                    : "text-foreground transition-colors"
-                )}
-              >
-                {task.title}
-              </span>
-              <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10 shrink-0 inline-flex items-center">
-                {task.points} Pts
-              </span>
-            </div>
+            <span
+              className={cn(
+                "text-base font-bold transition-all tracking-tight leading-snug line-clamp-2",
+                task.completed
+                  ? "text-muted-foreground line-through"
+                  : "text-foreground transition-colors"
+              )}
+            >
+              {task.title}
+            </span>
             {isObjective && rewardTitle && (
               <span className="text-xs font-medium text-neutral-400 tracking-tight block mt-0.5">
                 Quest: {rewardTitle}
@@ -153,6 +148,10 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           
           <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
             {isObjective ? "Objective" : "Bounty"}
+          </span>
+
+          <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
+            {task.points} Pts
           </span>
         </div>
         {/* 3. Actions Column */}

@@ -53,14 +53,16 @@ function ToastItem({ toast }: { toast: ToastType }) {
 
         {/* Message Content */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-foreground leading-snug tracking-tight">
-            {toast.message}
-          </p>
-          {toast.points !== undefined && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-500 dark:text-emerald-400 uppercase tracking-widest bg-emerald-500/5 px-2 py-0.5 rounded-full border border-emerald-500/10 mt-1.5">
-              +{toast.points} Pts
-            </span>
-          )}
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm font-bold text-foreground leading-snug tracking-tight">
+              {toast.message}
+            </p>
+            {toast.points !== undefined && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-500 dark:text-emerald-400 uppercase tracking-widest bg-emerald-500/5 px-2 py-0.5 rounded-full border border-emerald-500/10 shrink-0">
+                +{toast.points} Pts
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Action Button (e.g. Undo) */}
