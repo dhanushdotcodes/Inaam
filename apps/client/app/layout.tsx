@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
+import ToastContainer from "@/components/shared/ToastContainer";
 
 const boldonse = localFont({
   src: "../fonts/Boldonse/Boldonse-Regular.ttf",
@@ -45,6 +46,7 @@ export default function RootLayout({
           disableTransitionOnChange={false}
         >
           <ServiceWorkerRegistrar />
+          <ToastContainer />
           {children}
         </ThemeProvider>
       </body>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState, useMemo } from "react";
-import { getAllTasks, getRewards, completeTask, deleteTask } from "@/lib/api";
+import { getAllTasks, getRewards, completeTask, incompleteTask, deleteTask } from "@/lib/api";
 import type { Task, Reward } from "@/types";
 import { TaskDifficulty } from "@/types";
+import { useToast } from "@/hooks/useToast";
 
 type TaskFilter = "all" | "active" | "completed";
 
@@ -11,6 +12,7 @@ type TaskFilter = "all" | "active" | "completed";
  * Hook for managing tasks, filtering, and completion logic.
  */
 export function useTasks() {
+  const addToast = useToast((s) => s.addToast);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,23 +44,58 @@ export function useTasks() {
   }, [fetchTasks]);
 
   const toggleComplete = async (task: Task) => {
-    if (task.completed) return;
-    
+    const isCompleting = !task.completed;
     const originalTasks = [...tasks];
+    
     try {
       // Optimistic update
       setTasks((prev) => 
-        prev.map((t) => t.id === task.id ? { ...t, completed: true, completed_at: new Date().toISOString() } : t)
+        prev.map((t) => t.id === task.id ? { 
+          ...t, 
+          completed: isCompleting, 
+          completed_at: isCompleting ? new Date().toISOString() : null 
+        } : t)
       );
 
-      await completeTask(task.id, task.reward_id);
-      
-      // Dispatch refreshPoints event
-      window.dispatchEvent(new CustomEvent("refreshPoints"));
+      if (isCompleting) {
+        await completeTask(task.id, task.reward_id);
+        
+        // Dispatch refreshPoints event
+        window.dispatchEvent(new CustomEvent("refreshPoints"));
+
+        // Add success toast with Undo capability
+        addToast({
+          message: `Task completed!`,
+          type: "success",
+          points: task.points,
+          action: {
+            label: "Undo",
+            onClick: async () => {
+              await toggleComplete({ ...task, completed: true });
+            }
+          }
+        });
+      } else {
+        await incompleteTask(task.id, task.reward_id);
+        
+        // Dispatch refreshPoints event
+        window.dispatchEvent(new CustomEvent("refreshPoints"));
+
+        // Add warning / reverted toast
+        addToast({
+          message: `Task reverted to active.`,
+          type: "warning",
+        });
+      }
     } catch (err) {
       console.error("Toggle task error:", err);
       // Revert optimistic update
       setTasks(originalTasks);
+      
+      addToast({
+        message: `Failed to update task: ${err instanceof Error ? err.message : "unknown error"}`,
+        type: "error"
+      });
     }
   };
 

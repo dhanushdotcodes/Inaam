@@ -12,9 +12,10 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { updateTask, completeTask } from "@/lib/api";
+import { updateTask, completeTask, incompleteTask } from "@/lib/api";
 import type { Task } from "@/types";
 import { motion } from "motion/react";
+import { useToast } from "@/hooks/useToast";
 
 interface ObjectiveItemProps {
   rewardId: string;
@@ -35,17 +36,49 @@ export default function ObjectiveItem({
   const [isEditing, setIsEditing] = useState(false);
   const [editingTitle, setEditingTitle] = useState(task.title);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
+  const addToast = useToast((s) => s.addToast);
 
   const handleToggle = async () => {
-    if (task.completed) return; // Prevent un-completing for now as points were already awarded
+    if (isToggling) return;
+    const isCompleting = !task.completed;
 
+    setIsToggling(true);
     try {
-      const updated = await completeTask(task.id, rewardId);
-      onUpdate(updated);
-      // Dispatch refreshPoints event
-      window.dispatchEvent(new CustomEvent("refreshPoints"));
+      if (isCompleting) {
+        const updated = await completeTask(task.id, rewardId);
+        onUpdate(updated);
+        window.dispatchEvent(new CustomEvent("refreshPoints"));
+        
+        addToast({
+          message: `Objective completed!`,
+          type: "success",
+          points: task.points,
+          action: {
+            label: "Undo",
+            onClick: async () => {
+              await handleToggle();
+            }
+          }
+        });
+      } else {
+        const updated = await incompleteTask(task.id, rewardId);
+        onUpdate(updated);
+        window.dispatchEvent(new CustomEvent("refreshPoints"));
+        
+        addToast({
+          message: `Objective reverted to active.`,
+          type: "warning",
+        });
+      }
     } catch (err) {
-      console.error("Failed to complete objective:", err);
+      console.error("Failed to toggle objective:", err);
+      addToast({
+        message: `Failed to update objective: ${err instanceof Error ? err.message : "unknown error"}`,
+        type: "error"
+      });
+    } finally {
+      setIsToggling(false);
     }
   };
 
@@ -79,7 +112,14 @@ export default function ObjectiveItem({
         <div
           className="focus:outline-none shrink-0"
         >
-          {task.completed ? (
+          {isToggling ? (
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+            >
+              <Circle className="h-5 w-5 text-primary opacity-40 animate-pulse" />
+            </motion.div>
+          ) : task.completed ? (
             <CheckCircle2 className="h-5 w-5 text-emerald-500" />
           ) : (
             <Circle className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />

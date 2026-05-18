@@ -229,3 +229,21 @@ async def complete_reward_task(
         )
     await db.commit()
     return ApiResponse.success(data=task)
+
+
+@router.patch("/{id}/task/{task_id}/incomplete", response_model=ApiResponse[TaskResponse])
+async def uncomplete_reward_task(
+    id: UUID, 
+    task_id: UUID, 
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Uncomplete/revert a specific task for a reward."""
+    task = await task_service.uncomplete_task(db, task_id, reward_id=id, user_id=current_user.id)
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f"Task with id {task_id} not found for reward {id}"
+        )
+    await db.commit()
+    return ApiResponse.success(data=task)

@@ -6,6 +6,7 @@ from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.task import Task
+from models.transaction import PointTransaction
 from models.enums import TransactionType
 from schemas.task import TaskCreate, TaskUpdate
 from schemas.transaction import TransactionCreate
@@ -147,6 +148,36 @@ async def complete_task(
     
     task.completed = True
     task.completed_at = datetime.now()
+    await db.flush()
+    await db.refresh(task)
+    return task
+
+
+async def uncomplete_task(
+    db: AsyncSession, 
+    task_id: UUID,
+    reward_id: Optional[UUID] = None,
+    user_id: Optional[UUID] = None
+) -> Optional[Task]:
+    """Uncomplete/revert a completed task and deduct points by deleting the EARNED transaction."""
+    task = await get_task(db, task_id, reward_id, user_id)
+    if not task:
+        return None
+        
+    if not task.completed:
+        return task
+        
+    # Delete the associated EARNED transaction
+    if user_id:
+        delete_query = delete(PointTransaction).where(
+            PointTransaction.user_id == user_id,
+            PointTransaction.task_id == task_id,
+            PointTransaction.type == TransactionType.EARNED
+        )
+        await db.execute(delete_query)
+        
+    task.completed = False
+    task.completed_at = None
     await db.flush()
     await db.refresh(task)
     return task

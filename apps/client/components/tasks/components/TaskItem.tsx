@@ -11,7 +11,7 @@ import { AlertDialog } from "@/components/ui/alert-dialog";
 interface TaskItemProps {
   task: Task;
   rewardTitle: string | null;
-  onToggle: (task: Task) => void;
+  onToggle: (task: Task) => void | Promise<void>;
   onDelete: (task: Task) => Promise<void>;
 }
 
@@ -57,6 +57,7 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
 
   const isObjective = task.reward_id !== null;
   const hasDescription = !!task.description?.trim();
@@ -82,7 +83,17 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           // Completion/Inactive state
           task.completed && "opacity-60 bg-muted/20 shadow-none border-border/50"
         )}
-        onClick={() => onToggle(task)}
+        onClick={async () => {
+          if (isToggling) return;
+          setIsToggling(true);
+          try {
+            await onToggle(task);
+          } catch (err) {
+            console.error("Task toggle failed:", err);
+          } finally {
+            setIsToggling(false);
+          }
+        }}
       >
         {/* 1. Selection & Content (Grouped together on mobile, split inside grid on desktop) */}
         <div className="flex items-center gap-3 md:contents">
@@ -90,7 +101,16 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           {/* Selection Column (Checkbox primitive) */}
           <div className="flex items-center justify-center shrink-0 w-10 h-10 select-none">
             <div className="focus:outline-none shrink-0">
-              {task.completed ? (
+              {isToggling ? (
+                <div className="p-1 rounded-full bg-muted border border-border text-primary flex items-center justify-center">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+                  >
+                    <Circle className="size-6 stroke-[2px] opacity-40 animate-pulse text-primary" />
+                  </motion.div>
+                </div>
+              ) : task.completed ? (
                 <div className="p-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 transition-colors">
                   <CheckCircle2 className="size-6 stroke-[2px]" />
                 </div>
@@ -104,16 +124,21 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
 
           {/* Content Column (Title Hierarchy) */}
           <div className="flex-1 min-w-0 md:flex md:flex-col md:gap-0.5">
-            <span
-              className={cn(
-                "text-base font-bold transition-all tracking-tight leading-snug line-clamp-2",
-                task.completed
-                  ? "text-muted-foreground line-through"
-                  : "text-foreground transition-colors"
-              )}
-            >
-              {task.title}
-            </span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span
+                className={cn(
+                  "text-base font-bold transition-all tracking-tight leading-snug line-clamp-2",
+                  task.completed
+                    ? "text-muted-foreground line-through"
+                    : "text-foreground transition-colors"
+                )}
+              >
+                {task.title}
+              </span>
+              <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10 shrink-0 inline-flex items-center">
+                {task.points} Pts
+              </span>
+            </div>
             {isObjective && rewardTitle && (
               <span className="text-xs font-medium text-neutral-400 tracking-tight block mt-0.5">
                 Quest: {rewardTitle}
@@ -128,10 +153,6 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           
           <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
             {isObjective ? "Objective" : "Bounty"}
-          </span>
- 
-          <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
-            {task.points} Pts
           </span>
         </div>
         {/* 3. Actions Column */}

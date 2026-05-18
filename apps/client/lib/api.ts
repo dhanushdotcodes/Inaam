@@ -174,6 +174,21 @@ export async function completeTask(
 }
 
 /**
+ * Uncomplete/revert a specific task.
+ */
+export async function incompleteTask(
+  taskId: string,
+  rewardId?: string | null
+): Promise<Task> {
+  const path = rewardId 
+    ? `/rewards/${rewardId}/task/${taskId}/incomplete` 
+    : `/tasks/${taskId}/incomplete`;
+  return apiFetch<Task>(path, {
+    method: "PATCH",
+  });
+}
+
+/**
  * Delete a specific task.
  */
 export async function deleteTask(

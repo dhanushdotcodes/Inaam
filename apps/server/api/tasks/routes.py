@@ -76,6 +76,23 @@ async def complete_independent_task(
     return ApiResponse.success(data=task)
 
 
+@router.patch("/{id}/incomplete", response_model=ApiResponse[TaskResponse])
+async def uncomplete_independent_task(
+    id: UUID, 
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Uncomplete/revert a specific task for the current user."""
+    task = await task_service.uncomplete_task(db, id, user_id=current_user.id)
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f"Task with id {id} not found"
+        )
+    await db.commit()
+    return ApiResponse.success(data=task)
+
+
 @router.delete("/{id}", response_model=ApiResponse[bool])
 async def delete_independent_task(
     id: UUID, 
