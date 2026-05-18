@@ -5,7 +5,8 @@
 Inaam helps me unlock rewards by completing a list of associated tasks in a simple and installable web application.
 
 ## Core Modules
-- Authentication Management - Password based access using a stored hashed password.
+- Authentication Management - Multi-user signup and password-based access using JWT session tokens and secure bcrypt hashing.
+- Multi-User Data Separation - Strict account isolation gating rewards, tasks, and ledger transactions, ensuring users only access their own data.
 - Reward Management - Add, Edit, Delete Quests (task-based) and Prizes (economy-based).
 - Task Management - Add, Edit, Delete Bounties (independent) and Objectives (linked to Quests).
 - Progress Tracking - Track completion percentage and Quest eligibility.
@@ -17,13 +18,15 @@ Inaam helps me unlock rewards by completing a list of associated tasks in a simp
 - Successfully creating and completing Bounties and Objectives.
 - Correct calculation of Quest progress percentage.
 - Correctly identifying claimable Quests after Objective completion.
+- Complete multi-user data isolation where no account can read or write another account's resources.
 - Containerisation and successful deployment of the application.
 - Successful generation of fake data for testing purposes using faker.js.
 
 ## User Flow
 
 ### Core loop
-- User enters the password to access the application.
+- User registers a new account or enters credentials to sign in.
+- Application issues a JWT access token for secure session management.
 - User creates a Quest or a Prize.
 - User adds Objectives to a Quest or completes Bounties for points.
 - User completes tasks progressively.
@@ -42,3 +45,4 @@ Inaam helps me unlock rewards by completing a list of associated tasks in a simp
 | **M6** | Configuring the application as a PWA with installable support and responsive layouts. |
 | **M7** | Implementing faker.js scripts and Docker Compose setup for local development and testing. |
 | **M8** | Writing integration tests using pytest and TestClient for all APIs and flows. |
+| **M9** | Re-architecting database models, services, and API layers to support robust multi-user isolation with schema migration. |

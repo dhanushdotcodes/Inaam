@@ -21,6 +21,7 @@
 | Column | Type | Notes | Description |
 | :--- | :--- | :--- | :--- |
 | id | uuid | Primary Key | Unique identifier for the reward |
+| user_id | uuid | Foreign Key, Non-Nullable, Cascade | Link to owner user (users.id) |
 | title | varchar | | Reward Title |
 | description | varchar | Optional | Reward description |
 | reward_type | varchar | Enum: QUEST, PRIZE | Type of reward unlock logic |
@@ -36,6 +37,7 @@
 | Column | Type | Notes | Description |
 | :--- | :--- | :--- | :--- |
 | id | uuid | Primary Key | Unique identifier for the task |
+| user_id | uuid | Foreign Key, Non-Nullable, Cascade | Link to owner user (users.id) |
 | title | varchar | | Task Title |
 | description | varchar | Optional | Task description |
 | task_type | varchar | Enum: BOUNTY, OBJECTIVE | Type of task (independent vs linked) |
@@ -54,6 +56,7 @@
 | Column | Type | Notes | Description |
 | :--- | :--- | :--- | :--- |
 | id | uuid | Primary Key | Unique identifier |
+| user_id | uuid | Foreign Key, Non-Nullable, Cascade | Link to owner user (users.id) |
 | type | varchar | Enum: EARNED, SPENT, BONUS, PENALTY | Transaction type |
 | points | integer | | Number of points |
 | task_id | uuid | Foreign Key, Nullable | Associated task |
