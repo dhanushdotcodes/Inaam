@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
-- Created four specialized documentation and audit skills:
+- Implemented user signup endpoint `POST /api/v1/auth/signup` supporting username, email, and password validation.
+- Implemented email-based user login endpoint `POST /api/v1/auth/login` returning a JWT access token and user profile details.
+- Integrated `bcrypt` library for cryptographically secure password hashing and verification.
+- Added a full suite of API integration tests in `tests/auth/test_routes.py` validating successful signup, duplicate username/email detection, invalid field constraints, and successful/failed login flows against the live database.
+- Created specialized documentation and audit skills:
     - **`doc-client-components`**: Maps component hierarchies and data flow using Mermaid diagrams.
     - **`audit-styling`**: Audits the UI for inconsistencies against design guidelines.
     - **`audit-code-quality`**: Identifies DRY and KISS violations and structural technical debt.
@@ -19,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
     - **`audit-styling-results.md`**: Detailed report on design system alignment.
     - **`audit-quality-results.md`**: Audit of code patterns and architectural integrity.
 - Introduced **`Sorting Logic`** section to the client documentation to formalize item ordering rules.
+
+### Removed
+- Removed legacy key-based authentication (`verify_key`) from `services/auth.py` and key-based route branches from `/auth/login`.
+- Removed `SECRET_KEY` environment variable setting from Pydantic config model.
+
 
 ### Changed
 - Removed redundant Active/Completed capsules from **`TaskItem`** to streamline visual information hierarchy, utilizing distinct completed states (green checked circle, muted line-through titles, opacity reduction).
