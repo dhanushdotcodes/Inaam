@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Completely refactored the **`TaskItem`** UI to utilize a unified Chevron accordion trigger instead of a dropdown menu, housing task descriptions, recurrence badges, and Edit/Delete controls within the expanded state.
 - Enhanced **`TaskItem`** responsive design for mobile devices, hiding desktop metadata columns and repositioning the action chevron seamlessly inline with the task title.
 - Increased vertical spacing in **`TaskList`** (`gap-6`) to provide better visual separation between individual task cards.
+- Added an auto-close effect to **`TaskItem`** that gracefully collapses the expanded accordion state whenever a task is marked as completed.
 - Upgraded the client-side `useTasks` hook and `toggleComplete` logic to optimistically update completion states bidirectionally and trigger interactive success and reverted warning toasts.
 - Enhanced **`TaskItem.tsx`** to render an animated, spinning/pulsing loading indicator inside the checkbox during in-flight toggle updates.
 - Refactored **`ObjectiveItem.tsx`** to support full bidirectional toggle interaction with spinners and undo toast notifications.

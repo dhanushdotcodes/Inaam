@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CheckCircle2, Circle, ChevronDown, Trash2, Repeat, Pencil } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -60,6 +60,12 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
   const [isDeleting, setIsDeleting] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (task.completed) {
+      setIsExpanded(false);
+    }
+  }, [task.completed]);
 
   const isObjective = task.reward_id !== null;
   const hasDescription = !!task.description?.trim();
