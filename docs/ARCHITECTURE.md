@@ -22,15 +22,18 @@
 │   │   ├── tests/              # Backend test suite
 │   │   └── main.py             # FastAPI entry point
 │   └── client/
-│       ├── app/                # Next.js App Router (pages and layouts)
+│       ├── app/                # Next.js App Router (pages, layouts, and style globals)
 │       ├── components/         # Reusable React components
-│       │   ├── rewards/        # Feature-specific modular components
-│       │   │   ├── dialogs/    # Modals and popups
-│       │   │   └── tasks/      # Granular sub-components
-│       │   ├── ui/             # Base UI primitives (buttons, inputs)
-│       │   └── shared/         # Shared feature components
+│       │   ├── auth/           # Login/Signup/Auth forms and portals
+│       │   ├── layout/         # Sidebar, Navbar, and layout wrappers
+│       │   ├── rewards/        # Rewards dashboards and related modular subfolders
+│       │   │   ├── components/ # Reward cards, items, list sub-components
+│       │   │   └── dialogs/    # Reward edit, create and claim dialogs
+│       │   ├── tasks/          # Tasks dashboard, list, item, and task dialog components
+│       │   ├── shared/         # Shared general components (like DropdownMenu)
+│       │   └── ui/             # Shadcn/base primitives (Button, Dialog, Input, etc.)
 │       ├── lib/                # Utility functions and API clients (apiFetch)
-│       ├── public/             # Static assets (images, fonts, etc.)
+│       ├── public/             # Static assets (images, fonts, manifest, etc.)
 │       └── types/              # TypeScript type definitions
 ├── docs/                       # Project documentation
 ├── infra/                      # Infrastructure and Docker configuration

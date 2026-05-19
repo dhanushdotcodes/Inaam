@@ -2,25 +2,52 @@
 
 ## Inaam
 
-Inaam helps me unlock rewards by completing a list of associated tasks in a simple and installable web application.
+A lightweight Progressive Web Application (PWA) designed for managing bounty-based prize rewards and opening objective-linked quests.
 
 ## Core Modules
 - Authentication Management - Multi-user signup and password-based access using JWT session tokens and secure bcrypt hashing.
 - Multi-User Data Separation - Strict account isolation gating rewards, tasks, and ledger transactions, ensuring users only access their own data.
 - Reward Management - Add, Edit, Delete Quests (task-based) and Prizes (economy-based).
-- Task Management - Add, Edit, Delete Bounties (independent) and Objectives (linked to Quests).
+- Task Management - Add, Edit, Delete Bounties (independent, with support for daily/weekly recurrence) and Objectives (linked to Quests).
 - Progress Tracking - Track completion percentage and Quest eligibility.
-- Points Tracking - Earn points from Bounties and Objectives to spend on Prizes.
+- Points Tracking - Earn points from Bounties and Objectives, including compounding daily milestone bonuses, to spend on Prizes.
 - PWA Support - Installable mobile-friendly application experience.
 
 ## Success Metrics
 - Successfully creating and managing Quests and Prizes.
 - Successfully creating and completing Bounties and Objectives.
+- Accurate handling of recurring tasks (resetting completion status based on defined days).
 - Correct calculation of Quest progress percentage.
 - Correctly identifying claimable Quests after Objective completion.
 - Complete multi-user data isolation where no account can read or write another account's resources.
+- Awarding compounding daily milestone bonuses correctly upon task completion.
+- Reverting points and milestone bonuses accurately when undoing task completion.
 - Containerisation and successful deployment of the application.
 - Successful generation of fake data for testing purposes using faker.js.
+
+## Core Principles & Gamification Rules
+
+### Compounding Daily Bonus Milestones
+To drive daily engagement, users earn extra bonus points for crossing specific thresholds of base points earned in a single day:
+- **2,000 Points**: +300 bonus points
+- **3,000 Points**: +500 bonus points
+- **4,000 Points**: +1,000 bonus points
+- **5,000 Points**: +2,000 bonus points
+These bonuses are compounding. For example, earning 5,000 points in a single day rewards a total of 3,800 bonus points (+300 + 500 + 1,000 + 2,000). The bonus points themselves do not count towards the earned point thresholds.
+
+### Task Undo (Uncompletion)
+Users can mark a completed task as incomplete (undo). This will:
+- Revert the task status to incomplete.
+- Deduct the points originally earned for completing the task.
+- Deduct any daily milestone bonuses that were unlocked as a result of those points.
+
+### Recurrence Rules
+Bounties can be configured as recurring tasks by specifying the days of the week they should reset. The server automatically checks and resets these tasks based on the user's local timezone.
+
+### Focus-Oriented Sorting Rules
+To help users focus on active goals, the UI enforces the following sorting rules:
+- **Tasks**: Uncompleted tasks are pinned to the top (sorted by creation date, latest first). Completed tasks are pushed to the bottom (sorted by completion date, latest first).
+- **Rewards**: Available/unclaimed rewards are prioritized at the top (sorted by creation date, latest first). Claimed rewards are pushed to the bottom (sorted by claim date, latest first).
 
 ## User Flow
 
