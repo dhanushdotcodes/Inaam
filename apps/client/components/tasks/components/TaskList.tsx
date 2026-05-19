@@ -61,7 +61,7 @@ export default function TaskList({ tasks, rewards, onToggle, onDelete, filter }:
         initial="hidden"
         animate="visible"
         exit="exit"
-        className="grid gap-4 w-full relative"
+        className="grid gap-6 w-full relative"
       >
         {sortedTasks.length > 0 ? (
           sortedTasks.map((task) => (

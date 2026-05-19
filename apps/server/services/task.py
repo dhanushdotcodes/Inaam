@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Optional, Sequence
+from datetime import datetime, timezone, timedelta, time
+from typing import Optional, Sequence, List
 from uuid import UUID
 
 from sqlalchemy import select, update, delete
@@ -16,9 +16,11 @@ from services import transaction as transaction_service
 async def get_tasks(
     db: AsyncSession, 
     reward_id: Optional[UUID] = None,
-    user_id: Optional[UUID] = None
+    user_id: Optional[UUID] = None,
+    tz_offset: int = 0,
+    filter_active_today: bool = False
 ) -> Sequence[Task]:
-    """Get all tasks for a specific user, optionally filtered by reward_id."""
+    """Get all tasks for a specific user, optionally filtered by reward_id and active_today."""
     query = select(Task)
     if user_id:
         query = query.where(Task.user_id == user_id)
@@ -26,7 +28,46 @@ async def get_tasks(
         query = query.where(Task.reward_id == reward_id)
         
     result = await db.execute(query)
-    return result.scalars().all()
+    tasks = result.scalars().all()
+    
+    # Timezone-aware local day boundary logic
+    now_utc = datetime.now(timezone.utc)
+    local_tz = timezone(timedelta(minutes=tz_offset))
+    local_now = now_utc.astimezone(local_tz)
+    local_today = local_now.date()
+    local_start_dt = datetime.combine(local_today, time.min, tzinfo=local_tz)
+    
+    # Python weekday: Mon=0, Sun=6
+    today_weekday = str(local_today.weekday())
+    
+    final_tasks: List[Task] = []
+    
+    for task in tasks:
+        # Check if it's a bounty (reward_id is None) and recurring
+        is_recurring_bounty = task.reward_id is None and task.is_recurring and task.recurrence_days
+        
+        # Self-healing reset: If completed before today's local start, uncomplete it
+        if is_recurring_bounty and task.completed and task.completed_at:
+            if task.completed_at < local_start_dt:
+                task.completed = False
+                task.completed_at = None
+                db.add(task)
+        
+        # Compute active_today
+        if is_recurring_bounty:
+            task.active_today = today_weekday in [d.strip() for d in task.recurrence_days.split(",")]
+        else:
+            task.active_today = True
+            
+        # Filter logic for main dashboard
+        if filter_active_today:
+            # Show if active today OR if completed today (even if not active today, just in case)
+            if task.active_today or (task.completed and task.completed_at and task.completed_at >= local_start_dt):
+                final_tasks.append(task)
+        else:
+            final_tasks.append(task)
+            
+    return final_tasks
 
 
 async def create_task(

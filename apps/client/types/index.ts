@@ -64,6 +64,9 @@ export interface Task {
   completed: boolean;
   completed_at: string | null;
   reward_id: string | null;
+  is_recurring: boolean;
+  recurrence_days: string | null;
+  active_today?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -89,6 +92,8 @@ export interface TaskCreatePayload {
   difficulty?: TaskDifficulty;
   points?: number;
   reward_id?: string | null;
+  is_recurring?: boolean;
+  recurrence_days?: string | null;
 }
 
 /**
@@ -113,6 +118,8 @@ export interface TaskUpdatePayload {
   points?: number;
   completed?: boolean;
   reward_id?: string | null;
+  is_recurring?: boolean;
+  recurrence_days?: string | null;
 }
 
 /**

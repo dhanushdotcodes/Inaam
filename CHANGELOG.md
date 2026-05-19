@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Implemented **Weekly Recurring Bounties** allowing tasks to repeat automatically on specific days of the week.
+- Extended backend `tasks` database schema with `is_recurring` and `recurrence_days` columns, alongside Alembic migrations.
+- Introduced timezone-aware "self-healing" reset mechanism in the backend `get_tasks` service that dynamically computes and uncompletes recurring bounties based on the client's local `tz_offset`, avoiding complex background cron jobs.
+- Added a premium circular weekday selector toggle to the `TaskFormDialog` for intuitive recurrence scheduling.
 - Implemented **Undo Task Completion Feature** on the backend and frontend. Added `PATCH /tasks/{id}/incomplete` and `PATCH /rewards/{id}/task/{task_id}/incomplete` endpoints to revert completed standalone bounties and quest objectives.
 - Developed the **Uncomplete Task Service** to safely reset completion status, clear completion timestamps, and automatically delete the associated earned transaction to guarantee perfect point ledger consistency.
 - Introduced a lightweight, reactive **Zustand-based Toast Store** (`useToast.ts`) that manages real-time interactive notifications supporting custom action triggers.
@@ -44,6 +48,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
  
  
 ### Changed
+- Upgraded the client-side `getAllTasks()` API call to automatically inject the browser's local timezone offset for accurate recurring task resets.
+- Completely refactored the **`TaskItem`** UI to utilize a unified Chevron accordion trigger instead of a dropdown menu, housing task descriptions, recurrence badges, and Edit/Delete controls within the expanded state.
+- Enhanced **`TaskItem`** responsive design for mobile devices, hiding desktop metadata columns and repositioning the action chevron seamlessly inline with the task title.
+- Increased vertical spacing in **`TaskList`** (`gap-6`) to provide better visual separation between individual task cards.
 - Upgraded the client-side `useTasks` hook and `toggleComplete` logic to optimistically update completion states bidirectionally and trigger interactive success and reverted warning toasts.
 - Enhanced **`TaskItem.tsx`** to render an animated, spinning/pulsing loading indicator inside the checkbox during in-flight toggle updates.
 - Refactored **`ObjectiveItem.tsx`** to support full bidirectional toggle interaction with spinners and undo toast notifications.

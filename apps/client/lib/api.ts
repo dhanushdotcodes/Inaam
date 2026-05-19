@@ -107,7 +107,8 @@ export async function signupUser(
  * Fetch all tasks across all rewards.
  */
 export async function getAllTasks(): Promise<Task[]> {
-  return apiFetch<Task[]>("/tasks");
+  const tzOffset = -new Date().getTimezoneOffset();
+  return apiFetch<Task[]>(`/tasks?tz_offset=${tzOffset}`);
 }
 
 /**

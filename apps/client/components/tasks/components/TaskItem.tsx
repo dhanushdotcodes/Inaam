@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { CheckCircle2, Circle, ChevronDown, Trash2 } from "lucide-react";
+import { CheckCircle2, Circle, ChevronDown, Trash2, Repeat, Pencil } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import type { Task } from "@/types";
 import DifficultyBadge from "./DifficultyBadge";
 import { AlertDialog } from "@/components/ui/alert-dialog";
+import TaskFormDialog from "../dialogs/TaskFormDialog";
 
 interface TaskItemProps {
   task: Task;
@@ -58,9 +59,23 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const isObjective = task.reward_id !== null;
   const hasDescription = !!task.description?.trim();
+  
+  const formatRecurrenceDays = (daysStr: string | null) => {
+    if (!daysStr) return null;
+    const daysArr = daysStr.split(",").map(Number).sort((a,b) => a-b);
+    if (daysArr.length === 7) return "Everyday";
+    if (daysArr.length === 5 && daysArr.every((d, i) => d === i)) return "Weekdays";
+    if (daysArr.length === 2 && daysArr.includes(5) && daysArr.includes(6)) return "Weekends";
+    
+    const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    return daysArr.map(d => dayNames[d]).join(", ");
+  };
+
+  const recurrenceText = task.is_recurring ? formatRecurrenceDays(task.recurrence_days) : null;
   
   return (
     <div className="relative w-full">
@@ -141,9 +156,32 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
             )}
           </div>
 
+          {/* Mobile Actions (Hidden on Desktop) */}
+          <div className="flex md:hidden shrink-0">
+            {!task.completed && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsExpanded(!isExpanded);
+                }}
+                className={cn(
+                  "h-7 w-7 rounded-xl border border-border bg-card hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-all duration-300 outline-none cursor-pointer",
+                  isExpanded && "bg-muted text-primary border-primary/20"
+                )}
+                title={isExpanded ? "Collapse Details" : "Expand Details"}
+              >
+                <ChevronDown className={cn(
+                  "size-3.5 transition-transform duration-300",
+                  isExpanded && "rotate-180 text-primary"
+                )} />
+              </button>
+            )}
+          </div>
+
         </div>
         {/* 2. Metadata Column (Difficulty badge, Reward Tag, and Quest association) */}
-        <div className="flex items-center gap-2 flex-wrap md:w-55 md:shrink-0 md:justify-start md:pl-0 pl-13">
+        <div className="hidden md:flex items-center gap-2 flex-wrap md:w-55 md:shrink-0 md:justify-start md:pl-0 pl-13">
           <DifficultyBadge difficulty={task.difficulty} />
           
           <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
@@ -155,24 +193,8 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           </span>
         </div>
         {/* 3. Actions Column */}
-        <div className="flex items-center gap-2 md:w-20 md:justify-end md:pl-0 pl-13 md:shrink-0">
-          {/* Delete Action Button (Circular & Premium, hidden for completed tasks) */}
+        <div className="hidden md:flex items-center gap-2 md:w-20 md:justify-end md:shrink-0">
           {!task.completed && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent completing the task
-                setIsDeleteDialogOpen(true);
-              }}
-              className="h-7 w-7 rounded-xl border border-destructive/20 bg-destructive/5 hover:bg-destructive text-destructive hover:text-white flex items-center justify-center transition-all duration-300 outline-none cursor-pointer shrink-0"
-              title={`Delete ${isObjective ? "Objective" : "Bounty"}`}
-            >
-              <Trash2 className="size-3.5" />
-            </button>
-          )}
- 
-          {/* Chevron Accordion Trigger Button (Only rendered if description exists) */}
-          {hasDescription && (
             <button
               type="button"
               onClick={(e) => {
@@ -193,9 +215,9 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           )}
         </div>
 
-        {/* 4. Description Accordion Container (Only visible if task has description) */}
+        {/* 4. Description Accordion Container */}
         <AnimatePresence initial={false}>
-          {isExpanded && hasDescription && (
+          {isExpanded && (
             <motion.div
               key="description-accordion"
               initial={{ height: 0, opacity: 0 }}
@@ -224,13 +246,66 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
                 }
               }}
               // Outer container: ZERO padding, margins, or borders! Only col-span-full and overflow-hidden.
-              className="col-span-full overflow-hidden"
+              className="col-span-full overflow-hidden pb-2"
             >
               {/* Inner container: holds the background, border, padding, and negative margins to align with card boundary */}
-              <div className="border-t border-border/60 bg-muted/10 -mx-4 -mb-4 mt-1.5 p-3 md:-mx-6 md:-mb-4 md:mt-2 md:px-6 md:py-2.5 md:pl-16 rounded-b-[24px]">
-                <p className="text-xs leading-relaxed text-muted-foreground font-medium whitespace-pre-wrap">
-                  {task.description}
-                </p>
+              <div className="border-t border-border/60 bg-muted/10 -mx-4 -mb-4 mt-1.5 p-3 md:-mx-6 md:-mb-4 md:mt-2 md:px-6 md:py-3 md:pl-16 rounded-b-[24px]">
+                {/* Mobile Metadata (Hidden on Desktop) */}
+                <div className="flex md:hidden items-center gap-2 flex-wrap mb-3">
+                  <DifficultyBadge difficulty={task.difficulty} />
+                  <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
+                    {isObjective ? "Objective" : "Bounty"}
+                  </span>
+                  <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
+                    {task.points} Pts
+                  </span>
+                </div>
+
+                {hasDescription && (
+                  <p className="text-xs leading-relaxed text-muted-foreground font-medium whitespace-pre-wrap mb-4">
+                    {task.description}
+                  </p>
+                )}
+                
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    {recurrenceText && (
+                      <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-violet-500/10 border-violet-500/20 text-violet-600 dark:text-violet-400 gap-1">
+                        <Repeat className="w-3 h-3" />
+                        {recurrenceText}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    {!task.completed && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsEditDialogOpen(true);
+                          }}
+                          className="h-7 px-3 rounded-xl border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-all duration-300 outline-none cursor-pointer text-xs font-semibold gap-1.5"
+                        >
+                          <Pencil className="size-3" />
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsDeleteDialogOpen(true);
+                          }}
+                          className="h-7 px-3 rounded-xl border border-destructive/20 bg-destructive/5 hover:bg-destructive text-destructive hover:text-white flex items-center justify-center transition-all duration-300 outline-none cursor-pointer text-xs font-semibold gap-1.5"
+                        >
+                          <Trash2 className="size-3" />
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
@@ -261,6 +336,12 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
             setIsDeleting(false);
           }
         }}
+      />
+      <TaskFormDialog 
+        open={isEditDialogOpen} 
+        onOpenChange={setIsEditDialogOpen} 
+        initialData={task} 
+        onSuccess={() => window.location.reload()} 
       />
     </div>
   );

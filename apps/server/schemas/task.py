@@ -12,6 +12,8 @@ class TaskBase(BaseModel):
     task_type: TaskType = Field(default=TaskType.BOUNTY)
     difficulty: TaskDifficulty = Field(default=TaskDifficulty.MEDIUM)
     points: int = Field(default=0, ge=0)
+    is_recurring: bool = Field(default=False)
+    recurrence_days: Optional[str] = Field(None, max_length=255)
 
 
 class TaskCreate(TaskBase):
@@ -27,6 +29,8 @@ class TaskUpdate(BaseModel):
     completed: Optional[bool] = None
     completed_at: Optional[datetime] = None
     reward_id: Optional[UUID] = None
+    is_recurring: Optional[bool] = None
+    recurrence_days: Optional[str] = Field(None, max_length=255)
 
 
 class TaskResponse(TaskBase):
@@ -36,5 +40,6 @@ class TaskResponse(TaskBase):
     reward_id: Optional[UUID]
     created_at: datetime
     updated_at: datetime
+    active_today: Optional[bool] = None
 
     model_config = ConfigDict(from_attributes=True)

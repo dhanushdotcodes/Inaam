@@ -28,6 +28,10 @@ class Task(Base, TimestampMixin):
     completed: Mapped[bool] = mapped_column(default=False)
     completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     reward_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("rewards.id", ondelete="CASCADE"), nullable=True)
+    
+    # Recurring Bounty Fields
+    is_recurring: Mapped[bool] = mapped_column(default=False)
+    recurrence_days: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     # Relationships
     user: Mapped["User"] = relationship()

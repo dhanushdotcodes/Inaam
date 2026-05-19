@@ -20,11 +20,13 @@ router = APIRouter(
 
 @router.get("", response_model=ApiResponse[List[TaskResponse]])
 async def list_all_tasks(
+    tz_offset: int = 0,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Get all tasks across all rewards for the current user."""
-    tasks = await task_service.get_tasks(db, user_id=current_user.id)
+    tasks = await task_service.get_tasks(db, user_id=current_user.id, tz_offset=tz_offset, filter_active_today=True)
+    await db.commit()  # Save any auto-reset changes
     return ApiResponse.success(data=tasks)
 
 
