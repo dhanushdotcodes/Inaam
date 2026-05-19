@@ -75,6 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 - Added `min-h-0` to the primary dashboard layout container to prevent layout overflow issues and ensure smooth scrolling.
 - Replaced the deprecated `.context/dashboard-context.md` with the more comprehensive `client-context.md`.
+- Resolved database migration `IntegrityError` when adding the `is_recurring` column to pre-existing tables by dividing the schema change into three steps: adding the column as nullable, backfilling existing rows to `False`, and altering the column to `NOT NULL`.
 
 
 
