@@ -46,6 +46,8 @@
 | completed | boolean | | Task completion status |
 | completed_at | timestamp | Optional | When the task was completed |
 | reward_id | uuid | Foreign Key, Nullable | Link to parent Quest |
+| is_recurring | boolean | Default: false, Non-Nullable | Whether the task is recurring |
+| recurrence_days | varchar | Optional | Days of the week task repeats (e.g., '0,2,4' for Mon,Wed,Fri) |
 | created_at | timestamp | | Creation timestamp |
 | updated_at | timestamp | | Last update timestamp |
 
