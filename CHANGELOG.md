@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
  
  
 ### Changed
+- Refactored **`DailyBonusProgress`** dashboard component: replaced static milestone cards below the progress bar with interactive hover tooltips on desktop screens and a responsive, full-width toggle dropdown button on mobile screens.
 - Updated the root `README.md` to reference active screenshots in `docs/public/` and documented the full tech stack, developer profiles, and local run/test commands.
 - Refined `docs/PRD.md` with core product and gamification principles (task recurrence, compounding daily milestone bonuses, task undo, sorting rules).
 - Standardized `docs/ARCHITECTURE.md` to show the correct client-side component directory layout.

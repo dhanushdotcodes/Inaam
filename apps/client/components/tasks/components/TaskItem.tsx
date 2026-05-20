@@ -63,6 +63,7 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
 
   useEffect(() => {
     if (task.completed) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsExpanded(false);
     }
   }, [task.completed]);
@@ -96,7 +97,8 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           }
         }}
         className={cn(
-          "w-full bg-card border border-border shadow-sm transition-all group cursor-pointer select-none relative",
+          "w-full bg-card border border-border shadow-sm transition-all group select-none relative",
+          task.completed ? "cursor-default" : "cursor-pointer",
           // Desktop Grid Layout (md viewport and up)
           "md:grid md:grid-cols-[40px_1fr_220px_80px] md:gap-x-6 md:gap-y-0 md:items-center md:min-h-22 md:px-6 md:py-4 md:rounded-[24px]",
           // Mobile Stacked Layout (below md viewport)
@@ -105,7 +107,7 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           task.completed && "opacity-60 bg-muted/20 shadow-none border-border/50"
         )}
         onClick={async () => {
-          if (isToggling) return;
+          if (isToggling || task.completed) return;
           setIsToggling(true);
           try {
             await onToggle(task);
@@ -147,7 +149,8 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
           <div className="flex-1 min-w-0 md:flex md:flex-col md:gap-0.5">
             <span
               className={cn(
-                "text-base font-bold transition-all tracking-tight leading-snug line-clamp-2",
+                "text-base font-bold transition-all tracking-tight leading-snug",
+                isExpanded ? "line-clamp-none" : "line-clamp-2",
                 task.completed
                   ? "text-muted-foreground line-through"
                   : "text-foreground transition-colors"
@@ -252,64 +255,117 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
                 }
               }}
               // Outer container: ZERO padding, margins, or borders! Only col-span-full and overflow-hidden.
-              className="col-span-full overflow-hidden pb-2"
+              className="col-span-full overflow-hidden -mx-4 -mb-4 md:-mx-6 md:-mb-4"
             >
               {/* Inner container: holds the background, border, padding, and negative margins to align with card boundary */}
-              <div className="border-t border-border/60 bg-muted/10 -mx-4 -mb-4 mt-1.5 p-3 md:-mx-6 md:-mb-4 md:mt-2 md:px-6 md:py-3 md:pl-16 rounded-b-[24px]">
-                {/* Mobile Metadata (Hidden on Desktop) */}
-                <div className="flex md:hidden items-center gap-2 flex-wrap mb-3">
-                  <DifficultyBadge difficulty={task.difficulty} />
-                  <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
-                    {isObjective ? "Objective" : "Bounty"}
-                  </span>
-                  <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
-                    {task.points} Pts
-                  </span>
+              <div className="border-t border-border/60 bg-muted/10 mt-1.5 p-4 md:mt-2 md:px-6 md:py-4 md:pl-16 rounded-b-[24px]">
+                {/* Mobile View Layout (Flex Column) */}
+                <div className="flex flex-col gap-4 md:hidden">
+                  {/* Section 1: Description (if present) */}
+                  {hasDescription && (
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">Description</span>
+                      <p className="text-xs leading-relaxed text-foreground font-medium whitespace-pre-wrap">
+                        {task.description}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Section 2: Metadata (Difficulty, Type, Points, Recurrence) */}
+                  <div className="flex flex-col gap-1.5 border-t border-border/40 pt-3 mt-1 first:border-0 first:pt-0 first:mt-0">
+                    <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">Task Details</span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <DifficultyBadge difficulty={task.difficulty} />
+                      <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
+                        {isObjective ? "Objective" : "Bounty"}
+                      </span>
+                      <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
+                        {task.points} Pts
+                      </span>
+                      {recurrenceText && (
+                        <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-violet-500/10 border-violet-500/20 text-violet-600 dark:text-violet-400 gap-1">
+                          <Repeat className="w-3 h-3" />
+                          {recurrenceText}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Section 3: Actions (Edit/Delete) */}
+                  {!task.completed && (
+                    <div className="flex items-center gap-2 border-t border-border/40 pt-3 w-full">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsEditDialogOpen(true);
+                        }}
+                        className="flex-1 h-8 rounded-xl border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-all duration-300 outline-none cursor-pointer text-xs font-semibold gap-1.5"
+                      >
+                        <Pencil className="size-3" />
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsDeleteDialogOpen(true);
+                        }}
+                        className="flex-1 h-8 rounded-xl border border-destructive/20 bg-destructive/5 hover:bg-destructive text-destructive hover:text-white flex items-center justify-center transition-all duration-300 outline-none cursor-pointer text-xs font-semibold gap-1.5"
+                      >
+                        <Trash2 className="size-3" />
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {hasDescription && (
-                  <p className="text-xs leading-relaxed text-muted-foreground font-medium whitespace-pre-wrap mb-4">
-                    {task.description}
-                  </p>
-                )}
-                
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    {recurrenceText && (
-                      <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-violet-500/10 border-violet-500/20 text-violet-600 dark:text-violet-400 gap-1">
-                        <Repeat className="w-3 h-3" />
-                        {recurrenceText}
-                      </span>
-                    )}
-                  </div>
+                {/* Desktop View Layout (Hidden on Mobile) */}
+                <div className="hidden md:flex md:flex-col md:gap-3">
+                  {hasDescription && (
+                    <p className="text-xs leading-relaxed text-muted-foreground font-medium whitespace-pre-wrap mb-2">
+                      {task.description}
+                    </p>
+                  )}
                   
-                  <div className="flex items-center gap-2">
-                    {!task.completed && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsEditDialogOpen(true);
-                          }}
-                          className="h-7 px-3 rounded-xl border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-all duration-300 outline-none cursor-pointer text-xs font-semibold gap-1.5"
-                        >
-                          <Pencil className="size-3" />
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsDeleteDialogOpen(true);
-                          }}
-                          className="h-7 px-3 rounded-xl border border-destructive/20 bg-destructive/5 hover:bg-destructive text-destructive hover:text-white flex items-center justify-center transition-all duration-300 outline-none cursor-pointer text-xs font-semibold gap-1.5"
-                        >
-                          <Trash2 className="size-3" />
-                          Delete
-                        </button>
-                      </>
-                    )}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      {recurrenceText && (
+                        <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-violet-500/10 border-violet-500/20 text-violet-600 dark:text-violet-400 gap-1">
+                          <Repeat className="w-3 h-3" />
+                          {recurrenceText}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      {!task.completed && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsEditDialogOpen(true);
+                            }}
+                            className="h-7 px-3 rounded-xl border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-all duration-300 outline-none cursor-pointer text-xs font-semibold gap-1.5"
+                          >
+                            <Pencil className="size-3" />
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsDeleteDialogOpen(true);
+                            }}
+                            className="h-7 px-3 rounded-xl border border-destructive/20 bg-destructive/5 hover:bg-destructive text-destructive hover:text-white flex items-center justify-center transition-all duration-300 outline-none cursor-pointer text-xs font-semibold gap-1.5"
+                          >
+                            <Trash2 className="size-3" />
+                            Delete
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

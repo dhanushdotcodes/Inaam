@@ -1,7 +1,16 @@
-.PHONY: commit add status up down db-migrate db-upgrade dev-server dev-web test
+.PHONY: commit add status up down db-migrate db-upgrade dev-server dev-web build-web typecheck-web test
 
 dev-web:
 	cd apps/client && bun run dev
+
+typecheck-web:
+	cd apps/client && bun x tsc --noEmit
+
+build-web:
+	cd apps/client && bun run build
+
+lint-web:
+	cd apps/client && bun run lint
 
 status:
 	git status

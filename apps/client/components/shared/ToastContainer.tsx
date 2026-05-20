@@ -11,17 +11,19 @@ function ToastItem({ toast }: { toast: ToastType }) {
   const duration = toast.duration || 4500;
 
   useEffect(() => {
-    const startTime = Date.now();
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const remaining = Math.max(0, 100 - (elapsed / duration) * 100);
-      setProgress(remaining);
-      if (elapsed >= duration) {
-        removeToast(toast.id);
-      }
-    }, 30);
+    // Schedule setting progress to 0 on the next tick/animation frame to trigger the CSS transition smoothly
+    const frame = requestAnimationFrame(() => {
+      setProgress(0);
+    });
 
-    return () => clearInterval(interval);
+    const timer = setTimeout(() => {
+      removeToast(toast.id);
+    }, duration);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+    };
   }, [toast.id, duration, removeToast]);
 
   const icons = {
@@ -92,9 +94,9 @@ function ToastItem({ toast }: { toast: ToastType }) {
       </div>
 
       {/* Progress Bar indicator */}
-      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-muted/30">
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-muted/30">
         <div
-          className={`h-full transition-all duration-300 ${
+          className={`h-full ${
             toast.type === "success"
               ? "bg-emerald-500"
               : toast.type === "error"
@@ -103,7 +105,10 @@ function ToastItem({ toast }: { toast: ToastType }) {
                   ? "bg-amber-500"
                   : "bg-primary"
           }`}
-          style={{ width: `${progress}%` }}
+          style={{ 
+            width: `${progress}%`,
+            transition: progress === 100 ? "none" : `width ${duration}ms linear`
+          }}
         />
       </div>
     </motion.div>
