@@ -83,11 +83,11 @@ export default function TaskList({ tasks, rewards, onToggle, onDelete, onPin, fi
 
             {pinnedTasks.length > 0 && unpinnedTasks.length > 0 && (
               <div className="relative flex items-center py-2 col-span-full select-none">
-                <div className="flex-grow border-t border-border/40"></div>
-                <span className="flex-shrink mx-4 text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 bg-background/50 backdrop-blur-sm px-3.5 py-1.5 rounded-full border border-border/60 shadow-xs flex items-center gap-1.5">
+                <div className="grow border-t border-border/40"></div>
+                <span className="shrink-0 mx-4 text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 bg-background/50 backdrop-blur-sm px-3.5 py-1.5 rounded-full border border-border/60 shadow-xs flex items-center gap-1.5">
                   <Pin className="size-3 text-neutral-400 -rotate-45" /> Other Tasks
                 </span>
-                <div className="flex-grow border-t border-border/40"></div>
+                <div className="grow border-t border-border/40"></div>
               </div>
             )}
 

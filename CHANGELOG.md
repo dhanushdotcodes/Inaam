@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Developed the **Task Analytics Dashboard & API Endpoint** to fetch and visualize completed task statistics daily over 7, 14, and 30 day windows.
+- Added the backend endpoint `GET /api/v1/tasks/analytics` validating the range parameters and returning zero-filled stats for days with no activity.
+- Implemented the backend service `get_task_analytics` which queries historical `point_transactions` of type `EARNED` shifted to the client's local timezone, guaranteeing accurate records even for recurring or deleted tasks.
+- Authored a comprehensive integration test suite `tests/test_analytics.py` verifying range calculations, timezone adjustments, and validation criteria.
+- Added typescript interfaces and client-side `getTaskAnalytics` API fetch method, passing local timezone offsets dynamically.
+- Integrated the "Analytics" link with the `BarChart2` icon in the desktop and mobile sidebar navigation lists.
+- Built an ultra-premium, interactive dashboard page `/analytics` featuring summary counters (Total, Daily Average, Peak, and Points), a responsive SVG bar chart with Framer Motion spring height transitions, hover tooltips, and a completed tasks activity timeline.
 - Implemented **Weekly Recurring Bounties** allowing tasks to repeat automatically on specific days of the week.
 - Extended backend `tasks` database schema with `is_recurring` and `recurrence_days` columns, alongside Alembic migrations.
 - Introduced timezone-aware "self-healing" reset mechanism in the backend `get_tasks` service that dynamically computes and uncompletes recurring bounties based on the client's local `tz_offset`, avoiding complex background cron jobs.

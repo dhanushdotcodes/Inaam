@@ -10,6 +10,7 @@ import {
   Compass, 
   LogOut,
   ChevronLeft,
+  BarChart2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { removeToken } from "@/lib/auth";
@@ -33,6 +34,11 @@ const NAV_ITEMS = [
     label: "Prizes",
     href: "/prizes",
     icon: ShoppingBag,
+  },
+  {
+    label: "Analytics",
+    href: "/analytics",
+    icon: BarChart2,
   },
 ];
 

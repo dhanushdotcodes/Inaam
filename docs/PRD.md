@@ -11,6 +11,7 @@ A lightweight Progressive Web Application (PWA) designed for managing bounty-bas
 - Task Management - Add, Edit, Delete Bounties (independent, with support for daily/weekly recurrence) and Objectives (linked to Quests).
 - Progress Tracking - Track completion percentage and Quest eligibility.
 - Points Tracking - Earn points from Bounties and Objectives, including compounding daily milestone bonuses, to spend on Prizes.
+- Productivity Analytics - Visualize daily completion stats, daily average metrics, consistency percentages, and transaction logs over 7, 14, and 30-day windows.
 - PWA Support - Installable mobile-friendly application experience.
 
 ## Success Metrics
@@ -24,6 +25,8 @@ A lightweight Progressive Web Application (PWA) designed for managing bounty-bas
 - Reverting points and milestone bonuses accurately when undoing task completion.
 - Containerisation and successful deployment of the application.
 - Successful generation of fake data for testing purposes using faker.js.
+- Interactive SVG bar and curved trend line charts displaying productivity analytics.
+- Date-grouped activity timeline linked to live task type and difficulty metadata.
 
 ## Core Principles & Gamification Rules
 
@@ -73,3 +76,4 @@ To help users focus on active goals, the UI enforces the following sorting rules
 | **M7** | Implementing faker.js scripts and Docker Compose setup for local development and testing. |
 | **M8** | Writing integration tests using pytest and TestClient for all APIs and flows. |
 | **M9** | Re-architecting database models, services, and API layers to support robust multi-user isolation with schema migration. |
+| **M10** | Implementing timezone-aware Task Analytics API, comprehensive backend tests, and a premium interactive frontend dashboard. |

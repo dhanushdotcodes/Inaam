@@ -191,3 +191,15 @@ export interface TransactionCreatePayload {
   reward_id?: string | null;
 }
 
+export interface TaskAnalyticsDay {
+  completed_tasks: number;
+  date: string;
+  day_label: string;
+}
+
+export interface TaskAnalyticsResponse {
+  total_days: number;
+  completed_data: Record<string, TaskAnalyticsDay>;
+}
+
+

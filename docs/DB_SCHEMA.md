@@ -66,3 +66,15 @@
 | reward_id | uuid | Foreign Key, Nullable | Associated reward |
 | description | varchar | | Transaction description |
 | created_at | timestamp | | Creation timestamp |
+
+---
+
+## Task Analytics Tracking Logic
+
+For compiling historical daily task completion statistics, queries MUST leverage the `point_transactions` table instead of the `tasks` table.
+
+### Rationale
+- **Recurring Tasks**: Recurring tasks automatically reset daily (setting `completed = False` and `completed_at = None`), which would otherwise erase their completion history if we only queried the `tasks` table.
+- **Task Deletions**: Deleting a task deletes its record from the `tasks` table entirely.
+- **Ledger-based Querying**: By querying `point_transactions` for entries where `type = 'EARNED'` (filtering by `task_id` and the user's timezone-shifted `created_at`), we maintain a permanent ledger of every task completion. This guarantees accurate, zero-filled historical metrics.
+

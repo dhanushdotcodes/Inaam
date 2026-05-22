@@ -13,6 +13,7 @@ import type {
   TaskUpdatePayload,
   PointTransaction,
   TransactionCreatePayload,
+  TaskAnalyticsResponse,
 } from "@/types";
 
 /**
@@ -278,3 +279,14 @@ export async function createTransaction(
     body: JSON.stringify(payload),
   });
 }
+
+/**
+ * Fetch task completion analytics for the last N days (7, 14, or 30 days).
+ */
+export async function getTaskAnalytics(
+  days: number
+): Promise<TaskAnalyticsResponse> {
+  const tzOffset = -new Date().getTimezoneOffset();
+  return apiFetch<TaskAnalyticsResponse>(`/tasks/analytics?days=${days}&tz_offset=${tzOffset}`);
+}
+

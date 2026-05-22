@@ -71,6 +71,36 @@ All tasks are isolated and scoped to the authenticated user.
     - `tz_offset`: (Optional integer, default: `0`) User timezone offset in minutes, used for milestone tracking.
 - `PATCH /api/v1/rewards/{id}/task/{task_id}/incomplete` - Uncomplete/revert a specific objective task. Deducts the task points and any milestone bonuses earned because of it.
 
+### Task Analytics
+- `GET /api/v1/tasks/analytics` - Fetch daily completion counts and metrics aggregated by local timezone offset.
+  - **Query Parameters**:
+    - `days`: (Required integer, values: `7`, `14`, or `30`) Number of days of historical data to compile.
+    - `tz_offset`: (Optional integer, default: `0`) User's local timezone offset in minutes (e.g., `330` for UTC+5:30) to compute calendar date boundaries.
+  - **Response Envelope**:
+    ```json
+    {
+      "data": {
+        "total_days": 7,
+        "completed_data": {
+          "day_1": {
+            "completed_tasks": 0,
+            "date": "2026-05-16",
+            "day_label": "Day 1"
+          },
+          ...
+          "day_7": {
+            "completed_tasks": 3,
+            "date": "2026-05-22",
+            "day_label": "Day 7"
+          }
+        }
+      },
+      "error": null,
+      "message": "success"
+    }
+    ```
+
+
 ## Points and Transactions
 ---
 Calculations and transaction ledgers are isolated and scoped to the authenticated user.
