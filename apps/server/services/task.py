@@ -2,7 +2,8 @@ from datetime import datetime, timezone, timedelta, time
 from typing import Optional, Sequence, List
 from uuid import UUID
 
-from sqlalchemy import select, update, delete
+from fastapi import HTTPException
+from sqlalchemy import select, update, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.task import Task
@@ -83,6 +84,17 @@ async def create_task(
     if user_id:
         data["user_id"] = user_id
         
+    if data.get("pinned") is True and user_id:
+        stmt = select(func.count(Task.id)).where(
+            Task.user_id == user_id,
+            Task.pinned == True,
+            Task.completed == False
+        )
+        res = await db.execute(stmt)
+        pinned_count = res.scalar() or 0
+        if pinned_count >= 3:
+            raise HTTPException(status_code=400, detail="You can only pin up to 3 tasks.")
+            
     task = Task(**data)
     db.add(task)
     await db.flush()
@@ -123,6 +135,18 @@ async def update_task(
     update_data = task_data.model_dump(exclude_unset=True)
     if not update_data:
         return task
+        
+    if update_data.get("pinned") is True:
+        stmt = select(func.count(Task.id)).where(
+            Task.user_id == task.user_id,
+            Task.pinned == True,
+            Task.completed == False,
+            Task.id != task_id
+        )
+        res = await db.execute(stmt)
+        pinned_count = res.scalar() or 0
+        if pinned_count >= 3:
+            raise HTTPException(status_code=400, detail="You can only pin up to 3 tasks.")
         
     query = update(Task).where(Task.id == task_id)
     if user_id:

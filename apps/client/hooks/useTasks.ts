@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useMemo } from "react";
-import { getAllTasks, getRewards, completeTask, incompleteTask, deleteTask } from "@/lib/api";
+import { getAllTasks, getRewards, completeTask, incompleteTask, deleteTask, updateTask } from "@/lib/api";
 import type { Task, Reward } from "@/types";
 import { TaskDifficulty } from "@/types";
 import { useToast } from "@/hooks/useToast";
@@ -113,6 +113,45 @@ export function useTasks() {
     }
   };
 
+  const pinTask = async (task: Task) => {
+    const isPinning = !task.pinned;
+    
+    if (isPinning) {
+      const activePinnedCount = tasks.filter((t) => t.pinned && !t.completed).length;
+      if (activePinnedCount >= 3) {
+        addToast({
+          message: "You can only pin up to 3 tasks.",
+          type: "error"
+        });
+        return;
+      }
+    }
+
+    const originalTasks = [...tasks];
+
+    try {
+      // Optimistic update
+      setTasks((prev) =>
+        prev.map((t) => (t.id === task.id ? { ...t, pinned: isPinning } : t))
+      );
+
+      await updateTask(task.id, { pinned: isPinning }, task.reward_id);
+
+      addToast({
+        message: isPinning ? "Task pinned to dashboard." : "Task unpinned.",
+        type: "success"
+      });
+    } catch (err) {
+      console.error("Pin task error:", err);
+      // Revert optimistic update
+      setTasks(originalTasks);
+      addToast({
+        message: `Failed to update task: ${err instanceof Error ? err.message : "unknown error"}`,
+        type: "error"
+      });
+    }
+  };
+
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
       // Find associated quest (reward) title
@@ -155,6 +194,7 @@ export function useTasks() {
     setDifficultyFilter,
     toggleComplete,
     deleteTask: removeTask,
+    pinTask,
     refresh: fetchTasks,
     stats
   };

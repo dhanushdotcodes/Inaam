@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CheckCircle2, Circle, ChevronDown, Trash2, Repeat, Pencil } from "lucide-react";
+import { CheckCircle2, Circle, ChevronDown, Trash2, Repeat, Pencil, Pin } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import type { Task } from "@/types";
@@ -14,6 +14,7 @@ interface TaskItemProps {
   rewardTitle: string | null;
   onToggle: (task: Task) => void | Promise<void>;
   onDelete: (task: Task) => Promise<void>;
+  onPin: (task: Task) => void | Promise<void>;
 }
 
 /**
@@ -54,7 +55,7 @@ const itemVariants = {
   }
 };
 
-export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: TaskItemProps) {
+export default function TaskItem({ task, rewardTitle, onToggle, onDelete, onPin }: TaskItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -204,23 +205,48 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
         {/* 3. Actions Column */}
         <div className="hidden md:flex items-center gap-2 md:w-20 md:justify-end md:shrink-0">
           {!task.completed && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent completing the task
-                setIsExpanded(!isExpanded);
-              }}
-              className={cn(
-                "h-7 w-7 rounded-xl border border-border bg-card hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-all duration-300 outline-none cursor-pointer shrink-0",
-                isExpanded && "bg-muted text-primary border-primary/20"
-              )}
-              title={isExpanded ? "Collapse Details" : "Expand Details"}
-            >
-              <ChevronDown className={cn(
-                "size-3.5 transition-transform duration-300",
-                isExpanded && "rotate-180 text-primary"
-              )} />
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  try {
+                    await onPin(task);
+                  } catch (err) {
+                    console.error("Pin toggle failed:", err);
+                  }
+                }}
+                className={cn(
+                  "h-7 w-7 rounded-xl border transition-all duration-300 outline-none cursor-pointer shrink-0 flex items-center justify-center",
+                  task.pinned
+                    ? "bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20"
+                    : "bg-card border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+                title={task.pinned ? "Unpin Task" : "Pin Task"}
+              >
+                <Pin className={cn(
+                  "size-3.5 transition-transform duration-300",
+                  task.pinned && "-rotate-45 fill-current"
+                )} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent completing the task
+                  setIsExpanded(!isExpanded);
+                }}
+                className={cn(
+                  "h-7 w-7 rounded-xl border border-border bg-card hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-all duration-300 outline-none cursor-pointer shrink-0",
+                  isExpanded && "bg-muted text-primary border-primary/20"
+                )}
+                title={isExpanded ? "Collapse Details" : "Expand Details"}
+              >
+                <ChevronDown className={cn(
+                  "size-3.5 transition-transform duration-300",
+                  isExpanded && "rotate-180 text-primary"
+                )} />
+              </button>
+            </>
           )}
         </div>
 
@@ -291,9 +317,29 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete }: Task
                     </div>
                   </div>
 
-                  {/* Section 3: Actions (Edit/Delete) */}
+                  {/* Section 3: Actions (Pin/Edit/Delete) */}
                   {!task.completed && (
                     <div className="flex items-center gap-2 border-t border-border/40 pt-3 w-full">
+                      <button
+                        type="button"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          try {
+                            await onPin(task);
+                          } catch (err) {
+                            console.error("Pin toggle failed:", err);
+                          }
+                        }}
+                        className={cn(
+                          "flex-1 h-8 rounded-xl border flex items-center justify-center transition-all duration-300 outline-none cursor-pointer text-xs font-semibold gap-1.5",
+                          task.pinned
+                            ? "bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20"
+                            : "bg-background border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                        )}
+                      >
+                        <Pin className={cn("size-3", task.pinned && "-rotate-45 fill-current")} />
+                        {task.pinned ? "Unpin" : "Pin"}
+                      </button>
                       <button
                         type="button"
                         onClick={(e) => {

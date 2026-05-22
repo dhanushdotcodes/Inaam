@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
+import { Pin } from "lucide-react";
 import type { Task, Reward } from "@/types";
 import TaskItem from "./TaskItem";
 
@@ -9,6 +10,7 @@ interface TaskListProps {
   rewards: Reward[];
   onToggle: (task: Task) => void;
   onDelete: (task: Task) => Promise<void>;
+  onPin: (task: Task) => void | Promise<void>;
   filter: string;
 }
 
@@ -32,7 +34,7 @@ const containerVariants = {
   }
 };
 
-export default function TaskList({ tasks, rewards, onToggle, onDelete, filter }: TaskListProps) {
+export default function TaskList({ tasks, rewards, onToggle, onDelete, onPin, filter }: TaskListProps) {
   const sortedTasks = [...tasks].sort((a, b) => {
     // 1. Uncompleted tasks first
     if (a.completed !== b.completed) {
@@ -47,6 +49,9 @@ export default function TaskList({ tasks, rewards, onToggle, onDelete, filter }:
     const timeB = b.completed_at ? new Date(b.completed_at).getTime() : new Date(b.updated_at).getTime();
     return timeB - timeA;
   });
+
+  const pinnedTasks = sortedTasks.filter((t) => t.pinned && !t.completed);
+  const unpinnedTasks = sortedTasks.filter((t) => !(t.pinned && !t.completed));
 
   const getRewardTitle = (rewardId: string | null) => {
     if (!rewardId) return null;
@@ -64,15 +69,39 @@ export default function TaskList({ tasks, rewards, onToggle, onDelete, filter }:
         className="grid gap-6 w-full relative"
       >
         {sortedTasks.length > 0 ? (
-          sortedTasks.map((task) => (
-            <TaskItem 
-              key={task.id} 
-              task={task} 
-              rewardTitle={getRewardTitle(task.reward_id)} 
-              onToggle={onToggle} 
-              onDelete={onDelete}
-            />
-          ))
+          <>
+            {pinnedTasks.map((task) => (
+              <TaskItem 
+                key={task.id} 
+                task={task} 
+                rewardTitle={getRewardTitle(task.reward_id)} 
+                onToggle={onToggle} 
+                onDelete={onDelete}
+                onPin={onPin}
+              />
+            ))}
+
+            {pinnedTasks.length > 0 && unpinnedTasks.length > 0 && (
+              <div className="relative flex items-center py-2 col-span-full select-none">
+                <div className="flex-grow border-t border-border/40"></div>
+                <span className="flex-shrink mx-4 text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 bg-background/50 backdrop-blur-sm px-3.5 py-1.5 rounded-full border border-border/60 shadow-xs flex items-center gap-1.5">
+                  <Pin className="size-3 text-neutral-400 -rotate-45" /> Other Tasks
+                </span>
+                <div className="flex-grow border-t border-border/40"></div>
+              </div>
+            )}
+
+            {unpinnedTasks.map((task) => (
+              <TaskItem 
+                key={task.id} 
+                task={task} 
+                rewardTitle={getRewardTitle(task.reward_id)} 
+                onToggle={onToggle} 
+                onDelete={onDelete}
+                onPin={onPin}
+              />
+            ))}
+          </>
         ) : (
           <motion.div 
             variants={{

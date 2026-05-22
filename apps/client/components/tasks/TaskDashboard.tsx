@@ -31,6 +31,7 @@ export default function TaskDashboard() {
     setDifficultyFilter,
     toggleComplete,
     deleteTask,
+    pinTask,
     refresh,
     stats
   } = useTasks();
@@ -73,6 +74,7 @@ export default function TaskDashboard() {
               rewards={rewards} 
               onToggle={toggleComplete} 
               onDelete={(task) => deleteTask(task.id, task.reward_id)}
+              onPin={pinTask}
               filter={`${filter}-${difficultyFilter}`}
             />
           </>
