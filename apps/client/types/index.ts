@@ -66,6 +66,7 @@ export interface Task {
   reward_id: string | null;
   is_recurring: boolean;
   recurrence_days: string | null;
+  pinned: boolean;
   active_today?: boolean;
   created_at: string;
   updated_at: string;
@@ -94,6 +95,7 @@ export interface TaskCreatePayload {
   reward_id?: string | null;
   is_recurring?: boolean;
   recurrence_days?: string | null;
+  pinned?: boolean;
 }
 
 /**
@@ -120,6 +122,7 @@ export interface TaskUpdatePayload {
   reward_id?: string | null;
   is_recurring?: boolean;
   recurrence_days?: string | null;
+  pinned?: boolean;
 }
 
 /**

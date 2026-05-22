@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import ForeignKey, String, Integer, Enum as SQLEnum, DateTime
+from sqlalchemy import ForeignKey, String, Integer, Enum as SQLEnum, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base, TimestampMixin, pk_uuid
@@ -32,6 +32,7 @@ class Task(Base, TimestampMixin):
     # Recurring Bounty Fields
     is_recurring: Mapped[bool] = mapped_column(default=False)
     recurrence_days: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    pinned: Mapped[bool] = mapped_column(default=False, server_default=text("false"), nullable=False)
 
     # Relationships
     user: Mapped["User"] = relationship()

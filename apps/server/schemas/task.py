@@ -14,6 +14,7 @@ class TaskBase(BaseModel):
     points: int = Field(default=0, ge=0)
     is_recurring: bool = Field(default=False)
     recurrence_days: Optional[str] = Field(None, max_length=255)
+    pinned: bool = Field(default=False)
 
 
 class TaskCreate(TaskBase):
@@ -31,6 +32,7 @@ class TaskUpdate(BaseModel):
     reward_id: Optional[UUID] = None
     is_recurring: Optional[bool] = None
     recurrence_days: Optional[str] = Field(None, max_length=255)
+    pinned: Optional[bool] = None
 
 
 class TaskResponse(TaskBase):
