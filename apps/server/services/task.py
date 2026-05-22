@@ -246,3 +246,65 @@ async def uncomplete_task(
     await db.flush()
     await db.refresh(task)
     return task
+
+
+async def get_task_analytics(
+    db: AsyncSession,
+    user_id: UUID,
+    days: int = 7,
+    tz_offset: int = 0
+) -> dict:
+    """
+    Get task completion analytics for the specified number of days, shifted to the user's timezone.
+    
+    Queries point_transactions where type is EARNED to count completed tasks, ensuring that
+    recurring tasks that reset daily are correctly counted.
+    """
+    local_tz = timezone(timedelta(minutes=tz_offset))
+    now_utc = datetime.now(timezone.utc)
+    local_now = now_utc.astimezone(local_tz)
+    local_today = local_now.date()
+    
+    # Calculate start date of our analytics window (inclusive of today)
+    start_date = local_today - timedelta(days=days - 1)
+    local_start_dt = datetime.combine(start_date, time.min, tzinfo=local_tz)
+    
+    # Query EARNED transactions for the user since the start date
+    query = (
+        select(PointTransaction.created_at)
+        .where(
+            PointTransaction.user_id == user_id,
+            PointTransaction.type == TransactionType.EARNED,
+            PointTransaction.created_at >= local_start_dt
+        )
+    )
+    result = await db.execute(query)
+    completed_timestamps = result.scalars().all()
+    
+    # Pre-populate all days in the range to ensure zero-filled records for days with no activity
+    completed_counts = {}
+    for i in range(days):
+        d = start_date + timedelta(days=i)
+        date_str = d.isoformat()
+        completed_counts[f"day_{i + 1}"] = {
+            "completed_tasks": 0,
+            "date": date_str,
+            "day_label": f"Day {i + 1}"
+        }
+        
+    # Aggregate counts by local day
+    for ts in completed_timestamps:
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+        
+        # Convert timestamp to user's local timezone
+        local_ts = ts.astimezone(local_tz)
+        local_date = local_ts.date()
+        
+        # Find which day_index this corresponds to
+        day_diff = (local_date - start_date).days
+        if 0 <= day_diff < days:
+            completed_counts[f"day_{day_diff + 1}"]["completed_tasks"] += 1
+            
+    return completed_counts
+

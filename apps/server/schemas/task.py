@@ -45,3 +45,15 @@ class TaskResponse(TaskBase):
     active_today: Optional[bool] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class TaskAnalyticsDay(BaseModel):
+    completed_tasks: int
+    date: str
+    day_label: str
+
+
+class TaskAnalyticsResponse(BaseModel):
+    total_days: int
+    completed_data: dict[str, TaskAnalyticsDay]
+

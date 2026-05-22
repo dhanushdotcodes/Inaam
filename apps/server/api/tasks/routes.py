@@ -8,7 +8,7 @@ from core.database import get_db
 from core.security import get_current_user
 from models.user import User
 from schemas.base import ApiResponse
-from schemas.task import TaskResponse, TaskCreate, TaskUpdate
+from schemas.task import TaskResponse, TaskCreate, TaskUpdate, TaskAnalyticsResponse
 from services import task as task_service
 
 router = APIRouter(
@@ -110,3 +110,23 @@ async def delete_independent_task(
         )
     await db.commit()
     return ApiResponse.success(data=True)
+
+
+@router.get("/analytics", response_model=ApiResponse[TaskAnalyticsResponse])
+async def get_task_analytics_data(
+    days: int = 7,
+    tz_offset: int = 0,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Get task completion stats for the last N days (7, 14, 30 days)."""
+    if days not in [7, 14, 30]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Days parameter must be 7, 14, or 30."
+        )
+    analytics_data = await task_service.get_task_analytics(
+        db, user_id=current_user.id, days=days, tz_offset=tz_offset
+    )
+    return ApiResponse.success(data=TaskAnalyticsResponse(total_days=days, completed_data=analytics_data))
+
