@@ -49,7 +49,7 @@ export default function AnalyticsChart({
         {/* Horizontal scroll wrapper with custom scrollbar styling */}
         <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-primary/15 scrollbar-track-transparent">
           {/* Minimum width constraints to maintain readability on smaller screens */}
-          <div className="relative flex flex-col pt-12 min-w-[800px] overflow-visible">
+          <div className="relative flex flex-col pt-12 min-w-200 overflow-visible">
             {/* Grid Lines behind chart */}
             <div className="absolute inset-x-0 top-12 bottom-8 flex flex-col justify-between pointer-events-none z-0">
               {[1, 2, 3, 4].map((i) => (
@@ -196,7 +196,7 @@ export default function AnalyticsChart({
                       )}
                     >
                       {/* Reflection overlay */}
-                      <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/5 to-transparent" />
+                      <div className="absolute inset-x-0 top-0 h-1/2 bg-linear-to-b from-white/5 to-transparent" />
                     </motion.div>
 
                     {/* X-Axis Label */}
@@ -206,7 +206,7 @@ export default function AnalyticsChart({
                         hoveredIndex === idx ? "text-primary font-bold" : "text-muted-foreground"
                       )}
                     >
-                      {days === 7 ? formatWeekdayLabel(day.date) : formatDateLabel(day.date).split(" ")[1]}
+                      {days === 7 ? formatWeekdayLabel(day.date) : day.date.split("-")[2]}
                     </span>
                   </div>
                 );

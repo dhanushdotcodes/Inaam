@@ -55,7 +55,11 @@ export default function AnalyticsDashboard() {
   // Convert map to ordered day array
   const dayArray = analyticsData
     ? Object.keys(analyticsData.completed_data)
-        .sort((a, b) => a.localeCompare(b))
+        .sort((a, b) => {
+          const numA = parseInt(a.replace("day_", ""), 10);
+          const numB = parseInt(b.replace("day_", ""), 10);
+          return numA - numB;
+        })
         .map((key) => analyticsData.completed_data[key])
     : [];
 
