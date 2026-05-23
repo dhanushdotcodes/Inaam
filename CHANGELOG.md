@@ -86,6 +86,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Synchronized the **`SKILL.md`** registry to include the 4 new specialized documentation skills.
 
 ### Fixed
+- Fixed production deployment caching issues on Vercel by adding custom cache-control headers in `next.config.ts` to prevent CDN and browser caching of `/sw.js`.
+- Refactored service worker `sw.js` caching strategies: bypassed same-origin API routes, implemented Network-First for HTML documents and Next.js RSC data, and restricted Cache-First strictly to hashed, immutable assets under `_next/static/`.
+- Enhanced service worker registration in `ServiceWorkerRegistrar.tsx` to detect updates and display a polished React toast (via the app's `useToast` hook) with an interactive "Refresh" action button instead of browser alert dialogues.
+- Improved service worker pre-caching robustness during installation by using `Promise.allSettled` to prevent single asset fetch failures (e.g., 404s) from aborting the installation process.
 - Added `min-h-0` to the primary dashboard layout container to prevent layout overflow issues and ensure smooth scrolling.
 - Replaced the deprecated `.context/dashboard-context.md` with the more comprehensive `client-context.md`.
 - Resolved database migration `IntegrityError` when adding the `is_recurring` column to pre-existing tables by dividing the schema change into three steps: adding the column as nullable, backfilling existing rows to `False`, and altering the column to `NOT NULL`.
