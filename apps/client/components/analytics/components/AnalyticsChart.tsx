@@ -32,7 +32,7 @@ export default function AnalyticsChart({
 
   return (
     <Card className="col-span-4 overflow-visible bg-card/40 backdrop-blur-md border-border/80 shadow-lg">
-      <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
+      <CardHeader className="flex flex-col gap-4 md:gap-0 md:flex-row items-start md:items-center justify-between border-b pb-4">
         <div>
           <CardTitle>Daily Completion Chart</CardTitle>
           <CardDescription>Visualizing task completion activity across the selected interval</CardDescription>
