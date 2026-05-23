@@ -116,7 +116,7 @@ export default function AnalyticsChartGraph({
   return (
     <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-primary/15 scrollbar-track-transparent">
       {/* Minimum width constraints to maintain readability on smaller screens */}
-      <div className="relative h-[320px] min-w-[800px] overflow-visible">
+      <div className="relative h-80 min-w-200 overflow-visible">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
