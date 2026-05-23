@@ -126,6 +126,7 @@ export default function AnalyticsDashboard() {
               days={days}
               hoveredIndex={hoveredIndex}
               setHoveredIndex={setHoveredIndex}
+              transactions={transactions}
             />
           </>
         )}

@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Installed and integrated the `recharts` library for client-side composed chart data visualizations.
+- Summed and mapped daily earned transaction points inside the analytics client to track rewards per date.
 - Developed the **Task Analytics Dashboard & API Endpoint** to fetch and visualize completed task statistics daily over 7, 14, and 30 day windows.
 - Added the backend endpoint `GET /api/v1/tasks/analytics` validating the range parameters and returning zero-filled stats for days with no activity.
 - Implemented the backend service `get_task_analytics` which queries historical `point_transactions` of type `EARNED` shifted to the client's local timezone, guaranteeing accurate records even for recurring or deleted tasks.
@@ -55,6 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
  
  
 ### Changed
+- Refactored the `AnalyticsChart` component from a single raw SVG file into modular, clean sub-components: `AnalyticsChartHeader`, `AnalyticsChartTooltip`, and `AnalyticsChartGraph` powered by Recharts.
+- Added a detailed command registry help menu target as the default entry point in the root `Makefile`.
 - Refactored **`DailyBonusProgress`** dashboard component: replaced static milestone cards below the progress bar with interactive hover tooltips on desktop screens and a responsive, full-width toggle dropdown button on mobile screens.
 - Updated the root `README.md` to reference active screenshots in `docs/public/` and documented the full tech stack, developer profiles, and local run/test commands.
 - Refined `docs/PRD.md` with core product and gamification principles (task recurrence, compounding daily milestone bonuses, task undo, sorting rules).
@@ -86,6 +90,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Synchronized the **`SKILL.md`** registry to include the 4 new specialized documentation skills.
 
 ### Fixed
+- Fixed tooltip clipping at the boundaries of the scrollable analytics chart container by introducing a boundary-aware translation shift in the custom tooltip component.
+- Resolved React warning `"Error: Cannot create components during render"` inside `AnalyticsChartGraph` by moving the custom tick and dot components outside of the render function.
+- Fixed Docker container package caching issues by adding the `-V` (`--renew-anon-volumes`) flag to the Makefile container upgrade commands to force recreation of anonymous volumes.
 - Fixed production deployment caching issues on Vercel by adding custom cache-control headers in `next.config.ts` to prevent CDN and browser caching of `/sw.js`.
 - Refactored service worker `sw.js` caching strategies: bypassed same-origin API routes, implemented Network-First for HTML documents and Next.js RSC data, and restricted Cache-First strictly to hashed, immutable assets under `_next/static/`.
 - Enhanced service worker registration in `ServiceWorkerRegistrar.tsx` to detect updates and display a polished React toast (via the app's `useToast` hook) with an interactive "Refresh" action button instead of browser alert dialogues.

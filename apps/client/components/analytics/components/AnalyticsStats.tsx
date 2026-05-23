@@ -50,7 +50,7 @@ export default function AnalyticsStats({
       animate="show"
       className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
     >
-      <motion.div variants={cardVariants} whileHover={{ y: -4 }} className="transition-all duration-300">
+      <motion.div variants={cardVariants} whileHover={{ y: -4 }}>
         <Card className="bg-card/40 backdrop-blur-md border-border/80 shadow-md h-full">
           <CardContent className="pt-6">
             <div className="flex justify-between items-start">
@@ -67,7 +67,7 @@ export default function AnalyticsStats({
         </Card>
       </motion.div>
 
-      <motion.div variants={cardVariants} whileHover={{ y: -4 }} className="transition-all duration-300">
+      <motion.div variants={cardVariants} whileHover={{ y: -4 }}>
         <Card className="bg-card/40 backdrop-blur-md border-border/80 shadow-md h-full">
           <CardContent className="pt-6">
             <div className="flex justify-between items-start">
@@ -84,7 +84,7 @@ export default function AnalyticsStats({
         </Card>
       </motion.div>
 
-      <motion.div variants={cardVariants} whileHover={{ y: -4 }} className="transition-all duration-300">
+      <motion.div variants={cardVariants} whileHover={{ y: -4 }}>
         <Card className="bg-card/40 backdrop-blur-md border-border/80 shadow-md h-full">
           <CardContent className="pt-6">
             <div className="flex justify-between items-start">
@@ -101,7 +101,7 @@ export default function AnalyticsStats({
         </Card>
       </motion.div>
 
-      <motion.div variants={cardVariants} whileHover={{ y: -4 }} className="transition-all duration-300">
+      <motion.div variants={cardVariants} whileHover={{ y: -4 }}>
         <Card className="bg-card/40 backdrop-blur-md border-border/80 shadow-md h-full">
           <CardContent className="pt-6">
             <div className="flex justify-between items-start">
