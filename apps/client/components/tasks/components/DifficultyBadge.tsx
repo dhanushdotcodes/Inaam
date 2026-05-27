@@ -32,7 +32,7 @@ const difficultyConfig = {
 };
 
 export default function DifficultyBadge({ difficulty, className }: DifficultyBadgeProps) {
-  const config = difficultyConfig[difficulty] || difficultyConfig[TaskDifficulty.MEDIUM];
+  const config = difficultyConfig[difficulty as keyof typeof difficultyConfig] || difficultyConfig[TaskDifficulty.MEDIUM];
 
   return (
     <Badge

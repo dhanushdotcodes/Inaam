@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Refactored `TaskItem` desktop grid layout to prevent the difficulty and points metadata column from wrapping into two rows, keeping them inline in a single row with auto-sizing while letting the title section adjust dynamically.
 - Upgraded the Postgres Docker database image to `postgres:17-alpine` in `docker-compose.local.yml`.
 
+### Fixed
+- Resolved a TypeScript compilation error in `DifficultyBadge.tsx` where index-signature checks failed due to `TaskDifficulty.ALL` missing from the local config object.
+
 ## [0.15.0] - 2026-05-27
 
 ### Added
