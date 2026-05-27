@@ -24,6 +24,8 @@ help:
 	@echo "  dev-server            - Start FastAPI backend dev server using uv"
 	@echo "  test                  - Run backend pytest test suite"
 	@echo "  install-client pkg=\"x\" - Install a client npm/bun package"
+	@echo "  install-server pkg=\"x\" - Install a server python package via uv"
+	@echo "  db-seed               - Run database seed script"
 	@echo ""
 
 dev-web:
@@ -78,3 +80,9 @@ test:
 
 install-client:
 	cd apps/client && bun install $(pkg)
+
+install-server:
+	cd apps/server && uv add $(pkg)
+
+db-seed:
+	cd apps/server && PYTHONPATH=../..:.:$$PYTHONPATH uv run python -m scripts.seed_data

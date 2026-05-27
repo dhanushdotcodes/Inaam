@@ -10,6 +10,7 @@ dependencies = [
     "pydantic-settings>=2.7.1",
     "pyjwt>=2.12.1",
     "bcrypt>=4.2.0",
+    "faker>=40.19.1",
 ]
 
 [dependency-groups]
