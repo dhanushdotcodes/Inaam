@@ -189,9 +189,7 @@ export default function TaskItem({ task, onToggle, onDelete, onPin }: TaskItemPr
         <div className="hidden md:flex items-center gap-2 md:shrink-0 md:justify-start md:pl-0 pl-13">
           <DifficultyBadge difficulty={task.difficulty} />
           
-          <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
-            Bounty
-          </span>
+
 
           <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
             {task.points} Pts
@@ -297,9 +295,7 @@ export default function TaskItem({ task, onToggle, onDelete, onPin }: TaskItemPr
                     <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">Task Details</span>
                     <div className="flex items-center gap-2 flex-wrap">
                       <DifficultyBadge difficulty={task.difficulty} />
-                      <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
-                        Bounty
-                      </span>
+
                       <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
                         {task.points} Pts
                       </span>

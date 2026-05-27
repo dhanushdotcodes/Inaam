@@ -35,7 +35,6 @@ export default function TaskDashboard() {
     loadMore,
     hasMore,
     refresh,
-    stats
   } = useTasks();
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -43,8 +42,6 @@ export default function TaskDashboard() {
   return (
     <PageShell>
       <TaskHeader 
-        completedCount={stats.completed} 
-        totalCount={stats.total} 
         onNewTask={() => setIsCreateDialogOpen(true)}
       />
 

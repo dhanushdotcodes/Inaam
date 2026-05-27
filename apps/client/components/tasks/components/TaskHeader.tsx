@@ -1,18 +1,15 @@
 "use client";
 
-import React from "react";
-import { Trophy, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import DashboardHeader from "../../layout/DashboardHeader";
 import { Button } from "@/components/ui/button";
 import PointsDisplay from "../../shared/PointsDisplay";
 
 interface TaskHeaderProps {
-  completedCount: number;
-  totalCount: number;
   onNewTask: () => void;
 }
 
-export default function TaskHeader({ completedCount, totalCount, onNewTask }: TaskHeaderProps) {
+export default function TaskHeader({ onNewTask }: TaskHeaderProps) {
   return (
     <DashboardHeader 
       title="Tasks"
@@ -27,12 +24,6 @@ export default function TaskHeader({ completedCount, totalCount, onNewTask }: Ta
         >
           New Bounty
         </Button>
-        <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-muted/30 border border-border">
-          <Trophy className="size-4 text-amber-500" />
-          <span className="text-xs font-bold text-foreground">
-            {completedCount}/{totalCount} Completed
-          </span>
-        </div>
       </div>
     </DashboardHeader>
   );
