@@ -117,15 +117,7 @@ export async function getAllTasks(
   if (params?.offset !== undefined) searchParams.append("offset", params.offset.toString());
   if (params?.status) searchParams.append("status", params.status);
   if (params?.search) searchParams.append("search", params.search);
-
   return apiFetch<Task[]>(`/tasks?${searchParams.toString()}`);
-}
-
-/**
- * Fetch all tasks for a specific reward.
- */
-export async function getRewardTasks(rewardId: string): Promise<Task[]> {
-  return apiFetch<Task[]>(`/rewards/${rewardId}/tasks`);
 }
 
 /**
@@ -141,27 +133,13 @@ export async function createTask(
 }
 
 /**
- * Create a new task linked to a specific reward.
- */
-export async function createRewardTask(
-  rewardId: string,
-  payload: TaskCreatePayload
-): Promise<Task> {
-  return apiFetch<Task>(`/rewards/${rewardId}/task`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
-}
-
-/**
  * Update a specific task.
  */
 export async function updateTask(
   taskId: string,
-  payload: TaskUpdatePayload,
-  rewardId?: string | null
+  payload: TaskUpdatePayload
 ): Promise<Task> {
-  const path = rewardId ? `/rewards/${rewardId}/task/${taskId}` : `/tasks/${taskId}`;
+  const path = `/tasks/${taskId}`;
   return apiFetch<Task>(path, {
     method: "PUT",
     body: JSON.stringify(payload),
@@ -172,13 +150,10 @@ export async function updateTask(
  * Complete a specific task.
  */
 export async function completeTask(
-  taskId: string,
-  rewardId?: string | null
+  taskId: string
 ): Promise<Task> {
   const tzOffset = -new Date().getTimezoneOffset();
-  const path = rewardId 
-    ? `/rewards/${rewardId}/task/${taskId}/complete?tz_offset=${tzOffset}` 
-    : `/tasks/${taskId}/complete?tz_offset=${tzOffset}`;
+  const path = `/tasks/${taskId}/complete?tz_offset=${tzOffset}`;
   return apiFetch<Task>(path, {
     method: "PATCH",
   });
@@ -188,12 +163,9 @@ export async function completeTask(
  * Uncomplete/revert a specific task.
  */
 export async function incompleteTask(
-  taskId: string,
-  rewardId?: string | null
+  taskId: string
 ): Promise<Task> {
-  const path = rewardId 
-    ? `/rewards/${rewardId}/task/${taskId}/incomplete` 
-    : `/tasks/${taskId}/incomplete`;
+  const path = `/tasks/${taskId}/incomplete`;
   return apiFetch<Task>(path, {
     method: "PATCH",
   });
@@ -203,10 +175,9 @@ export async function incompleteTask(
  * Delete a specific task.
  */
 export async function deleteTask(
-  taskId: string,
-  rewardId?: string | null
+  taskId: string
 ): Promise<boolean> {
-  const path = rewardId ? `/rewards/${rewardId}/task/${taskId}` : `/tasks/${taskId}`;
+  const path = `/tasks/${taskId}`;
   return apiFetch<boolean>(path, {
     method: "DELETE",
   });
@@ -216,14 +187,13 @@ export async function deleteTask(
  * Fetch all rewards.
  */
 export async function getRewards(
-  params?: { limit?: number; offset?: number; status?: "claimed" | "unclaimed"; search?: string; reward_type?: string }
+  params?: { limit?: number; offset?: number; status?: "claimed" | "unclaimed"; search?: string }
 ): Promise<Reward[]> {
   const searchParams = new URLSearchParams();
   if (params?.status) searchParams.append("status", params.status);
   if (params?.limit !== undefined) searchParams.append("limit", params.limit.toString());
   if (params?.offset !== undefined) searchParams.append("offset", params.offset.toString());
   if (params?.search) searchParams.append("search", params.search);
-  if (params?.reward_type) searchParams.append("reward_type", params.reward_type);
   
   const query = searchParams.toString();
   const path = query ? `/rewards?${query}` : "/rewards";

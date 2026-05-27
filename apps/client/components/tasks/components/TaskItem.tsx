@@ -11,7 +11,6 @@ import TaskFormDialog from "../dialogs/TaskFormDialog";
 
 interface TaskItemProps {
   task: Task;
-  rewardTitle: string | null;
   onToggle: (task: Task) => void | Promise<void>;
   onDelete: (task: Task) => Promise<void>;
   onPin: (task: Task) => void | Promise<void>;
@@ -55,7 +54,7 @@ const itemVariants = {
   }
 };
 
-export default function TaskItem({ task, rewardTitle, onToggle, onDelete, onPin }: TaskItemProps) {
+export default function TaskItem({ task, onToggle, onDelete, onPin }: TaskItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -69,7 +68,7 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete, onPin 
     }
   }, [task.completed]);
 
-  const isObjective = task.reward_id !== null;
+
   const hasDescription = !!task.description?.trim();
   
   const formatRecurrenceDays = (daysStr: string | null) => {
@@ -159,11 +158,7 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete, onPin 
             >
               {task.title}
             </span>
-            {isObjective && rewardTitle && (
-              <span className="text-xs font-medium text-neutral-400 tracking-tight block mt-0.5">
-                Quest: {rewardTitle}
-              </span>
-            )}
+
           </div>
 
           {/* Mobile Actions (Hidden on Desktop) */}
@@ -195,7 +190,7 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete, onPin 
           <DifficultyBadge difficulty={task.difficulty} />
           
           <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
-            {isObjective ? "Objective" : "Bounty"}
+            Bounty
           </span>
 
           <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
@@ -303,7 +298,7 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete, onPin 
                     <div className="flex items-center gap-2 flex-wrap">
                       <DifficultyBadge difficulty={task.difficulty} />
                       <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
-                        {isObjective ? "Objective" : "Bounty"}
+                        Bounty
                       </span>
                       <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-2.5 h-6 rounded-full border border-primary/10 flex items-center justify-center">
                         {task.points} Pts
@@ -425,10 +420,8 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete, onPin 
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        title={`Delete ${isObjective ? "Objective" : "Bounty"}`}
-        description={`Are you sure you want to permanently delete this ${
-          isObjective ? "objective" : "bounty"
-        }? This action is irreversible.`}
+        title="Delete Bounty"
+        description="Are you sure you want to permanently delete this bounty? This action is irreversible."
         cancelText="Cancel"
         confirmText="Delete"
         variant="destructive"

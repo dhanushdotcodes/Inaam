@@ -20,21 +20,6 @@ export enum TaskDifficulty {
   EXTREME = "EXTREME",
 }
 
-/**
- * Task Type.
- */
-export enum TaskType {
-  BOUNTY = "BOUNTY",
-  OBJECTIVE = "OBJECTIVE",
-}
-
-/**
- * Reward Type.
- */
-export enum RewardType {
-  QUEST = "QUEST",
-  PRIZE = "PRIZE",
-}
 
 /**
  * Reward entity.
@@ -44,7 +29,6 @@ export interface Reward {
   id: string;
   title: string;
   description: string | null;
-  reward_type: RewardType;
   cost_points: number;
   claimed_at: string | null;
   created_at: string;
@@ -59,12 +43,10 @@ export interface Task {
   id: string;
   title: string;
   description: string | null;
-  task_type: TaskType;
   difficulty: TaskDifficulty;
   points: number;
   completed: boolean;
   completed_at: string | null;
-  reward_id: string | null;
   is_recurring: boolean;
   recurrence_days: string | null;
   pinned: boolean;
@@ -80,7 +62,6 @@ export interface Task {
 export interface RewardCreatePayload {
   title: string;
   description?: string;
-  reward_type?: RewardType;
   cost_points?: number;
 }
 
@@ -90,10 +71,8 @@ export interface RewardCreatePayload {
 export interface TaskCreatePayload {
   title: string;
   description?: string;
-  task_type?: TaskType;
   difficulty?: TaskDifficulty;
   points?: number;
-  reward_id?: string | null;
   is_recurring?: boolean;
   recurrence_days?: string | null;
   pinned?: boolean;
@@ -105,7 +84,6 @@ export interface TaskCreatePayload {
 export interface RewardUpdatePayload {
   title?: string;
   description?: string;
-  reward_type?: RewardType;
   cost_points?: number;
   claimed_at?: string | null;
 }
@@ -116,23 +94,15 @@ export interface RewardUpdatePayload {
 export interface TaskUpdatePayload {
   title?: string;
   description?: string;
-  task_type?: TaskType;
   difficulty?: TaskDifficulty;
   points?: number;
   completed?: boolean;
-  reward_id?: string | null;
   is_recurring?: boolean;
   recurrence_days?: string | null;
   pinned?: boolean;
 }
 
-/**
- * Reward with its tasks and UI loading state.
- */
-export interface RewardWithTasks extends Reward {
-  tasks: Task[];
-  tasksLoading: boolean;
-}
+
 
 export interface UserResponse {
   id: string;

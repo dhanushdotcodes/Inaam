@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState, useMemo, useRef } from "react";
-import { getAllTasks, getRewards, completeTask, incompleteTask, deleteTask, updateTask } from "@/lib/api";
-import type { Task, Reward } from "@/types";
+import { getAllTasks, completeTask, incompleteTask, deleteTask, updateTask } from "@/lib/api";
+import type { Task } from "@/types";
 import { TaskDifficulty } from "@/types";
 import { useToast } from "@/hooks/useToast";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -15,7 +15,6 @@ type TaskFilter = "active" | "completed";
 export function useTasks() {
   const addToast = useToast((s) => s.addToast);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,10 +33,13 @@ export function useTasks() {
         offsetRef.current = 0;
       }
       setError(null);
-      const [tasksData, rewardsData] = await Promise.all([
-        getAllTasks({ limit: LIMIT, offset: offsetRef.current, status: filter, search: debouncedSearchQuery }),
-        getRewards({ limit: 100 }) // Fetch all rewards for UI lookup
-      ]);
+      
+      const tasksData = await getAllTasks({ 
+        limit: LIMIT, 
+        offset: offsetRef.current, 
+        status: filter, 
+        search: debouncedSearchQuery 
+      });
       
       setTasks(prev => {
         if (reset) return tasksData || [];
@@ -45,7 +47,6 @@ export function useTasks() {
         const newTasks = (tasksData || []).filter(t => !existingIds.has(t.id));
         return [...prev, ...newTasks];
       });
-      setRewards(rewardsData || []);
       
       if ((tasksData || []).length < LIMIT) {
         setHasMore(false);
@@ -93,7 +94,7 @@ export function useTasks() {
       );
 
       if (isCompleting) {
-        await completeTask(task.id, task.reward_id);
+        await completeTask(task.id);
         
         // Dispatch refreshPoints event
         window.dispatchEvent(new CustomEvent("refreshPoints"));
@@ -111,7 +112,7 @@ export function useTasks() {
           }
         });
       } else {
-        await incompleteTask(task.id, task.reward_id);
+        await incompleteTask(task.id);
         
         // Dispatch refreshPoints event
         window.dispatchEvent(new CustomEvent("refreshPoints"));
@@ -134,9 +135,9 @@ export function useTasks() {
     }
   };
 
-  const removeTask = async (taskId: string, rewardId?: string | null) => {
+  const removeTask = async (taskId: string) => {
     try {
-      await deleteTask(taskId, rewardId);
+      await deleteTask(taskId);
       setTasks((prev) => prev.filter((t) => t.id !== taskId));
       
       // Dispatch refreshPoints event
@@ -169,7 +170,7 @@ export function useTasks() {
         prev.map((t) => (t.id === task.id ? { ...t, pinned: isPinning } : t))
       );
 
-      await updateTask(task.id, { pinned: isPinning }, task.reward_id);
+      await updateTask(task.id, { pinned: isPinning });
 
       addToast({
         message: isPinning ? "Task pinned to dashboard." : "Task unpinned.",
@@ -188,15 +189,7 @@ export function useTasks() {
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
-      // Find associated quest (reward) title
-      const associatedReward = task.reward_id 
-        ? rewards.find((r) => r.id === task.reward_id)
-        : null;
-      const questTitle = associatedReward ? associatedReward.title : "";
-
-      const matchesSearch = 
-        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        questTitle.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesDifficulty = 
         difficultyFilter === TaskDifficulty.ALL || 
@@ -204,7 +197,7 @@ export function useTasks() {
         
       return matchesSearch && matchesDifficulty;
     });
-  }, [tasks, rewards, searchQuery, difficultyFilter]);
+  }, [tasks, searchQuery, difficultyFilter]);
 
   const stats = useMemo(() => ({
     total: tasks.length,
@@ -213,7 +206,6 @@ export function useTasks() {
 
   return {
     tasks,
-    rewards,
     filteredTasks,
     loading,
     error,

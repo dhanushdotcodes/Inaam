@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { TaskDifficulty, TaskCreatePayload, TaskType, Task } from "@/types";
+import { TaskDifficulty, TaskCreatePayload, Task } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,7 +46,6 @@ export default function TaskFormDialog({ open, onOpenChange, onSuccess, initialD
   const [formData, setFormData] = useState<TaskCreatePayload>({
     title: "",
     description: "",
-    task_type: TaskType.BOUNTY,
     difficulty: TaskDifficulty.MEDIUM,
     points: DIFFICULTY_RANGES[TaskDifficulty.MEDIUM].min,
     is_recurring: false,
@@ -63,7 +62,6 @@ export default function TaskFormDialog({ open, onOpenChange, onSuccess, initialD
           setFormData({
             title: initialData.title,
             description: initialData.description || "",
-            task_type: initialData.task_type || TaskType.BOUNTY,
             difficulty: initialData.difficulty || TaskDifficulty.MEDIUM,
             points: initialData.points || DIFFICULTY_RANGES[TaskDifficulty.MEDIUM].min,
             is_recurring: initialData.is_recurring,
@@ -78,7 +76,6 @@ export default function TaskFormDialog({ open, onOpenChange, onSuccess, initialD
           setFormData({
             title: "",
             description: "",
-            task_type: TaskType.BOUNTY,
             difficulty: TaskDifficulty.MEDIUM,
             points: DIFFICULTY_RANGES[TaskDifficulty.MEDIUM].min,
             is_recurring: false,
@@ -156,8 +153,7 @@ export default function TaskFormDialog({ open, onOpenChange, onSuccess, initialD
         });
       } else {
         await createTask({
-          ...formData,
-          task_type: TaskType.BOUNTY
+          ...formData
         });
       }
       

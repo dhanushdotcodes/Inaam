@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { 
-  Trophy,
   ShoppingBag,
   Compass, 
   LogOut,
@@ -24,11 +23,6 @@ const NAV_ITEMS = [
     label: "Tasks",
     href: "/tasks",
     icon: Compass,
-  },
-  {
-    label: "Quests",
-    href: "/quests",
-    icon: Trophy,
   },
   {
     label: "Prizes",
@@ -52,7 +46,7 @@ export default function Sidebar() {
     router.push("/");
   };
 
-  const NavContent = () => (
+  const renderNavContent = () => (
     <div className="flex flex-col h-full px-6 py-9">
       {/* Brand Header: Uses logo.png and font-brand (Boldonse) */}
       {/* Transition padding-left and gap smoothly over 400ms to avoid justify jumps */}
@@ -206,7 +200,7 @@ export default function Sidebar() {
       >
         {/* NavContent wrapper with overflow-hidden to clip contents cleanly during width morph animation */}
         <div className="w-full h-full flex flex-col overflow-hidden">
-          <NavContent />
+          {renderNavContent()}
         </div>
 
         {/* Beautiful border bulge toggle button */}
@@ -243,7 +237,7 @@ export default function Sidebar() {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed top-0 left-0 bottom-0 w-72 bg-card z-50 border-r border-border shadow-xl"
             >
-              <NavContent />
+              {renderNavContent()}
             </motion.aside>
           </>
         )}

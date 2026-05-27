@@ -7,11 +7,11 @@ import DashboardHeader from "@/components/layout/DashboardHeader";
 import PrizeCard from "./components/PrizeCard";
 import RewardFilters from "./components/RewardFilters";
 import RewardFormDialog from "./dialogs/RewardFormDialog";
-import ObjectiveDetailsDialog from "./dialogs/ObjectiveDetailsDialog";
+
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import PointsDisplay from "../shared/PointsDisplay";
-import type { Reward, RewardWithTasks } from "@/types";
-import { RewardType } from "@/types";
+import type { Reward } from "@/types";
+
 
 import { useRewards } from "@/hooks/useRewards";
 import { useRewardActions } from "@/hooks/useRewardActions";
@@ -38,7 +38,7 @@ export default function PrizesDashboard() {
     refresh, 
     updateReward,
     setRewards 
-  } = useRewards(RewardType.PRIZE);
+  } = useRewards();
 
   const { 
     deleteRewardAction, 
@@ -50,13 +50,12 @@ export default function PrizesDashboard() {
   /* Dialog states */
   const [formDialogOpen, setFormDialogOpen] = useState(false);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
-  const [selectedReward, setSelectedReward] = useState<RewardWithTasks | null>(null);
+  const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [rewardToEdit, setRewardToEdit] = useState<Reward | null>(null);
 
   /* Reward deletion state */
   const [rewardToDelete, setRewardToDelete] = useState<string | null>(null);
-
-  const handleRewardUpdate = (updatedReward: RewardWithTasks) => {
+  const handleRewardUpdate = (updatedReward: Reward) => {
     updateReward(updatedReward);
     if (selectedReward?.id === updatedReward.id) {
       setSelectedReward(updatedReward);
@@ -81,7 +80,7 @@ export default function PrizesDashboard() {
     });
   };
 
-  const handleClaim = async (reward: RewardWithTasks) => {
+  const handleClaim = async (reward: Reward) => {
     await claimRewardAction(reward.id, () => {
       setDetailsDialogOpen(false);
       refresh();
@@ -187,19 +186,24 @@ export default function PrizesDashboard() {
         <RewardFormDialog 
           key={rewardToEdit?.id || "new"}
           reward={rewardToEdit}
-          defaultType={RewardType.PRIZE}
+
           open={formDialogOpen} 
           onOpenChange={setFormDialogOpen} 
           onSuccess={refresh}
         />
 
-        <ObjectiveDetailsDialog 
-          reward={selectedReward}
+        <AlertDialog
           open={detailsDialogOpen}
           onOpenChange={setDetailsDialogOpen}
-          onUpdate={handleRewardUpdate}
-          onRedeem={handleClaim}
-          isClaiming={isClaiming}
+          title="Redeem Prize"
+          description={
+            selectedReward
+              ? `Are you sure you want to redeem "${selectedReward.title}" for ${selectedReward.cost_points} points?`
+              : ""
+          }
+          confirmText="Redeem"
+          onConfirm={() => selectedReward && handleClaim(selectedReward)}
+          isLoading={isClaiming}
         />
 
         <AlertDialog

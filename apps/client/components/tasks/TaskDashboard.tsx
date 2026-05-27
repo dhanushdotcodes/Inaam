@@ -20,7 +20,6 @@ import StatusError from "@/components/shared/StatusError";
 export default function TaskDashboard() {
   const {
     tasks,
-    rewards,
     filteredTasks,
     loading,
     error,
@@ -75,9 +74,8 @@ export default function TaskDashboard() {
 
             <TaskList 
               tasks={filteredTasks} 
-              rewards={rewards} 
               onToggle={toggleComplete} 
-              onDelete={(task) => deleteTask(task.id, task.reward_id)}
+              onDelete={(task) => deleteTask(task.id)}
               onPin={pinTask}
               filter={`${filter}-${difficultyFilter}`}
             />

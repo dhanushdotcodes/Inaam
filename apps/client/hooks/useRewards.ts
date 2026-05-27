@@ -1,18 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useState, useMemo, useRef } from "react";
-import { getRewards, getRewardTasks } from "@/lib/api";
-import type { RewardWithTasks } from "@/types";
-import { RewardType } from "@/types";
+import { getRewards } from "@/lib/api";
+import type { Reward } from "@/types";
+
 import { useDebounce } from "@/hooks/useDebounce";
 
 type RewardFilter = "active" | "claimed";
 
 /**
- * Hook for fetching and managing rewards by type.
+ * Hook for fetching and managing rewards.
  */
-export function useRewards(type: RewardType) {
-  const [rewards, setRewards] = useState<RewardWithTasks[]>([]);
+export function useRewards() {
+  const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,7 +40,6 @@ export function useRewards(type: RewardType) {
         offset: offsetRef.current,
         status: apiStatus,
         search: debouncedSearchQuery,
-        reward_type: type
       });
 
       if (!Array.isArray(data)) {
@@ -50,16 +49,10 @@ export function useRewards(type: RewardType) {
         return;
       }
 
-      const newRewards: RewardWithTasks[] = data.map((r) => ({
-        ...r,
-        tasks: [],
-        tasksLoading: true,
-      }));
-
       setRewards(prev => {
-        if (reset) return newRewards;
+        if (reset) return data;
         const existingIds = new Set(prev.map(r => r.id));
-        const filtered = newRewards.filter(r => !existingIds.has(r.id));
+        const filtered = data.filter(r => !existingIds.has(r.id));
         return [...prev, ...filtered];
       });
 
@@ -69,31 +62,14 @@ export function useRewards(type: RewardType) {
         setHasMore(true);
       }
       offsetRef.current += data.length;
-      
-      // Fetch tasks for the newly fetched rewards
-      const taskResults = await Promise.allSettled(
-        data.map((r) => getRewardTasks(r.id))
-      );
 
-      setRewards((prev) =>
-        prev.map((reward) => {
-          const index = data.findIndex(d => d.id === reward.id);
-          if (index === -1) return reward; // Already had tasks fetched
-          const result = taskResults[index];
-          return {
-            ...reward,
-            tasks: result.status === "fulfilled" ? result.value : [],
-            tasksLoading: false,
-          };
-        })
-      );
     } catch (err) {
-      console.error(`Fetch ${type} error:`, err);
-      setError(err instanceof Error ? err.message : `Failed to fetch ${type}s`);
+      console.error(`Fetch rewards error:`, err);
+      setError(err instanceof Error ? err.message : `Failed to fetch rewards`);
     } finally {
       if (reset) setLoading(false);
     }
-  }, [type, debouncedSearchQuery, statusFilter]);
+  }, [debouncedSearchQuery, statusFilter]);
 
   useEffect(() => {
     let active = true;
@@ -112,7 +88,7 @@ export function useRewards(type: RewardType) {
     fetchRewards(false);
   }, [hasMore, loading, fetchRewards]);
 
-  const updateReward = (updatedReward: RewardWithTasks) => {
+  const updateReward = (updatedReward: Reward) => {
     setRewards((prev) =>
       prev.map((r) => (r.id === updatedReward.id ? updatedReward : r))
     );

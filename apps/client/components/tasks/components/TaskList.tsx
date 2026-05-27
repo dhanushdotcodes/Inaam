@@ -2,12 +2,11 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { Pin } from "lucide-react";
-import type { Task, Reward } from "@/types";
+import type { Task } from "@/types";
 import TaskItem from "./TaskItem";
 
 interface TaskListProps {
   tasks: Task[];
-  rewards: Reward[];
   onToggle: (task: Task) => void;
   onDelete: (task: Task) => Promise<void>;
   onPin: (task: Task) => void | Promise<void>;
@@ -34,7 +33,7 @@ const containerVariants = {
   }
 };
 
-export default function TaskList({ tasks, rewards, onToggle, onDelete, onPin, filter }: TaskListProps) {
+export default function TaskList({ tasks, onToggle, onDelete, onPin, filter }: TaskListProps) {
   const sortedTasks = [...tasks].sort((a, b) => {
     // 1. Uncompleted tasks first
     if (a.completed !== b.completed) {
@@ -53,10 +52,7 @@ export default function TaskList({ tasks, rewards, onToggle, onDelete, onPin, fi
   const pinnedTasks = sortedTasks.filter((t) => t.pinned && !t.completed);
   const unpinnedTasks = sortedTasks.filter((t) => !(t.pinned && !t.completed));
 
-  const getRewardTitle = (rewardId: string | null) => {
-    if (!rewardId) return null;
-    return rewards.find(r => r.id === rewardId)?.title || null;
-  };
+
 
   return (
     <AnimatePresence mode="wait">
@@ -74,7 +70,6 @@ export default function TaskList({ tasks, rewards, onToggle, onDelete, onPin, fi
               <TaskItem 
                 key={task.id} 
                 task={task} 
-                rewardTitle={getRewardTitle(task.reward_id)} 
                 onToggle={onToggle} 
                 onDelete={onDelete}
                 onPin={onPin}
@@ -95,7 +90,6 @@ export default function TaskList({ tasks, rewards, onToggle, onDelete, onPin, fi
               <TaskItem 
                 key={task.id} 
                 task={task} 
-                rewardTitle={getRewardTitle(task.reward_id)} 
                 onToggle={onToggle} 
                 onDelete={onDelete}
                 onPin={onPin}
