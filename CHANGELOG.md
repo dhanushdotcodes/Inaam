@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### [Unreleased]
 
+## [0.16.0] - 2026-05-27
+
+### Added
+- Created database seeding utility script `seed_data.py` utilizing `Faker` to populate mock users, tasks, quests, prizes, and transaction histories.
+- Added `install-server` and `db-seed` targets in the root `Makefile` to simplify dependencies installation and seed execution.
+
+### Changed
+- Refactored `TaskItem` desktop grid layout to prevent the difficulty and points metadata column from wrapping into two rows, keeping them inline in a single row with auto-sizing while letting the title section adjust dynamically.
+- Upgraded the Postgres Docker database image to `postgres:17-alpine` in `docker-compose.local.yml`.
+
 ## [0.15.0] - 2026-05-27
 
 ### Added
