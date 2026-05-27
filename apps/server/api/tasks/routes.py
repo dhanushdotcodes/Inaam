@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -21,11 +21,23 @@ router = APIRouter(
 @router.get("", response_model=ApiResponse[List[TaskResponse]])
 async def list_all_tasks(
     tz_offset: int = 0,
+    status: str = "active",
+    search: Optional[str] = None,
+    limit: int = 20,
+    offset: int = 0,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Get all tasks across all rewards for the current user."""
-    tasks = await task_service.get_tasks(db, user_id=current_user.id, tz_offset=tz_offset, filter_active_today=True)
+    tasks = await task_service.get_tasks(
+        db, 
+        user_id=current_user.id, 
+        tz_offset=tz_offset, 
+        status=status,
+        search=search,
+        limit=limit,
+        offset=offset
+    )
     await db.commit()  # Save any auto-reset changes
     return ApiResponse.success(data=tasks)
 

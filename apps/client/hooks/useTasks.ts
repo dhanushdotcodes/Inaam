@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import { getAllTasks, getRewards, completeTask, incompleteTask, deleteTask, updateTask } from "@/lib/api";
 import type { Task, Reward } from "@/types";
 import { TaskDifficulty } from "@/types";
 import { useToast } from "@/hooks/useToast";
+import { useDebounce } from "@/hooks/useDebounce";
 
 type TaskFilter = "all" | "active" | "completed";
 
@@ -18,31 +19,64 @@ export function useTasks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filter, setFilter] = useState<TaskFilter>("all");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const [filter, setFilter] = useState<TaskFilter>("active");
   const [difficultyFilter, setDifficultyFilter] = useState<TaskDifficulty | "all">("all");
+  const [hasMore, setHasMore] = useState(true);
 
-  const fetchTasks = useCallback(async () => {
+  const offsetRef = useRef(0);
+  const LIMIT = 20;
+
+  const fetchTasks = useCallback(async (reset = false) => {
     try {
-      setLoading(true);
+      if (reset) {
+        setLoading(true);
+        offsetRef.current = 0;
+      }
       setError(null);
       const [tasksData, rewardsData] = await Promise.all([
-        getAllTasks(),
-        getRewards()
+        getAllTasks({ limit: LIMIT, offset: offsetRef.current, status: filter, search: debouncedSearchQuery }),
+        getRewards({ limit: 100 }) // Fetch all rewards for UI lookup
       ]);
-      setTasks(tasksData || []);
+      
+      setTasks(prev => {
+        if (reset) return tasksData || [];
+        const existingIds = new Set(prev.map(t => t.id));
+        const newTasks = (tasksData || []).filter(t => !existingIds.has(t.id));
+        return [...prev, ...newTasks];
+      });
       setRewards(rewardsData || []);
+      
+      if ((tasksData || []).length < LIMIT) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
+      offsetRef.current += (tasksData || []).length;
     } catch (err) {
       console.error("Fetch tasks error:", err);
       setError(err instanceof Error ? err.message : "Failed to load tasks");
     } finally {
-      setLoading(false);
+      if (reset) setLoading(false);
     }
-  }, []);
+  }, [debouncedSearchQuery, filter]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchTasks();
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) {
+        fetchTasks(true);
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, [fetchTasks]);
+
+  const loadMore = useCallback(() => {
+    if (!hasMore || loading) return;
+    fetchTasks(false);
+  }, [hasMore, loading, fetchTasks]);
 
   const toggleComplete = async (task: Task) => {
     const isCompleting = !task.completed;
@@ -164,16 +198,13 @@ export function useTasks() {
         task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         questTitle.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesFilter = 
-        filter === "all" || 
-        (filter === "active" && !task.completed) || 
-        (filter === "completed" && task.completed);
       const matchesDifficulty = 
         difficultyFilter === "all" || 
         task.difficulty === difficultyFilter;
-      return matchesSearch && matchesFilter && matchesDifficulty;
+        
+      return matchesSearch && matchesDifficulty;
     });
-  }, [tasks, rewards, searchQuery, filter, difficultyFilter]);
+  }, [tasks, rewards, searchQuery, difficultyFilter]);
 
   const stats = useMemo(() => ({
     total: tasks.length,
@@ -189,13 +220,15 @@ export function useTasks() {
     searchQuery,
     filter,
     difficultyFilter,
+    hasMore,
     setSearchQuery,
     setFilter,
     setDifficultyFilter,
     toggleComplete,
     deleteTask: removeTask,
     pinTask,
-    refresh: fetchTasks,
+    loadMore,
+    refresh: () => fetchTasks(true),
     stats
   };
 }

@@ -19,14 +19,28 @@ async def get_tasks(
     reward_id: Optional[UUID] = None,
     user_id: Optional[UUID] = None,
     tz_offset: int = 0,
-    filter_active_today: bool = False
+    status: str = "active",
+    search: Optional[str] = None,
+    limit: int = 20,
+    offset: int = 0
 ) -> Sequence[Task]:
-    """Get all tasks for a specific user, optionally filtered by reward_id and active_today."""
+    """Get tasks for a user, optionally filtered by status, search, and paginated."""
     query = select(Task)
     if user_id:
         query = query.where(Task.user_id == user_id)
     if reward_id:
         query = query.where(Task.reward_id == reward_id)
+        
+    if search:
+        query = query.where(Task.title.ilike(f"%{search}%"))
+
+    if status == "completed":
+        query = query.where(Task.completed == True)
+    elif status == "active":
+        query = query.where(Task.completed == False)
+        
+    # We order by created_at desc for consistent pagination
+    query = query.order_by(Task.created_at.desc())
         
     result = await db.execute(query)
     tasks = result.scalars().all()
@@ -61,14 +75,15 @@ async def get_tasks(
             task.active_today = True
             
         # Filter logic for main dashboard
-        if filter_active_today:
+        if status == "active":
             # Show if active today OR if completed today (even if not active today, just in case)
             if task.active_today or (task.completed and task.completed_at and task.completed_at >= local_start_dt):
                 final_tasks.append(task)
         else:
             final_tasks.append(task)
             
-    return final_tasks
+    # Apply limit and offset in memory since python-level filtering changes the count
+    return final_tasks[offset : offset + limit]
 
 
 async def create_task(

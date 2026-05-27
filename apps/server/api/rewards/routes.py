@@ -23,11 +23,17 @@ router = APIRouter(
 @router.get("", response_model=ApiResponse[List[RewardResponse]])
 async def list_rewards(
     status: Optional[str] = None, 
+    search: Optional[str] = None,
+    reward_type: Optional[str] = None,
+    limit: int = 20,
+    offset: int = 0,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Get all rewards with optional status filtering."""
-    rewards = await reward_service.get_rewards(db, status, current_user.id)
+    rewards = await reward_service.get_rewards(
+        db, status=status, user_id=current_user.id, search=search, reward_type=reward_type, limit=limit, offset=offset
+    )
     return ApiResponse.success(data=rewards)
 
 

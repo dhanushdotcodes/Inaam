@@ -5,6 +5,7 @@ import { Plus, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import PrizeCard from "./components/PrizeCard";
+import RewardFilters from "./components/RewardFilters";
 import RewardFormDialog from "./dialogs/RewardFormDialog";
 import ObjectiveDetailsDialog from "./dialogs/ObjectiveDetailsDialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -25,8 +26,15 @@ import EmptyState from "@/components/shared/EmptyState";
 export default function PrizesDashboard() {
   const { 
     rewards, 
+    filteredRewards,
     loading, 
     error, 
+    searchQuery,
+    setSearchQuery,
+    statusFilter,
+    setStatusFilter,
+    hasMore,
+    loadMore,
     refresh, 
     updateReward,
     setRewards 
@@ -119,7 +127,16 @@ export default function PrizesDashboard() {
         </div>
       </DashboardHeader>
 
-      <PageContent>
+      <PageContent className="space-y-6">
+        <RewardFilters 
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          filter={statusFilter}
+          onFilterChange={setStatusFilter}
+          placeholder="Search prizes..."
+          layoutIdPrefix="prize"
+        />
+
         {loading && rewards.length === 0 && (
           <DashboardLoader message="Syncing prize shop..." />
         )}
@@ -137,9 +154,9 @@ export default function PrizesDashboard() {
           />
         )}
 
-        {!loading && !error && rewards.length > 0 && (
+        {!loading && !error && filteredRewards.length > 0 && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {sortedPrizes.map((prize) => (
+            {filteredRewards.map((prize) => (
               <PrizeCard 
                 key={prize.id} 
                 prize={prize} 
@@ -151,6 +168,18 @@ export default function PrizesDashboard() {
                 onDelete={(id) => setRewardToDelete(id)}
               />
             ))}
+          </div>
+        )}
+        
+        {!loading && !error && hasMore && (
+          <div className="mt-8 flex justify-center pb-8">
+            <Button 
+              onClick={loadMore} 
+              variant="ghost"
+              isLoading={loading}
+            >
+              Load more prizes...
+            </Button>
           </div>
         )}
 

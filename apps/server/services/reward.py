@@ -15,7 +15,11 @@ from services import transaction as transaction_service
 async def get_rewards(
     db: AsyncSession, 
     status: Optional[str] = None,
-    user_id: Optional[UUID] = None
+    user_id: Optional[UUID] = None,
+    search: Optional[str] = None,
+    reward_type: Optional[str] = None,
+    limit: int = 20,
+    offset: int = 0
 ) -> Sequence[Reward]:
     """Get all rewards for a specific user with optional status filtering."""
     query = select(Reward)
@@ -26,6 +30,15 @@ async def get_rewards(
         query = query.where(Reward.claimed_at.is_not(None))
     elif status == "unclaimed":
         query = query.where(Reward.claimed_at.is_(None))
+        
+    if reward_type:
+        query = query.where(Reward.reward_type == reward_type)
+        
+    if search:
+        query = query.where(Reward.title.ilike(f"%{search}%"))
+        
+    query = query.order_by(Reward.created_at.desc())
+    query = query.limit(limit).offset(offset)
         
     result = await db.execute(query)
     return result.scalars().all()

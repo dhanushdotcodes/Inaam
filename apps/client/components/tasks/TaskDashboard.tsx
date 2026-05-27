@@ -11,6 +11,7 @@ import DailyBonusProgress from "@/components/tasks/components/DailyBonusProgress
 import { useTasks } from "@/hooks/useTasks";
 import PageShell, { PageContent } from "@/components/layout/PageShell";
 import DashboardLoader from "@/components/shared/DashboardLoader";
+import { Button } from "@/components/ui/button";
 import StatusError from "@/components/shared/StatusError";
 
 /**
@@ -32,6 +33,8 @@ export default function TaskDashboard() {
     toggleComplete,
     deleteTask,
     pinTask,
+    loadMore,
+    hasMore,
     refresh,
     stats
   } = useTasks();
@@ -77,6 +80,18 @@ export default function TaskDashboard() {
               onPin={pinTask}
               filter={`${filter}-${difficultyFilter}`}
             />
+            
+            {hasMore && (
+              <div className="mt-8 flex justify-center pb-8">
+                <Button 
+                  onClick={loadMore} 
+                  variant="ghost"
+                  isLoading={loading}
+                >
+                  Load more tasks...
+                </Button>
+              </div>
+            )}
           </>
         )}
       </PageContent>

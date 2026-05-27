@@ -107,9 +107,18 @@ export async function signupUser(
 /**
  * Fetch all tasks across all rewards.
  */
-export async function getAllTasks(): Promise<Task[]> {
+export async function getAllTasks(
+  params?: { limit?: number; offset?: number; status?: "active" | "completed" | "all"; search?: string }
+): Promise<Task[]> {
   const tzOffset = -new Date().getTimezoneOffset();
-  return apiFetch<Task[]>(`/tasks?tz_offset=${tzOffset}`);
+  const searchParams = new URLSearchParams({ tz_offset: tzOffset.toString() });
+  
+  if (params?.limit !== undefined) searchParams.append("limit", params.limit.toString());
+  if (params?.offset !== undefined) searchParams.append("offset", params.offset.toString());
+  if (params?.status) searchParams.append("status", params.status);
+  if (params?.search) searchParams.append("search", params.search);
+
+  return apiFetch<Task[]>(`/tasks?${searchParams.toString()}`);
 }
 
 /**
@@ -206,8 +215,18 @@ export async function deleteTask(
 /**
  * Fetch all rewards.
  */
-export async function getRewards(status?: "claimed" | "unclaimed"): Promise<Reward[]> {
-  const path = status ? `/rewards?status=${status}` : "/rewards";
+export async function getRewards(
+  params?: { limit?: number; offset?: number; status?: "claimed" | "unclaimed"; search?: string; reward_type?: string }
+): Promise<Reward[]> {
+  const searchParams = new URLSearchParams();
+  if (params?.status) searchParams.append("status", params.status);
+  if (params?.limit !== undefined) searchParams.append("limit", params.limit.toString());
+  if (params?.offset !== undefined) searchParams.append("offset", params.offset.toString());
+  if (params?.search) searchParams.append("search", params.search);
+  if (params?.reward_type) searchParams.append("reward_type", params.reward_type);
+  
+  const query = searchParams.toString();
+  const path = query ? `/rewards?${query}` : "/rewards";
   return apiFetch<Reward[]>(path);
 }
 
