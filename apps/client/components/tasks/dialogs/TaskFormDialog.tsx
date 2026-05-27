@@ -32,7 +32,7 @@ interface TaskFormDialogProps {
   initialData?: Task;
 }
 
-const DIFFICULTY_RANGES: Record<TaskDifficulty, { min: number; max: number }> = {
+const DIFFICULTY_RANGES: Record<Exclude<TaskDifficulty, TaskDifficulty.ALL>, { min: number; max: number }> = {
   [TaskDifficulty.TINY]: { min: 5, max: 10 },
   [TaskDifficulty.SMALL]: { min: 15, max: 25 },
   [TaskDifficulty.MEDIUM]: { min: 40, max: 75 },
@@ -119,7 +119,7 @@ export default function TaskFormDialog({ open, onOpenChange, onSuccess, initialD
   const handleDifficultyChange = (value: TaskDifficulty | null) => {
     if (!value) return;
     const diff = value;
-    const range = DIFFICULTY_RANGES[diff];
+    const range = DIFFICULTY_RANGES[diff as Exclude<TaskDifficulty, TaskDifficulty.ALL>];
     
     setFormData(prev => ({
       ...prev,
@@ -137,7 +137,7 @@ export default function TaskFormDialog({ open, onOpenChange, onSuccess, initialD
 
     if (!formData.title.trim()) return;
 
-    const range = DIFFICULTY_RANGES[formData.difficulty as TaskDifficulty];
+    const range = DIFFICULTY_RANGES[formData.difficulty as Exclude<TaskDifficulty, TaskDifficulty.ALL>];
     const points = formData.points || 0;
 
     if (points < range.min || points > range.max) {
@@ -171,7 +171,7 @@ export default function TaskFormDialog({ open, onOpenChange, onSuccess, initialD
     }
   };
 
-  const currentRange = DIFFICULTY_RANGES[formData.difficulty as TaskDifficulty];
+  const currentRange = DIFFICULTY_RANGES[formData.difficulty as Exclude<TaskDifficulty, TaskDifficulty.ALL>];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -262,7 +262,7 @@ export default function TaskFormDialog({ open, onOpenChange, onSuccess, initialD
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.values(TaskDifficulty).map((diff) => (
+                      {Object.values(TaskDifficulty).filter(d => d !== TaskDifficulty.ALL).map((diff) => (
                         <SelectItem key={diff} value={diff}>
                           {diff.charAt(0) + diff.slice(1).toLowerCase()}
                         </SelectItem>
