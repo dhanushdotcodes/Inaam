@@ -6,7 +6,7 @@ from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.reward import Reward
-from models.enums import RewardType, TransactionType
+from models.enums import TransactionType
 from schemas.reward import RewardCreate, RewardUpdate
 from schemas.transaction import TransactionCreate
 from services import transaction as transaction_service
@@ -17,7 +17,6 @@ async def get_rewards(
     status: Optional[str] = None,
     user_id: Optional[UUID] = None,
     search: Optional[str] = None,
-    reward_type: Optional[str] = None,
     limit: int = 20,
     offset: int = 0
 ) -> Sequence[Reward]:
@@ -31,9 +30,7 @@ async def get_rewards(
     elif status == "unclaimed":
         query = query.where(Reward.claimed_at.is_(None))
         
-    if reward_type:
-        query = query.where(Reward.reward_type == reward_type)
-        
+
     if search:
         query = query.where(Reward.title.ilike(f"%{search}%"))
         
@@ -104,11 +101,10 @@ async def claim_reward(db: AsyncSession, reward_id: UUID, user_id: UUID) -> Opti
     if reward.claimed_at:
         return reward
         
-    # If PRIZE, check points
-    if reward.reward_type == RewardType.PRIZE:
-        user_points = await transaction_service.get_user_points(db, user_id)
-        if user_points < reward.cost_points:
-            raise ValueError(f"Insufficient points to claim reward. Need {reward.cost_points}, have {user_points}")
+    # All rewards cost points
+    user_points = await transaction_service.get_user_points(db, user_id)
+    if user_points < reward.cost_points:
+        raise ValueError(f"Insufficient points to claim reward. Need {reward.cost_points}, have {user_points}")
             
         # Create SPENT transaction
         await transaction_service.create_transaction(
@@ -121,7 +117,7 @@ async def claim_reward(db: AsyncSession, reward_id: UUID, user_id: UUID) -> Opti
             ),
             user_id
         )
-        
+
     reward.claimed_at = datetime.now()
     await db.flush()
     await db.refresh(reward)

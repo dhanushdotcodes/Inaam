@@ -37,7 +37,6 @@ def test_daily_bonuses(client):
             json={
                 "title": title,
                 "description": "Task for daily bonus testing",
-                "task_type": "BOUNTY",
                 "difficulty": "EXTREME",
                 "points": points
             },

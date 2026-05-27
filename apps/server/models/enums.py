@@ -1,11 +1,6 @@
 import enum
 
 
-class RewardType(str, enum.Enum):
-    """Type of reward."""
-    QUEST = "QUEST"
-    PRIZE = "PRIZE"
-
 
 class TransactionType(str, enum.Enum):
     """Type of point transaction."""
@@ -22,9 +17,3 @@ class TaskDifficulty(str, enum.Enum):
     MEDIUM = "MEDIUM"
     HARD = "HARD"
     EXTREME = "EXTREME"
-
-
-class TaskType(str, enum.Enum):
-    """Type of task."""
-    BOUNTY = "BOUNTY"
-    OBJECTIVE = "OBJECTIVE"

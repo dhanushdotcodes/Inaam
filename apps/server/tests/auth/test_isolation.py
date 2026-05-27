@@ -48,7 +48,6 @@ def test_multi_user_data_isolation(client):
     reward_payload = {
         "title": "Epic Quest User A",
         "description": "User A's private reward",
-        "reward_type": "QUEST",
         "cost_points": 0
     }
     create_resp = client.post("/api/v1/rewards", json=reward_payload, headers=headers_a)
@@ -74,7 +73,6 @@ def test_multi_user_data_isolation(client):
     task_payload = {
         "title": "Bounty for User A",
         "description": "User A earns 100 points",
-        "task_type": "BOUNTY",
         "difficulty": "MEDIUM",
         "points": 100
     }

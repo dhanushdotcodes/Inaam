@@ -34,7 +34,6 @@ def test_task_pinning_limit(client):
         payload = {
             "title": f"Test Task {i}",
             "description": "Pin test task",
-            "task_type": "BOUNTY",
             "difficulty": "MEDIUM",
             "points": 100,
             "pinned": False
@@ -68,7 +67,6 @@ def test_task_pinning_limit(client):
     new_pinned_payload = {
         "title": "Create Pinned Failed",
         "description": "Should fail",
-        "task_type": "BOUNTY",
         "difficulty": "MEDIUM",
         "points": 100,
         "pinned": True

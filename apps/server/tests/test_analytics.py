@@ -41,7 +41,6 @@ def test_task_analytics(client):
     task_payload = {
         "title": "Analytics Task",
         "description": "To be counted",
-        "task_type": "BOUNTY",
         "difficulty": "MEDIUM",
         "points": 500
     }

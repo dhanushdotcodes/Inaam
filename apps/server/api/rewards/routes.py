@@ -5,13 +5,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services import reward as reward_service
-from services import task as task_service
 from core.database import get_db
 from core.security import get_current_user
 from models.user import User
 from schemas.base import ApiResponse
 from schemas.reward import RewardCreate, RewardResponse, RewardUpdate
-from schemas.task import TaskCreate, TaskResponse, TaskUpdate
 
 router = APIRouter(
     prefix="/rewards", 
@@ -22,9 +20,8 @@ router = APIRouter(
 
 @router.get("", response_model=ApiResponse[List[RewardResponse]])
 async def list_rewards(
-    status: Optional[str] = None, 
+    status: Optional[str] = None,
     search: Optional[str] = None,
-    reward_type: Optional[str] = None,
     limit: int = 20,
     offset: int = 0,
     db: AsyncSession = Depends(get_db),
@@ -32,7 +29,7 @@ async def list_rewards(
 ):
     """Get all rewards with optional status filtering."""
     rewards = await reward_service.get_rewards(
-        db, status=status, user_id=current_user.id, search=search, reward_type=reward_type, limit=limit, offset=offset
+        db, status=status, user_id=current_user.id, search=search, limit=limit, offset=offset
     )
     return ApiResponse.success(data=rewards)
 
@@ -124,132 +121,4 @@ async def claim_reward(
     return ApiResponse.success(data=reward)
 
 
-# Nested Task Routes
 
-@router.get("/{id}/tasks", response_model=ApiResponse[List[TaskResponse]])
-async def list_reward_tasks(
-    id: UUID, 
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Get all tasks for a specific reward."""
-    # Ensure reward exists and belongs to user
-    reward = await reward_service.get_reward(db, id, current_user.id)
-    if not reward:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"Reward with id {id} not found"
-        )
-    tasks = await task_service.get_tasks(db, reward_id=id, user_id=current_user.id)
-    return ApiResponse.success(data=tasks)
-
-
-@router.post("/{id}/task", response_model=ApiResponse[TaskResponse], status_code=status.HTTP_201_CREATED)
-async def create_reward_task(
-    id: UUID, 
-    payload: TaskCreate, 
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Create a new task for a specific reward."""
-    # Ensure reward exists and belongs to user
-    reward = await reward_service.get_reward(db, id, current_user.id)
-    if not reward:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"Reward with id {id} not found"
-        )
-    task = await task_service.create_task(db, payload, reward_id=id, user_id=current_user.id)
-    await db.commit()
-    return ApiResponse.success(data=task)
-
-
-@router.get("/{id}/task/{task_id}", response_model=ApiResponse[TaskResponse])
-async def get_reward_task(
-    id: UUID, 
-    task_id: UUID, 
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Get a specific task for a reward."""
-    task = await task_service.get_task(db, task_id, reward_id=id, user_id=current_user.id)
-    if not task:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"Task with id {task_id} not found for reward {id}"
-        )
-    return ApiResponse.success(data=task)
-
-
-@router.put("/{id}/task/{task_id}", response_model=ApiResponse[TaskResponse])
-async def update_reward_task(
-    id: UUID, 
-    task_id: UUID, 
-    payload: TaskUpdate, 
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Update a specific task for a reward."""
-    task = await task_service.update_task(db, task_id, payload, reward_id=id, user_id=current_user.id)
-    if not task:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"Task with id {task_id} not found for reward {id}"
-        )
-    await db.commit()
-    return ApiResponse.success(data=task)
-
-
-@router.delete("/{id}/task/{task_id}", response_model=ApiResponse[bool])
-async def delete_reward_task(
-    id: UUID, 
-    task_id: UUID, 
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Delete a specific task for a reward."""
-    success = await task_service.delete_task(db, task_id, reward_id=id, user_id=current_user.id)
-    if not success:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"Task with id {task_id} not found for reward {id}"
-        )
-    await db.commit()
-    return ApiResponse.success(data=True)
-
-
-@router.patch("/{id}/task/{task_id}/complete", response_model=ApiResponse[TaskResponse])
-async def complete_reward_task(
-    id: UUID, 
-    task_id: UUID, 
-    tz_offset: int = 0,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Complete a specific task for a reward."""
-    task = await task_service.complete_task(db, task_id, reward_id=id, user_id=current_user.id, tz_offset=tz_offset)
-    if not task:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"Task with id {task_id} not found for reward {id}"
-        )
-    await db.commit()
-    return ApiResponse.success(data=task)
-
-
-@router.patch("/{id}/task/{task_id}/incomplete", response_model=ApiResponse[TaskResponse])
-async def uncomplete_reward_task(
-    id: UUID, 
-    task_id: UUID, 
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Uncomplete/revert a specific task for a reward."""
-    task = await task_service.uncomplete_task(db, task_id, reward_id=id, user_id=current_user.id)
-    if not task:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail=f"Task with id {task_id} not found for reward {id}"
-        )
-    await db.commit()
-    return ApiResponse.success(data=task)

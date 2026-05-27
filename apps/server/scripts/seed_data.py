@@ -10,7 +10,7 @@ from models.user import User
 from models.reward import Reward
 from models.task import Task
 from models.transaction import PointTransaction
-from models.enums import RewardType, TaskType, TaskDifficulty, TransactionType
+from models.enums import TaskDifficulty, TransactionType
 from services.auth import hash_password
 
 fake = Faker()
@@ -29,33 +29,29 @@ async def clear_existing_data(db: AsyncSession, user_id: str):
     await db.execute(delete(Reward).where(Reward.user_id == user_id))
     await db.commit()
 
-def create_reward(user_id, r_type, is_claimed, cost_points=None):
+def create_reward(user_id, is_claimed, cost_points=None):
     if cost_points is None:
-        cost_points = random.randint(100, 1000) if r_type == RewardType.PRIZE else 0
+        cost_points = random.randint(100, 1000)
     claimed_at = datetime.now(timezone.utc) - timedelta(days=random.randint(0, 10)) if is_claimed else None
     return Reward(
         user_id=user_id,
         title=fake.catch_phrase(),
         description=fake.sentence(),
-        reward_type=r_type,
         cost_points=cost_points,
         claimed_at=claimed_at
     )
 
-def create_task(user_id, is_completed, reward_id=None):
-    t_type = random.choice(list(TaskType))
+def create_task(user_id, is_completed):
     difficulty = random.choice(list(TaskDifficulty))
     completed_at = datetime.now(timezone.utc) - timedelta(days=random.randint(0, 10)) if is_completed else None
     return Task(
         user_id=user_id,
         title=fake.bs().capitalize(),
         description=fake.text(max_nb_chars=100),
-        task_type=t_type,
         difficulty=difficulty,
         points=random.randint(100, 500),  # Increased points to help offset prize costs
         completed=is_completed,
-        completed_at=completed_at,
-        reward_id=reward_id
+        completed_at=completed_at
     )
 
 async def seed():
@@ -86,33 +82,16 @@ async def seed():
             await db.commit()
             await db.refresh(user)
 
-        # 2. Generate Quests first so Tasks can link to them
-        print("Generating quests...")
-        rewards = []
-        for _ in range(random.randint(20, 25)):
-            rewards.append(create_reward(user.id, RewardType.QUEST, is_claimed=True))
-        for _ in range(random.randint(20, 25)):
-            rewards.append(create_reward(user.id, RewardType.QUEST, is_claimed=False))
-
-        db.add_all(rewards)
-        await db.commit()
-        for r in rewards:
-            await db.refresh(r)
-            
-        quest_rewards = [r for r in rewards if r.reward_type == RewardType.QUEST]
-
         # 3. Generate Tasks
         print("Generating tasks...")
         tasks = []
         # 20+ completed tasks
         for _ in range(random.randint(25, 35)):
-            r_id = random.choice(quest_rewards).id if quest_rewards and random.choice([True, False]) else None
-            tasks.append(create_task(user.id, is_completed=True, reward_id=r_id))
+            tasks.append(create_task(user.id, is_completed=True))
             
         # 20+ active (uncompleted) tasks
         for _ in range(random.randint(25, 35)):
-            r_id = random.choice(quest_rewards).id if quest_rewards and random.choice([True, False]) else None
-            tasks.append(create_task(user.id, is_completed=False, reward_id=r_id))
+            tasks.append(create_task(user.id, is_completed=False))
 
         db.add_all(tasks)
         await db.commit()
@@ -126,25 +105,24 @@ async def seed():
         # 4. Generate Prizes based on available balance
         print("Generating prizes...")
         balance = total_earned
+        rewards = []
         for _ in range(random.randint(20, 25)):
             cost = random.randint(100, 500)
             if balance >= cost:
                 balance -= cost
-                rewards.append(create_reward(user.id, RewardType.PRIZE, is_claimed=True, cost_points=cost))
+                rewards.append(create_reward(user.id, is_claimed=True, cost_points=cost))
             else:
-                rewards.append(create_reward(user.id, RewardType.PRIZE, is_claimed=False, cost_points=cost))
+                rewards.append(create_reward(user.id, is_claimed=False, cost_points=cost))
                 
         # unclaimed prizes
         for _ in range(random.randint(20, 25)):
-            rewards.append(create_reward(user.id, RewardType.PRIZE, is_claimed=False))
+            rewards.append(create_reward(user.id, is_claimed=False))
             
         # Add the new prizes to DB
-        db.add_all([r for r in rewards if r.reward_type == RewardType.PRIZE])
+        db.add_all(rewards)
         await db.commit()
         for r in rewards:
-            if r.reward_type == RewardType.PRIZE:
-                await db.refresh(r)
-
+            await db.refresh(r)
         # 5. Generate Point Transactions
         print("Generating point transactions...")
         transactions = []
@@ -164,7 +142,7 @@ async def seed():
                 
         # Transactions for claimed prizes (SPENT)
         for reward in rewards:
-            if reward.reward_type == RewardType.PRIZE and reward.claimed_at is not None:
+            if reward.claimed_at is not None:
                 pt = PointTransaction(
                     user_id=user.id,
                     type=TransactionType.SPENT,

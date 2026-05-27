@@ -28,7 +28,6 @@ def test_uncomplete_task(client):
     task_payload = {
         "title": "Test Undo Task",
         "description": "Undo test",
-        "task_type": "BOUNTY",
         "difficulty": "MEDIUM",
         "points": 500
     }
@@ -69,50 +68,3 @@ def test_uncomplete_task(client):
     txs = tx_resp.json()["data"]
     assert len(txs) == 0
 
-    # 5. Create a reward (Quest)
-    reward_payload = {
-        "title": "Ultimate Reward",
-        "description": "Win this",
-        "points_cost": 1000
-    }
-    reward_resp = client.post("/api/v1/rewards", json=reward_payload, headers=headers)
-    assert reward_resp.status_code == 201
-    reward_id = reward_resp.json()["data"]["id"]
-
-    # 6. Create a nested task (Quest Objective)
-    objective_payload = {
-        "title": "Objective 1",
-        "description": "Objective description",
-        "task_type": "OBJECTIVE",
-        "difficulty": "HARD",
-        "points": 300
-    }
-    obj_resp = client.post(f"/api/v1/rewards/{reward_id}/task", json=objective_payload, headers=headers)
-    assert obj_resp.status_code == 201
-    obj_id = obj_resp.json()["data"]["id"]
-
-    # 7. Complete Quest Objective
-    complete_obj_resp = client.patch(f"/api/v1/rewards/{reward_id}/task/{obj_id}/complete", headers=headers)
-    assert complete_obj_resp.status_code == 200
-    assert complete_obj_resp.json()["data"]["completed"] is True
-
-    # Verify points balance is 300
-    points_resp = client.get("/api/v1/points", headers=headers)
-    assert points_resp.json()["data"] == 300
-
-    # Verify transaction count is 1
-    tx_resp = client.get("/api/v1/transactions", headers=headers)
-    assert len(tx_resp.json()["data"]) == 1
-
-    # 8. Uncomplete Quest Objective
-    uncomplete_obj_resp = client.patch(f"/api/v1/rewards/{reward_id}/task/{obj_id}/incomplete", headers=headers)
-    assert uncomplete_obj_resp.status_code == 200
-    assert uncomplete_obj_resp.json()["data"]["completed"] is False
-
-    # Verify points reverted to 0
-    points_resp = client.get("/api/v1/points", headers=headers)
-    assert points_resp.json()["data"] == 0
-
-    # Verify transaction deleted
-    tx_resp = client.get("/api/v1/transactions", headers=headers)
-    assert len(tx_resp.json()["data"]) == 0
