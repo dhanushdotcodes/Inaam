@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### [Unreleased]
 
+## [1.0.0] - 2026-05-27
+
+### Changed
+- **Major Architectural Overhaul:** Completely removed the concepts of "Quests" and "Objectives" from the application. The app now focuses exclusively on independent "Bounties" (tasks) and "Prizes" (rewards).
+- Refactored `get_tasks` and `get_rewards` API endpoints to remove quest and objective constraints.
+- Updated database schema, dropping `reward_type`, `task_type`, and `reward_id` from the PostgreSQL tables with a data migration mapping existing Quests' `cost_points` to `0`.
+- Revamped the client-side UI, completely deleting the `/quests` dashboard, simplifying `RewardFormDialog`, and extracting `reward_id` logic from all `Task` components.
+
+### Fixed
+- Fixed a React "Cannot create components during render" error in the sidebar by refactoring `NavContent` to a render function.
+
 ## [0.16.0] - 2026-05-27
 
 ### Added
