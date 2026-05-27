@@ -101,7 +101,7 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete, onPin 
           "w-full bg-card border border-border shadow-sm transition-all group select-none relative",
           task.completed ? "cursor-default" : "cursor-pointer",
           // Desktop Grid Layout (md viewport and up)
-          "md:grid md:grid-cols-[40px_1fr_220px_80px] md:gap-x-6 md:gap-y-0 md:items-center md:min-h-22 md:px-6 md:py-4 md:rounded-[24px]",
+          "md:grid md:grid-cols-[40px_1fr_auto_80px] md:gap-x-6 md:gap-y-0 md:items-center md:min-h-22 md:px-6 md:py-4 md:rounded-[24px]",
           // Mobile Stacked Layout (below md viewport)
           "flex flex-col gap-3 p-4 rounded-[24px]",
           // Completion/Inactive state
@@ -191,7 +191,7 @@ export default function TaskItem({ task, rewardTitle, onToggle, onDelete, onPin 
 
         </div>
         {/* 2. Metadata Column (Difficulty badge, Reward Tag, and Quest association) */}
-        <div className="hidden md:flex items-center gap-2 flex-wrap md:w-55 md:shrink-0 md:justify-start md:pl-0 pl-13">
+        <div className="hidden md:flex items-center gap-2 md:shrink-0 md:justify-start md:pl-0 pl-13">
           <DifficultyBadge difficulty={task.difficulty} />
           
           <span className="text-[10px] font-black uppercase tracking-widest px-2.5 h-6 rounded-full border flex items-center justify-center bg-neutral-100/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700 text-muted-foreground">
