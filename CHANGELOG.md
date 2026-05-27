@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com),
 and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+### [Unreleased]
+
+## [0.13.0] - 2026-05-27
 
 ### Added
 - Created specialized `QuestCard.tsx` component to handle rendering of Quests, task lists, objective progress, and locks.
@@ -24,6 +26,14 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 - Resolved a Next.js/React hydration error caused by invalid HTML nesting (`<form>` inside `<form>`) by refactoring `ObjectiveForm.tsx` to use a `<div>` container instead of a `<form>` element, manually capturing key down events for the Enter key.
+- Fixed tooltip clipping at the boundaries of the scrollable analytics chart container by introducing a boundary-aware translation shift in the custom tooltip component.
+- Resolved React warning `"Error: Cannot create components during render"` inside `AnalyticsChartGraph` by moving the custom tick and dot components outside of the render function.
+- Fixed production deployment caching issues on Vercel by adding custom cache-control headers in `next.config.ts` to prevent CDN and browser caching of `/sw.js`.
+- Refactored service worker `sw.js` caching strategies: bypassed same-origin API routes, implemented Network-First for HTML documents and Next.js RSC data, and restricted Cache-First strictly to hashed, immutable assets under `_next/static/`.
+- Enhanced service worker registration in `ServiceWorkerRegistrar.tsx` to detect updates and display a polished React toast (via the app's `useToast` hook) with an interactive "Refresh" action button instead of browser alert dialogues.
+- Improved service worker pre-caching robustness during installation by using `Promise.allSettled` to prevent single asset fetch failures (e.g., 404s) from aborting the installation process.
+
+## [0.12.0] - 2026-05-22
 
 ### Added
 - Installed and integrated the `recharts` library for client-side composed chart data visualizations.
@@ -34,11 +44,34 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Authored a comprehensive integration test suite `tests/test_analytics.py` verifying range calculations, timezone adjustments, and validation criteria.
 - Added typescript interfaces and client-side `getTaskAnalytics` API fetch method, passing local timezone offsets dynamically.
 - Integrated the "Analytics" link with the `BarChart2` icon in the desktop and mobile sidebar navigation lists.
-- Built an ultra-premium, interactive dashboard page `/analytics` featuring summary counters (Total, Daily Average, Peak, and Points), a responsive SVG bar chart with Framer Motion spring height transitions, hover tooltips, and a completed tasks activity timeline.
+- Built an interactive dashboard page `/analytics` featuring summary counters (Total, Daily Average, Peak, and Points), a responsive SVG bar chart with Framer Motion spring height transitions, hover tooltips, and a completed tasks activity timeline.
+- Extended backend `tasks` database schema with a `pinned` boolean column, supporting a 2-stage database migration with Alembic and data backfill for existing records.
+- Implemented task pinning limit (maximum 3 pinned tasks) with a UI divider separating pinned and regular tasks.
+
+## [0.11.1] - 2026-05-20
+
+### Changed
+- Updated the Inaam app branding logo asset.
+- Refactored client dashboard layout: replaced the unclaimed points banner with an aligned task list header.
+- Refactored and adjusted the bonus points progress bar and task item details.
+
+## [0.11.0] - 2026-05-19
+
+### Added
 - Implemented **Weekly Recurring Bounties** allowing tasks to repeat automatically on specific days of the week.
 - Extended backend `tasks` database schema with `is_recurring` and `recurrence_days` columns, alongside Alembic migrations.
 - Introduced timezone-aware "self-healing" reset mechanism in the backend `get_tasks` service that dynamically computes and uncompletes recurring bounties based on the client's local `tz_offset`, avoiding complex background cron jobs.
 - Added a premium circular weekday selector toggle to the `TaskFormDialog` for intuitive recurrence scheduling.
+
+### Changed
+- Added an auto-close effect to `TaskItem` that gracefully collapses the expanded accordion state whenever a task is marked as completed.
+
+### Fixed
+- Resolved database migration `IntegrityError` when adding the `is_recurring` column to pre-existing tables by dividing the schema change into three steps: adding the column as nullable, backfilling existing rows to `False`, and altering the column to `NOT NULL`.
+
+## [0.10.0] - 2026-05-18
+
+### Added
 - Implemented **Undo Task Completion Feature** on the backend and frontend. Added `PATCH /tasks/{id}/incomplete` and `PATCH /rewards/{id}/task/{task_id}/incomplete` endpoints to revert completed standalone bounties and quest objectives.
 - Developed the **Uncomplete Task Service** to safely reset completion status, clear completion timestamps, and automatically delete the associated earned transaction to guarantee perfect point ledger consistency.
 - Introduced a lightweight, reactive **Zustand-based Toast Store** (`useToast.ts`) that manages real-time interactive notifications supporting custom action triggers.
@@ -53,73 +86,94 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Created `get_current_user` JWT authentication dependency to extract claims and inject complete authenticated database User instances.
 - Authored a comprehensive multi-user isolation integration test suite (`tests/auth/test_isolation.py`) verifying strict resource gating, action isolation, and separate point ledger calculations.
 - Generated Alembic schema migration `7deccecb3d81_add_user_id_to_all_models.py` handling safe nullable-to-non-nullable migrations for pre-existing database records.
+
+### Changed
+- Moved toast points badges inline beside the message and restored card points to metadata details in `ToastContainer.tsx` and `TaskItem.tsx`.
+
+## [0.9.0] - 2026-05-17
+
+### Added
+- Integrated difficulty dropdown filter on dashboard and enabled quest-name searching.
+- Implement premium border bulge toggle on interactive buttons and smooth sidebar collapse transitions.
+- Integrated brand logo and regenerated progressive web app (PWA) manifest icons.
+
+### Fixed
+- Improved caching of service worker `sw.js` and general progressive web app assets.
+
+## [0.8.0] - 2026-05-16
+
+### Added
+- Implemented dark mode toggle with `next-themes` and `react-icons`.
+
+### Changed
+- Migrated the application styling to a token-based unified design system and centralized difficulty level badge colors.
+- Standardized feature folder structures, refactored raw badges to shared primitives, and replaced native confirm dialogues with beautiful `AlertDialog` alerts.
+- Refactored client-side code: implemented shared abstractions, custom hooks, and migrated general state management to Zustand based on architectural audit findings.
+- Added new brand fonts and core UI foundations containing primitives and semantic tokens of the app.
+
+## [0.7.1] - 2026-05-15
+
+### Fixed
+- Fixed small styling layout alignment issues on client dashboard components.
+
+## [0.7.0] - 2026-05-14
+
+### Added
+- Implemented fully integrated **Transaction History** feature with visual dialog records list.
+- Implemented **completion-aware sorting** across all major dashboards (TaskList, ObjectiveList, RewardsOverview, and RewardsDashboard), prioritizing active tasks and unclaimed rewards, sorting chronologically, and pushing completed/claimed items to the bottom.
+- Created specialized documentation and audit skills: `doc-client-components`, `audit-styling`, `audit-code-quality`, and `doc-client-context`.
+- Added comprehensive client-side documentation in the `.context/` directory covering feature domains, component hierarchies, design systems, and code patterns.
+
+### Changed
+- Standardized UI button heights and updated overall frontend design guidelines.
+- Refined quest filtering mechanisms and implemented immediate claim confirmations.
+- Refactored `TaskItem` UI: replaced standard dropdown menus with a unified accordion Chevron trigger housing task descriptions, recurrence badges, and Edit/Delete controls.
+- Restructured `TaskItem` layout columns into a compactactions button cluster, using tween transitions instead of spring animations to prevent layout jumps.
+- Replaced the deprecated `.context/dashboard-context.md` with the more comprehensive `client-context.md`.
+
+### Fixed
+- Fixed container package caching issues by adding `-V` to Makefile container upgrades.
+- Resolved dashboard main container scrollable clipping issue by adding `min-h-0`.
+
+## [0.6.0] - 2026-05-13
+
+### Added
+- Restructured reward and task system with new vocabulary and domain terminology (renaming rewards to Quest and Prize, tasks under rewards to objectives).
+- Implemented transaction ledger, robust backend points calculation system, and global points display UI.
+- Comprehensive database schema update adding user, points, and rewards relations.
+
+### Changed
+- Modularized project rules, created documentation registry, and decoupled specific guidelines.
+
+## [0.5.0] - 2026-05-12
+
+### Added
+- Made rewards claimable with dynamic point updates.
+- Consolidated quest tracking and standardized navigation flows.
+
+## [0.4.0] - 2026-05-11
+
+### Added
+- Created sidebar and sidebar context for responsive layouts.
+- Added Poppins fonts and updated Tailwind CSS configuration.
+- Configured progressive web app (PWA) manifest support and branding assets.
+
+### Fixed
+- Resolved CORS issues, API path prefix errors, environment variable loader parsing bugs, and double slash client-side URL formatting.
+
+## [0.3.0] - 2026-05-10
+
+### Added
 - Implemented user signup endpoint `POST /api/v1/auth/signup` supporting username, email, and password validation.
 - Implemented email-based user login endpoint `POST /api/v1/auth/login` returning a JWT access token and user profile details.
 - Integrated `bcrypt` library for cryptographically secure password hashing and verification.
 - Added a full suite of API integration tests in `tests/auth/test_routes.py` validating successful signup, duplicate username/email detection, invalid field constraints, and successful/failed login flows against the live database.
-- Created specialized documentation and audit skills:
-    - **`doc-client-components`**: Maps component hierarchies and data flow using Mermaid diagrams.
-    - **`audit-styling`**: Audits the UI for inconsistencies against design guidelines.
-    - **`audit-code-quality`**: Identifies DRY and KISS violations and structural technical debt.
-    - **`doc-client-context`**: Documents high-level business logic and feature domains.
-- Added comprehensive client-side documentation in the `.context/` directory:
-    - **`client-context.md`**: High-level overview of feature domains and user flows.
-    - **`client-components.md`**: Interactive Mermaid map of component relationships.
-    - **`audit-styling-results.md`**: Detailed report on design system alignment.
-    - **`audit-quality-results.md`**: Audit of code patterns and architectural integrity.
-- Introduced **`Sorting Logic`** section to the client documentation to formalize item ordering rules.
- 
+- Implemented user login and signup portals with validation schemas and secure redirect rules on the frontend.
+- Added key-based authentication verification gates on the dashboard home page.
+
 ### Removed
 - Removed legacy key-based authentication (`verify_key`) from `services/auth.py` and key-based route branches from `/auth/login`.
 - Removed `SECRET_KEY` environment variable setting from Pydantic config model.
- 
- 
-### Changed
-- Refactored the `AnalyticsChart` component from a single raw SVG file into modular, clean sub-components: `AnalyticsChartHeader`, `AnalyticsChartTooltip`, and `AnalyticsChartGraph` powered by Recharts.
-- Added a detailed command registry help menu target as the default entry point in the root `Makefile`.
-- Refactored **`DailyBonusProgress`** dashboard component: replaced static milestone cards below the progress bar with interactive hover tooltips on desktop screens and a responsive, full-width toggle dropdown button on mobile screens.
-- Updated the root `README.md` to reference active screenshots in `docs/public/` and documented the full tech stack, developer profiles, and local run/test commands.
-- Refined `docs/PRD.md` with core product and gamification principles (task recurrence, compounding daily milestone bonuses, task undo, sorting rules).
-- Standardized `docs/ARCHITECTURE.md` to show the correct client-side component directory layout.
-- Documented top-level Bounty endpoints, timezone parameters, completion/uncompletion APIs, and compounding milestones in `docs/API_SPEC.md`.
-- Upgraded the client-side `getAllTasks()` API call to automatically inject the browser's local timezone offset for accurate recurring task resets.
-- Completely refactored the **`TaskItem`** UI to utilize a unified Chevron accordion trigger instead of a dropdown menu, housing task descriptions, recurrence badges, and Edit/Delete controls within the expanded state.
-- Enhanced **`TaskItem`** responsive design for mobile devices, hiding desktop metadata columns and repositioning the action chevron seamlessly inline with the task title.
-- Increased vertical spacing in **`TaskList`** (`gap-6`) to provide better visual separation between individual task cards.
-- Added an auto-close effect to **`TaskItem`** that gracefully collapses the expanded accordion state whenever a task is marked as completed.
-- Upgraded the client-side `useTasks` hook and `toggleComplete` logic to optimistically update completion states bidirectionally and trigger interactive success and reverted warning toasts.
-- Enhanced **`TaskItem.tsx`** to render an animated, spinning/pulsing loading indicator inside the checkbox during in-flight toggle updates.
-- Refactored **`ObjectiveItem.tsx`** to support full bidirectional toggle interaction with spinners and undo toast notifications.
-- Raised the global `ToastContainer` desktop positioning to `sm:bottom-24` (about 10% above the usual height) to clear navigation elements.
-- Updated **`ToastContainer.tsx`** (`ToastItem`) to render points badges directly inline beside the toast completion message.
-- Refactored `reward`, `task`, and `transaction` service layers to strictly filter database operations by user ID.
-- Updated all API routes (`/rewards`, `/tasks`, `/points`) to inject the `get_current_user` dependency and enforce account boundaries.
-- Re-architected routing database transaction patterns from explicit `db.begin()` blocks to clean `await db.commit()` calls to prevent Session deadlock issues from pre-dependency queries.
-- Removed redundant Active/Completed capsules from **`TaskItem`** to streamline visual information hierarchy, utilizing distinct completed states (green checked circle, muted line-through titles, opacity reduction).
-- Restructured **`TaskItem`** columns into a hyper-clean `[40px_1fr_220px_80px]` layout, grouping the delete button and Chevron dropdown trigger as a premium compact actions button cluster on the right-hand side.
-- Refactored task list reordering and expansion animations in **`TaskItem`** from spring to tween (`easeInOut`, `0.25s` duration) to eliminate layout jumps and component overlapping.
-- Positioned the Chevron bulge trigger inside the animated `<motion.div>` for perfect alignment during layout transitions.
-- Adjusted paddings and margins on the task description accordion to make the expanded state more compact, wrapping it in a zero-padded outer motion container to guarantee smooth collapse height transitions all the way to 0px without sudden layout pops.
-- Implemented **completion-aware sorting** across all major dashboards:
-    - Active tasks and unclaimed rewards are prioritized at the top of lists.
-    - Within groups, items are sorted chronologically (latest first).
-    - Completed tasks and claimed rewards are pushed to the bottom and sorted by their completion/claimed timestamp.
-- Updated **`TaskList`**, **`ObjectiveList`**, **`RewardsOverview`**, and **`RewardsDashboard`** to support the new sorting logic.
-- Synchronized the **`SKILL.md`** registry to include the 4 new specialized documentation skills.
-
-### Fixed
-- Fixed tooltip clipping at the boundaries of the scrollable analytics chart container by introducing a boundary-aware translation shift in the custom tooltip component.
-- Resolved React warning `"Error: Cannot create components during render"` inside `AnalyticsChartGraph` by moving the custom tick and dot components outside of the render function.
-- Fixed Docker container package caching issues by adding the `-V` (`--renew-anon-volumes`) flag to the Makefile container upgrade commands to force recreation of anonymous volumes.
-- Fixed production deployment caching issues on Vercel by adding custom cache-control headers in `next.config.ts` to prevent CDN and browser caching of `/sw.js`.
-- Refactored service worker `sw.js` caching strategies: bypassed same-origin API routes, implemented Network-First for HTML documents and Next.js RSC data, and restricted Cache-First strictly to hashed, immutable assets under `_next/static/`.
-- Enhanced service worker registration in `ServiceWorkerRegistrar.tsx` to detect updates and display a polished React toast (via the app's `useToast` hook) with an interactive "Refresh" action button instead of browser alert dialogues.
-- Improved service worker pre-caching robustness during installation by using `Promise.allSettled` to prevent single asset fetch failures (e.g., 404s) from aborting the installation process.
-- Added `min-h-0` to the primary dashboard layout container to prevent layout overflow issues and ensure smooth scrolling.
-- Replaced the deprecated `.context/dashboard-context.md` with the more comprehensive `client-context.md`.
-- Resolved database migration `IntegrityError` when adding the `is_recurring` column to pre-existing tables by dividing the schema change into three steps: adding the column as nullable, backfilling existing rows to `False`, and altering the column to `NOT NULL`.
-
-
 
 ## [0.2.0] - 2026-05-09
 

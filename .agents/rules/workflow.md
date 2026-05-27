@@ -22,3 +22,9 @@ description: Git workflow, conventional commits, and changelog management.
 - Always update the project's `CHANGELOG.md` on a daily basis or immediately after significant commits.
 - Keep commits small and focused (<50 LOC preferred).
 - One logical change per commit.
+
+## Versioning Rules
+The project adheres to Semantic Versioning (SemVer): `MAJOR.MINOR.PATCH`. Commits pushed or deployed in a single set belong to the same version, and that version's number is incremented based on the contents of that set:
+- **MAJOR (X.0.0)**: Incremented when making incompatible API changes, major architectural overhauls, or breaking database schema shifts.
+- **MINOR (x.Y.0)**: Incremented when adding new backward-compatible functionality or features (e.g. `feat` commits in the pushed set).
+- **PATCH (x.y.Z)**: Incremented for backward-compatible bug fixes, refactoring, documentation, style adjustments, or chores (e.g. only `fix`, `refactor`, `style`, `docs`, `chore`, `test` commits in the set).
