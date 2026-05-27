@@ -7,17 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### [Unreleased]
 
+## [0.14.0] - 2026-05-27
+
 ### Added
 - Implemented offset-based pagination fetching 20 items at a time across Tasks, Prizes, and Quests dashboards with a modern "Load more" interface.
 - Developed a tab-based UI filter system (`RewardFilters.tsx`) separating active and claimed/completed quests and prizes.
 - Added client-side debounced search fetches (300ms delay) that queries the backend for missing tasks and rewards.
 - Integrated the unified premium borderless `Button` component in its neutral `ghost` variant for all load-more actions, incorporating automatic loading spinner animations and click-preventative disabled states.
+- Developed a modular, generic client-side `useDebounce` hook to handle debouncing input fields and state values.
 
 ### Changed
 - Refactored backend `get_tasks` service to support timezone-safe Python-level pagination and filtering.
 - Refactored backend `get_rewards` service to execute database-level limit and offset queries via SQLAlchemy.
 - Updated `getAllTasks` and `getRewards` in `api.ts` to serialize limit, offset, search, status, and type parameters.
 - Overhauled `useTasks` and `useRewards` frontend state hooks to handle paginated merges, Set-based deduplication, and debounced search requests.
+
+### Fixed
+- Resolved synchronous `setState` cascading render warnings during initial fetches in `useTasks` and `useRewards` by deferring state initialization calls to the microtask queue using `Promise.resolve()`.
 
 ## [0.13.0] - 2026-05-27
 
