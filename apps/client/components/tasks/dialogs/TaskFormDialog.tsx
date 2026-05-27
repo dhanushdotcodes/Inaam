@@ -55,38 +55,41 @@ export default function TaskFormDialog({ open, onOpenChange, onSuccess, initialD
 
   const [selectedDays, setSelectedDays] = useState<number[]>([0,1,2,3,4,5,6]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(() => {
-    if (open) {
-      if (initialData) {
-        setFormData({
-          title: initialData.title,
-          description: initialData.description || "",
-          task_type: initialData.task_type || TaskType.BOUNTY,
-          difficulty: initialData.difficulty || TaskDifficulty.MEDIUM,
-          points: initialData.points || DIFFICULTY_RANGES[TaskDifficulty.MEDIUM].min,
-          is_recurring: initialData.is_recurring,
-          recurrence_days: initialData.recurrence_days || "0,1,2,3,4,5,6",
-        });
-        if (initialData.recurrence_days) {
-          setSelectedDays(initialData.recurrence_days.split(",").map(Number));
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active && open) {
+        if (initialData) {
+          setFormData({
+            title: initialData.title,
+            description: initialData.description || "",
+            task_type: initialData.task_type || TaskType.BOUNTY,
+            difficulty: initialData.difficulty || TaskDifficulty.MEDIUM,
+            points: initialData.points || DIFFICULTY_RANGES[TaskDifficulty.MEDIUM].min,
+            is_recurring: initialData.is_recurring,
+            recurrence_days: initialData.recurrence_days || "0,1,2,3,4,5,6",
+          });
+          if (initialData.recurrence_days) {
+            setSelectedDays(initialData.recurrence_days.split(",").map(Number));
+          } else {
+            setSelectedDays([0,1,2,3,4,5,6]);
+          }
         } else {
+          setFormData({
+            title: "",
+            description: "",
+            task_type: TaskType.BOUNTY,
+            difficulty: TaskDifficulty.MEDIUM,
+            points: DIFFICULTY_RANGES[TaskDifficulty.MEDIUM].min,
+            is_recurring: false,
+            recurrence_days: "0,1,2,3,4,5,6",
+          });
           setSelectedDays([0,1,2,3,4,5,6]);
         }
-      } else {
-        setFormData({
-          title: "",
-          description: "",
-          task_type: TaskType.BOUNTY,
-          difficulty: TaskDifficulty.MEDIUM,
-          points: DIFFICULTY_RANGES[TaskDifficulty.MEDIUM].min,
-          is_recurring: false,
-          recurrence_days: "0,1,2,3,4,5,6",
-        });
-        setSelectedDays([0,1,2,3,4,5,6]);
+        setValidationError(null);
       }
-      setValidationError(null);
-    }
+    });
+    return () => { active = false; };
   }, [open, initialData]);
 
   const toggleDay = (dayIndex: number) => {

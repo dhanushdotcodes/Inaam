@@ -17,10 +17,10 @@ import { TaskDifficulty } from "@/types";
 interface TaskFiltersProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  filter: "all" | "active" | "completed";
-  onFilterChange: (filter: "all" | "active" | "completed") => void;
-  difficultyFilter: TaskDifficulty | "all";
-  onDifficultyChange: (difficulty: TaskDifficulty | "all") => void;
+  filter: "active" | "completed";
+  onFilterChange: (filter: "active" | "completed") => void;
+  difficultyFilter: TaskDifficulty;
+  onDifficultyChange: (difficulty: TaskDifficulty) => void;
 }
 
 export default function TaskFilters({
@@ -47,21 +47,33 @@ export default function TaskFilters({
       {/* Difficulty Dropdown Filter */}
       <div className="w-full sm:w-48 shrink-0">
         <Select
-          value={difficultyFilter as any}
-          onValueChange={(val) => onDifficultyChange(val as any)}
+          value={difficultyFilter}
+          onValueChange={(val) => {
+            if (
+              val === TaskDifficulty.ALL ||
+              val === TaskDifficulty.TINY ||
+              val === TaskDifficulty.SMALL ||
+              val === TaskDifficulty.MEDIUM ||
+              val === TaskDifficulty.HARD ||
+              val === TaskDifficulty.EXTREME
+            ) {
+              onDifficultyChange(val);
+            }
+          }}
         >
           <SelectTrigger className="w-full relative h-12 rounded-2xl">
             <SelectValue placeholder="All Difficulties">
-              {difficultyFilter === "all" 
+              {difficultyFilter === TaskDifficulty.ALL 
                 ? "All Difficulties" 
                 : (difficultyFilter.charAt(0) + difficultyFilter.slice(1).toLowerCase())}
             </SelectValue>
           </SelectTrigger>
           <SelectContent className={"absolute top-0 -left-24"}>
-            <SelectItem value="all">All Difficulties</SelectItem>
             {Object.values(TaskDifficulty).map((diff) => (
               <SelectItem key={diff} value={diff}>
-                {diff.charAt(0) + diff.slice(1).toLowerCase()}
+                {diff === TaskDifficulty.ALL 
+                  ? "All Difficulties" 
+                  : diff.charAt(0) + diff.slice(1).toLowerCase()}
               </SelectItem>
             ))}
           </SelectContent>
@@ -70,7 +82,7 @@ export default function TaskFilters({
 
       {/* Filter Tabs Container: Sized to exactly h-12 to align with Input */}
       <div className="flex items-center gap-1 p-1.5 h-12 rounded-2xl bg-muted/40 border border-border backdrop-blur-sm shrink-0 w-full sm:w-auto">
-        {(["all", "active", "completed"] as const).map((f) => {
+        {(["active", "completed"] as const).map((f) => {
           const isActive = filter === f;
           return (
             <button

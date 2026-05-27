@@ -108,7 +108,7 @@ export async function signupUser(
  * Fetch all tasks across all rewards.
  */
 export async function getAllTasks(
-  params?: { limit?: number; offset?: number; status?: "active" | "completed" | "all"; search?: string }
+  params?: { limit?: number; offset?: number; status?: "active" | "completed"; search?: string }
 ): Promise<Task[]> {
   const tzOffset = -new Date().getTimezoneOffset();
   const searchParams = new URLSearchParams({ tz_offset: tzOffset.toString() });

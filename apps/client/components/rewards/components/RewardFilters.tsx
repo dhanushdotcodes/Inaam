@@ -9,8 +9,8 @@ import { motion } from "motion/react";
 interface RewardFiltersProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  filter: "all" | "active" | "claimed";
-  onFilterChange: (filter: "all" | "active" | "claimed") => void;
+  filter: "active" | "claimed";
+  onFilterChange: (filter: "active" | "claimed") => void;
   placeholder?: string;
   layoutIdPrefix?: string;
 }
@@ -38,7 +38,7 @@ export default function RewardFilters({
 
       {/* Filter Tabs Container */}
       <div className="flex items-center gap-1 p-1.5 h-12 rounded-2xl bg-muted/40 border border-border backdrop-blur-sm shrink-0 w-full sm:w-auto">
-        {(["all", "active", "claimed"] as const).map((f) => {
+        {(["active", "claimed"] as const).map((f) => {
           const isActive = filter === f;
           return (
             <button

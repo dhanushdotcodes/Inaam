@@ -59,6 +59,8 @@ export default function TaskDashboard() {
           onDifficultyChange={setDifficultyFilter}
         />
 
+        <DailyBonusProgress />
+
         {loading && tasks.length === 0 && (
           <DashboardLoader message="Loading your tasks..." />
         )}
@@ -69,7 +71,6 @@ export default function TaskDashboard() {
 
         {!loading && !error && (
           <>
-            <DailyBonusProgress />
             <TaskListHeader tasks={tasks} />
 
             <TaskList 

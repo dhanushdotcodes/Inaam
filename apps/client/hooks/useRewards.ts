@@ -6,7 +6,7 @@ import type { RewardWithTasks } from "@/types";
 import { RewardType } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
 
-type RewardFilter = "all" | "active" | "claimed";
+type RewardFilter = "active" | "claimed";
 
 /**
  * Hook for fetching and managing rewards by type.

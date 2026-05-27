@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### [Unreleased]
 
+## [0.15.0] - 2026-05-27
+
+### Added
+- Integrated the user's manual addition of `ALL = "ALL"` into the `TaskDifficulty` enum in `types/index.ts`.
+
+### Changed
+- Refactored `TaskFilters.tsx` and `RewardFilters.tsx` to remove the "All" status filter and standardise status filtering solely between "active" and "completed"/"claimed".
+- Simplified difficulty selection by integrating `TaskDifficulty.ALL` directly into the difficulty drop-down in `TaskFilters.tsx`, eliminating the hybrid `TaskDifficulty | "all"` type union.
+- Updated `useTasks` and `useRewards` frontend hooks, as well as `api.ts` clients, to align with the simplified status filter schemas ("active" and "completed"/"claimed").
+- Repositioned the `DailyBonusProgress` widget inside `TaskDashboard.tsx` above the main loading loader, preventing the component from being unmounted and re-mounted from the DOM during list re-fetches and initial queries.
+
+### Fixed
+- Fixed an ESLint `unexpected any` type-safety violation in `TaskFilters.tsx` by using an exhaustive conditional check against strict `TaskDifficulty` values instead of a type assertion.
+- Resolved a React cascading render warning (`setState` within a `useEffect`) inside `TaskFormDialog.tsx` by deferring the state update to a microtask using `Promise.resolve().then()`.
+
 ## [0.14.0] - 2026-05-27
 
 ### Added

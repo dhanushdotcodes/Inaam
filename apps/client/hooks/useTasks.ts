@@ -7,7 +7,7 @@ import { TaskDifficulty } from "@/types";
 import { useToast } from "@/hooks/useToast";
 import { useDebounce } from "@/hooks/useDebounce";
 
-type TaskFilter = "all" | "active" | "completed";
+type TaskFilter = "active" | "completed";
 
 /**
  * Hook for managing tasks, filtering, and completion logic.
@@ -21,7 +21,7 @@ export function useTasks() {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [filter, setFilter] = useState<TaskFilter>("active");
-  const [difficultyFilter, setDifficultyFilter] = useState<TaskDifficulty | "all">("all");
+  const [difficultyFilter, setDifficultyFilter] = useState<TaskDifficulty>(TaskDifficulty.ALL);
   const [hasMore, setHasMore] = useState(true);
 
   const offsetRef = useRef(0);
@@ -199,7 +199,7 @@ export function useTasks() {
         questTitle.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesDifficulty = 
-        difficultyFilter === "all" || 
+        difficultyFilter === TaskDifficulty.ALL || 
         task.difficulty === difficultyFilter;
         
       return matchesSearch && matchesDifficulty;

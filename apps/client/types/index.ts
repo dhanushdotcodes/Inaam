@@ -12,6 +12,7 @@ export interface ApiResponse<T> {
  * Task Difficulty levels.
  */
 export enum TaskDifficulty {
+  ALL = "ALL",
   TINY = "TINY",
   SMALL = "SMALL",
   MEDIUM = "MEDIUM",
