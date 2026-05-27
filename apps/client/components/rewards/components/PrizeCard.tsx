@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Pencil, Trash2, Lock, ShoppingBag, Trophy } from "lucide-react";
+import { Pencil, Trash2, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -11,33 +11,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Reward, Task } from "@/types";
-import { RewardType } from "@/types";
+import type { Reward } from "@/types";
+import { useAppStore } from "@/hooks/store";
 
-interface RewardCardProps {
-  reward: Reward & { tasks: Task[]; tasksLoading: boolean };
+interface PrizeCardProps {
+  prize: Reward;
   onClick: () => void;
   onEdit?: (reward: Reward) => void;
   onDelete?: (id: string) => void;
 }
 
 /**
- * RewardCard component — Displays summary of a Quest or Prize and its status.
+ * PrizeCard component — Displays summary of a Prize, its cost, and redemption progress.
  */
-export default function RewardCard({
-  reward,
+export default function PrizeCard({
+  prize,
   onClick,
   onEdit,
   onDelete,
-}: RewardCardProps) {
-  const isQuest = reward.reward_type === RewardType.QUEST;
-  const isPrize = reward.reward_type === RewardType.PRIZE;
+}: PrizeCardProps) {
+  const isClaimed = !!prize.claimed_at;
 
-  
-  const total = reward.tasks.length;
-  const completed = reward.tasks.filter((t) => t.completed).length;
-  const allDone = isQuest && completed === total;
-  const isClaimed = !!reward.claimed_at;
+  const { balance } = useAppStore((state) => state.points);
+  const currentPoints = balance ?? 0;
+
+  const progressPercent = prize.cost_points > 0
+    ? Math.min(100, Math.round((currentPoints / prize.cost_points) * 100))
+    : 0;
 
   return (
     <Card
@@ -54,45 +54,30 @@ export default function RewardCard({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 mb-1">
               <div className="w-5 h-5 flex items-center justify-center">
-                {isQuest ? (
-                  <Trophy className="h-4 w-4 text-brand-gold" />
-                ) : (
-                  <ShoppingBag className="h-4 w-4 text-primary" />
-                )}
+                <ShoppingBag className="h-4 w-4 text-primary" />
               </div>
               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                {isQuest ? "Quest" : "Prize"}
+                Prize
               </span>
             </div>
             <CardTitle className={cn(
               "text-base truncate max-w-40 break-all tracking-tight",
               isClaimed && "text-muted-foreground"
             )}>
-              {reward.title}
+              {prize.title}
             </CardTitle>
-            {reward.description && (
+            {prize.description && (
               <CardDescription className="mt-1 line-clamp-2 text-xs">
-                {reward.description}
+                {prize.description}
               </CardDescription>
             )}
           </div>
           <div className="flex flex-col items-end gap-2">
             {isClaimed ? (
               <Badge variant="secondary" className="bg-neutral-200 dark:bg-neutral-800 text-neutral-500">Claimed</Badge>
-            ) : isQuest && allDone ? (
-              <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/10">
-                Ready
-              </Badge>
-            ) : isPrize ? (
-              <Badge variant="outline" className="text-[10px] px-1.5 h-5 font-bold bg-primary/5 text-primary border-primary/20">
-                {reward.cost_points} Pts
-              </Badge>
             ) : (
-              <Badge variant="outline" className="text-[10px] px-1.5 h-5 flex gap-1 items-center bg-neutral-50/50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700">
-                <div className="w-3 h-3 flex items-center justify-center">
-                  <Lock className="h-2.5 w-2.5 text-neutral-400" />
-                </div>
-                <span className="text-neutral-500">Locked</span>
+              <Badge variant="outline" className="text-[10px] px-1.5 h-5 font-bold bg-primary/5 text-primary border-primary/20">
+                {prize.cost_points.toLocaleString()} Pts
               </Badge>
             )}
 
@@ -105,7 +90,7 @@ export default function RewardCard({
                     className="h-7 w-7 text-muted-foreground hover:text-primary"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onEdit(reward);
+                      onEdit(prize);
                     }}
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -118,7 +103,7 @@ export default function RewardCard({
                     className="h-7 w-7 text-muted-foreground hover:text-destructive"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onDelete(reward.id);
+                      onDelete(prize.id);
                     }}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -131,46 +116,29 @@ export default function RewardCard({
       </CardHeader>
 
       <CardContent>
-        {isQuest && (
-          reward.tasksLoading ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-3 w-3 animate-spin" />
-              Loading...
-            </div>
-          ) : (
+        {!isClaimed && (
+          <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className={cn("font-medium", isClaimed && "text-neutral-400")}>
-                  {total === 0 ? "No objectives" : `${completed}/${total} objectives`}
+                <span className="font-medium text-foreground dark:text-neutral-300">
+                  {currentPoints.toLocaleString()} / {prize.cost_points.toLocaleString()} Pts
                 </span>
-                <span className={isClaimed ? "text-neutral-400" : ""}>
-                  {total > 0 ? Math.round((completed / total) * 100) : 0}%
+                <span className="font-bold text-primary">
+                  {progressPercent}%
                 </span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                 <div
-                  className={cn(
-                    "h-full rounded-full transition-all duration-500",
-                    isClaimed ? "bg-neutral-300 dark:bg-neutral-700" : "bg-primary"
-                  )}
+                  className="h-full rounded-full bg-primary transition-all duration-500"
                   style={{
-                    width: `${total > 0 ? (completed / total) * 100 : 0}%`,
+                    width: `${progressPercent}%`,
                   }}
                 />
               </div>
             </div>
-          )
-        )}
-        
-        {isPrize && !isClaimed && (
-          <div className="pt-2">
-            <Button variant="contained" className="w-full text-[10px] font-black uppercase tracking-widest">
-              Redeem Prize
-            </Button>
           </div>
         )}
       </CardContent>
     </Card>
-
   );
 }

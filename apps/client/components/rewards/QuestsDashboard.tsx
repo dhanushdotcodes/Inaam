@@ -7,7 +7,7 @@ import type { Reward, RewardWithTasks } from "@/types";
 import { RewardType } from "@/types";
 
 import DashboardHeader from "@/components/layout/DashboardHeader";
-import RewardCard from "./components/RewardCard";
+import QuestCard from "./components/QuestCard";
 import RewardFormDialog from "./dialogs/RewardFormDialog";
 import ObjectiveDetailsDialog from "./dialogs/ObjectiveDetailsDialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -47,9 +47,8 @@ export default function QuestsDashboard() {
   const [selectedReward, setSelectedReward] = useState<RewardWithTasks | null>(null);
   const [rewardToEdit, setRewardToEdit] = useState<Reward | null>(null);
 
-  /* Reward deletion & claiming state */
+  /* Reward deletion state */
   const [rewardToDelete, setRewardToDelete] = useState<string | null>(null);
-  const [claimingReward, setClaimingReward] = useState<RewardWithTasks | null>(null);
 
   const handleRewardUpdate = (updatedReward: RewardWithTasks) => {
     updateReward(updatedReward);
@@ -80,10 +79,9 @@ export default function QuestsDashboard() {
     });
   };
 
-  const handleClaim = async () => {
-    if (!claimingReward) return;
-    await claimRewardAction(claimingReward.id, () => {
-      setClaimingReward(null);
+  const handleClaim = async (reward: RewardWithTasks) => {
+    await claimRewardAction(reward.id, () => {
+      setObjectiveDialogOpen(false);
       refresh();
     });
   };
@@ -167,16 +165,12 @@ export default function QuestsDashboard() {
         {!loading && !error && rewards.length > 0 && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {sortedQuests.map((quest) => (
-              <RewardCard 
+              <QuestCard 
                 key={quest.id} 
-                reward={quest} 
+                quest={quest} 
                 onClick={() => {
-                  if (quest.tasks.length > 0 && quest.tasks.every(t => t.completed)) {
-                    setClaimingReward(quest);
-                  } else {
-                    setSelectedReward(quest);
-                    setObjectiveDialogOpen(true);
-                  }
+                  setSelectedReward(quest);
+                  setObjectiveDialogOpen(true);
                 }}
                 onEdit={handleEditReward}
                 onDelete={(id) => setRewardToDelete(id)}
@@ -200,6 +194,8 @@ export default function QuestsDashboard() {
           open={objectiveDialogOpen}
           onOpenChange={setObjectiveDialogOpen}
           onUpdate={handleRewardUpdate}
+          onRedeem={handleClaim}
+          isClaiming={isClaiming}
         />
 
         <AlertDialog
@@ -212,18 +208,6 @@ export default function QuestsDashboard() {
           variant="destructive"
           isLoading={isDeleting}
         />
-
-        {claimingReward && (
-          <AlertDialog
-            open={!!claimingReward}
-            onOpenChange={(open) => !open && setClaimingReward(null)}
-            title="Claim Quest Reward"
-            description={`Are you sure you want to claim your reward for "${claimingReward.title}"?`}
-            confirmText="Claim"
-            onConfirm={handleClaim}
-            isLoading={isClaiming}
-          />
-        )}
       </PageContent>
     </PageShell>
   );

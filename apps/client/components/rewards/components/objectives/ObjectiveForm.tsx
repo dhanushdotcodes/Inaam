@@ -23,8 +23,7 @@ export default function ObjectiveForm({ rewardId, taskType = TaskType.OBJECTIVE,
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!title.trim()) return;
 
     try {
@@ -44,6 +43,14 @@ export default function ObjectiveForm({ rewardId, taskType = TaskType.OBJECTIVE,
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      handleSubmit();
+    }
+  };
+
   useEffect(() => {
     if (!submitting && inputRef.current) {
       inputRef.current.focus();
@@ -52,24 +59,30 @@ export default function ObjectiveForm({ rewardId, taskType = TaskType.OBJECTIVE,
 
   return (
     <div className="space-y-2">
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <div className="flex gap-2">
         <Input
           placeholder="Add a new objective..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          onKeyDown={handleKeyDown}
           disabled={submitting}
           className="flex-1"
           autoFocus
           ref={inputRef}
         />
-        <Button type="submit" size="icon" disabled={submitting || !title.trim()}>
+        <Button 
+          type="button" 
+          size="icon" 
+          disabled={submitting || !title.trim()}
+          onClick={handleSubmit}
+        >
           {submitting ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <Plus className="h-4 w-4" />
           )}
         </Button>
-      </form>
+      </div>
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );

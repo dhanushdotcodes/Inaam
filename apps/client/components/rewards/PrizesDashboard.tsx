@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { Plus, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Reward } from "@/types";
-import { RewardType } from "@/types";
-
 import DashboardHeader from "@/components/layout/DashboardHeader";
-import RewardCard from "./components/RewardCard";
+import PrizeCard from "./components/PrizeCard";
 import RewardFormDialog from "./dialogs/RewardFormDialog";
+import ObjectiveDetailsDialog from "./dialogs/ObjectiveDetailsDialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import PointsDisplay from "../shared/PointsDisplay";
+import type { Reward, RewardWithTasks } from "@/types";
+import { RewardType } from "@/types";
 
 import { useRewards } from "@/hooks/useRewards";
 import { useRewardActions } from "@/hooks/useRewardActions";
@@ -28,6 +28,7 @@ export default function PrizesDashboard() {
     loading, 
     error, 
     refresh, 
+    updateReward,
     setRewards 
   } = useRewards(RewardType.PRIZE);
 
@@ -40,11 +41,19 @@ export default function PrizesDashboard() {
 
   /* Dialog states */
   const [formDialogOpen, setFormDialogOpen] = useState(false);
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  const [selectedReward, setSelectedReward] = useState<RewardWithTasks | null>(null);
   const [rewardToEdit, setRewardToEdit] = useState<Reward | null>(null);
 
-  /* Reward deletion & claiming state */
+  /* Reward deletion state */
   const [rewardToDelete, setRewardToDelete] = useState<string | null>(null);
-  const [claimingReward, setClaimingReward] = useState<Reward | null>(null);
+
+  const handleRewardUpdate = (updatedReward: RewardWithTasks) => {
+    updateReward(updatedReward);
+    if (selectedReward?.id === updatedReward.id) {
+      setSelectedReward(updatedReward);
+    }
+  };
 
   const openCreateDialog = () => {
     setRewardToEdit(null);
@@ -64,10 +73,9 @@ export default function PrizesDashboard() {
     });
   };
 
-  const handleClaim = async () => {
-    if (!claimingReward) return;
-    await claimRewardAction(claimingReward.id, () => {
-      setClaimingReward(null);
+  const handleClaim = async (reward: RewardWithTasks) => {
+    await claimRewardAction(reward.id, () => {
+      setDetailsDialogOpen(false);
       refresh();
     });
   };
@@ -132,10 +140,13 @@ export default function PrizesDashboard() {
         {!loading && !error && rewards.length > 0 && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {sortedPrizes.map((prize) => (
-              <RewardCard 
+              <PrizeCard 
                 key={prize.id} 
-                reward={prize} 
-                onClick={() => setClaimingReward(prize)}
+                prize={prize} 
+                onClick={() => {
+                  setSelectedReward(prize);
+                  setDetailsDialogOpen(true);
+                }}
                 onEdit={handleEditReward}
                 onDelete={(id) => setRewardToDelete(id)}
               />
@@ -153,6 +164,15 @@ export default function PrizesDashboard() {
           onSuccess={refresh}
         />
 
+        <ObjectiveDetailsDialog 
+          reward={selectedReward}
+          open={detailsDialogOpen}
+          onOpenChange={setDetailsDialogOpen}
+          onUpdate={handleRewardUpdate}
+          onRedeem={handleClaim}
+          isClaiming={isClaiming}
+        />
+
         <AlertDialog
           open={!!rewardToDelete}
           onOpenChange={(open) => !open && setRewardToDelete(null)}
@@ -163,18 +183,6 @@ export default function PrizesDashboard() {
           variant="destructive"
           isLoading={isDeleting}
         />
-
-        {claimingReward && (
-          <AlertDialog
-            open={!!claimingReward}
-            onOpenChange={(open) => !open && setClaimingReward(null)}
-            title="Redeem Prize"
-            description={`Are you sure you want to redeem "${claimingReward.title}" for ${claimingReward.cost_points} points?`}
-            confirmText="Redeem"
-            onConfirm={handleClaim}
-            isLoading={isClaiming}
-          />
-        )}
       </PageContent>
     </PageShell>
   );

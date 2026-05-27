@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Created specialized `QuestCard.tsx` component to handle rendering of Quests, task lists, objective progress, and locks.
+- Created specialized `PrizeCard.tsx` component to handle rendering of Prizes, points cost badges, and linear points progress bars based on the user's current points.
+- Integrated `ObjectiveDetailsDialog` into the `PrizesDashboard` to show full prize details (title and description) upon card click.
+- Placed interactive Claim and Redeem buttons in the footer of `ObjectiveDetailsDialog` next to the Close button, with disabled and neutral styling when goals are not met.
+- Integrated loading indicators (`isLoading={isClaiming}`) into the dialog's Claim and Redeem buttons.
+
+### Removed
+- Deleted deprecated, unified `RewardCard.tsx` component.
+- Removed intermediate confirmation `AlertDialog` popups for Quests and Prizes claiming/redemption to streamline the user flow and avoid "double dialogs".
+
+### Changed
+- Refactored `QuestsDashboard.tsx` and `PrizesDashboard.tsx` to render their respective specialized card components.
+- Modified `ObjectiveDetailsDialog.tsx` to handle immediate claim/redemption upon clicking the footer action buttons.
+
+### Fixed
+- Resolved a Next.js/React hydration error caused by invalid HTML nesting (`<form>` inside `<form>`) by refactoring `ObjectiveForm.tsx` to use a `<div>` container instead of a `<form>` element, manually capturing key down events for the Enter key.
+
+### Added
 - Installed and integrated the `recharts` library for client-side composed chart data visualizations.
 - Summed and mapped daily earned transaction points inside the analytics client to track rewards per date.
 - Developed the **Task Analytics Dashboard & API Endpoint** to fetch and visualize completed task statistics daily over 7, 14, and 30 day windows.

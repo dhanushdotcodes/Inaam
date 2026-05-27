@@ -15,6 +15,8 @@ import { AlertDialog } from "@/components/ui/alert-dialog";
 import { deleteTask } from "@/lib/api";
 import type { RewardWithTasks, Task } from "@/types";
 import { RewardType, TaskType } from "@/types";
+import { useAppStore } from "@/hooks/store";
+import { cn } from "@/lib/utils";
 
 import ObjectiveForm from "../components/objectives/ObjectiveForm";
 import ObjectiveList from "../components/objectives/ObjectiveList";
@@ -24,6 +26,8 @@ interface ObjectiveDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUpdate: (updatedReward: RewardWithTasks) => void;
+  onRedeem?: (reward: RewardWithTasks) => void;
+  isClaiming?: boolean;
 }
 
 /**
@@ -34,7 +38,12 @@ export default function ObjectiveDetailsDialog({
   open,
   onOpenChange,
   onUpdate,
+  onRedeem,
+  isClaiming = false,
 }: ObjectiveDetailsDialogProps) {
+  const { balance } = useAppStore((state) => state.points);
+  const currentPoints = balance ?? 0;
+
   /* Objective deletion confirmation state */
   const [objectiveToDelete, setObjectiveToDelete] = useState<string | null>(null);
   const [isDeletingObjective, setIsDeletingObjective] = useState(false);
@@ -42,6 +51,7 @@ export default function ObjectiveDetailsDialog({
   if (!reward) return null;
 
   const isQuest = reward.reward_type === RewardType.QUEST;
+  const hasEnoughPoints = currentPoints >= reward.cost_points;
 
   const handleObjectiveAdded = (newTask: Task) => {
     onUpdate({
@@ -91,7 +101,7 @@ export default function ObjectiveDetailsDialog({
                   {reward.title}
                 </DialogTitle>
                 <DialogDescription className="mt-1 wrap-break-word">
-                  {reward.description || (isQuest ? "Complete these objectives to unlock this quest." : "Redeem this prize with your earned points.")}
+                  {isQuest ? "Complete these objectives to unlock this quest." : "Redeem this prize with your earned points."}
                 </DialogDescription>
               </div>
               {reward.claimed_at && (
@@ -118,33 +128,67 @@ export default function ObjectiveDetailsDialog({
               />
             </div>
           ) : (
-            <div className="mt-6 p-12 rounded-3xl border border-dashed border-border flex flex-col items-center justify-center bg-muted/10">
-               <p className="text-sm text-muted-foreground text-center">
-                 Prizes are redeemed directly with points. No objectives required.
-               </p>
-               {!reward.claimed_at && (
-                 <Button className="mt-6" variant="contained">
-                   Redeem for {reward.cost_points} Points
-                 </Button>
-               )}
+            <div className="mt-4 p-6 rounded-2xl border border-neutral-100 dark:border-neutral-800 flex flex-col justify-center bg-muted/5">
+              <p className="text-sm text-foreground leading-relaxed">
+                {reward.description || "No description provided for this prize."}
+              </p>
             </div>
           )}
 
-          <DialogFooter className="mt-4 sm:justify-start">
-            <div className="w-full flex items-center justify-between">
-              {isQuest && (
+          <DialogFooter className="mt-6">
+            <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              {isQuest ? (
                 <div className="text-xs text-muted-foreground">
                   {completedCount}/{totalCount} objectives completed
                 </div>
+              ) : (
+                <div className="text-xs text-muted-foreground font-medium">
+                  Cost: {reward.cost_points.toLocaleString()} Pts (Your Balance: {currentPoints.toLocaleString()} Pts)
+                </div>
               )}
-              <Button
-                variant="outline"
-                size="default"
-                className="ml-auto"
-                onClick={() => onOpenChange(false)}
-              >
-                Close
-              </Button>
+              <div className="flex items-center gap-2 sm:ml-auto">
+                <Button
+                  variant="outline"
+                  size="default"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Close
+                </Button>
+                
+                {isQuest && !reward.claimed_at && (
+                  <Button 
+                    variant={completedCount === totalCount && totalCount > 0 ? "contained" : "outlined"}
+                    disabled={!(completedCount === totalCount && totalCount > 0)}
+                    isLoading={isClaiming}
+                    className={cn(
+                      "text-[10px] font-black uppercase tracking-widest",
+                      !(completedCount === totalCount && totalCount > 0) && "border-neutral-200 text-neutral-400 bg-neutral-50 dark:bg-neutral-800/50 dark:border-neutral-700 dark:text-neutral-500"
+                    )}
+                    onClick={() => {
+                      onRedeem?.(reward);
+                    }}
+                  >
+                    Claim Reward
+                  </Button>
+                )}
+
+                {!isQuest && !reward.claimed_at && (
+                  <Button 
+                    variant={hasEnoughPoints ? "contained" : "outlined"}
+                    disabled={!hasEnoughPoints}
+                    isLoading={isClaiming}
+                    className={cn(
+                      "text-[10px] font-black uppercase tracking-widest",
+                      !hasEnoughPoints && "border-neutral-200 text-neutral-400 bg-neutral-50 dark:bg-neutral-800/50 dark:border-neutral-700 dark:text-neutral-500"
+                    )}
+                    onClick={() => {
+                      onRedeem?.(reward);
+                    }}
+                  >
+                    Redeem Prize
+                  </Button>
+                )}
+              </div>
             </div>
           </DialogFooter>
         </DialogContent>
