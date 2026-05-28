@@ -32,44 +32,32 @@ Endpoints perform resource CRUD operations in the context of the authenticated u
 - `POST /api/v1/auth/login` - Sign in and get a JWT access token (returns `access_token` and user details).
 - `GET /api/v1/health` - Public health check.
 
-## Quest and Prize management
+## Prize management
 ---
 All operations are isolated and scoped to the authenticated user.
-- `GET /api/v1/rewards` - get all quests and prizes for the authenticated user
-- `POST /api/v1/rewards` - create a new quest or prize for the authenticated user
-- `GET /api/v1/rewards/{id}` - get a specific reward owned by the user
-- `PUT /api/v1/rewards/{id}` - update a specific reward owned by the user
-- `DELETE /api/v1/rewards/{id}` - delete a specific reward owned by the user
-- `PATCH /api/v1/rewards/{id}/claim` - claim a quest or prize owned by the user
+- `GET /api/v1/rewards` - get all prizes for the authenticated user
+- `POST /api/v1/rewards` - create a new prize for the authenticated user
+- `GET /api/v1/rewards/{id}` - get a specific prize owned by the user
+- `PUT /api/v1/rewards/{id}` - update a specific prize owned by the user
+- `DELETE /api/v1/rewards/{id}` - delete a specific prize owned by the user
+- `PATCH /api/v1/rewards/{id}/claim` - claim a prize owned by the user
 - `GET /api/v1/rewards?status=claimed` - get claimed rewards for the authenticated user
 - `GET /api/v1/rewards?status=unclaimed` - get unclaimed rewards for the authenticated user
 
-## Task management (Bounties & Objectives)
+## Task management (Bounties)
 ---
 All tasks are isolated and scoped to the authenticated user.
 
-### Independent Tasks (Bounties)
-- `GET /api/v1/tasks` - Get all tasks (both bounties and objectives) for the user.
+- `GET /api/v1/tasks` - Get all tasks (bounties) for the user.
   - **Query Parameters**:
     - `tz_offset`: (Optional integer, default: `0`) User timezone offset in minutes, used to filter active/reset tasks for today.
-- `POST /api/v1/tasks` - Create a new independent task (bounty) for the user.
-- `PUT /api/v1/tasks/{id}` - Update a specific independent task (bounty).
-- `DELETE /api/v1/tasks/{id}` - Delete a specific independent task (bounty).
-- `PATCH /api/v1/tasks/{id}/complete` - Complete a specific independent task and grant points.
+- `POST /api/v1/tasks` - Create a new task (bounty) for the user.
+- `PUT /api/v1/tasks/{id}` - Update a specific task (bounty).
+- `DELETE /api/v1/tasks/{id}` - Delete a specific task (bounty).
+- `PATCH /api/v1/tasks/{id}/complete` - Complete a specific task and grant points.
   - **Query Parameters**:
     - `tz_offset`: (Optional integer, default: `0`) User timezone offset in minutes, used for daily reset and milestone tracking.
-- `PATCH /api/v1/tasks/{id}/incomplete` - Uncomplete/revert a specific independent task. Deducts the task points and any milestone bonuses earned because of it.
-
-### Quest-Linked Tasks (Objectives)
-- `GET /api/v1/rewards/{id}/tasks` - Get all objectives for a specific quest owned by the user.
-- `POST /api/v1/rewards/{id}/task` - Create a new objective for a specific quest.
-- `GET /api/v1/rewards/{id}/task/{task_id}` - Get a specific objective task.
-- `PUT /api/v1/rewards/{id}/task/{task_id}` - Update a specific objective task.
-- `DELETE /api/v1/rewards/{id}/task/{task_id}` - Delete a specific objective task.
-- `PATCH /api/v1/rewards/{id}/task/{task_id}/complete` - Complete a specific objective task and grant points.
-  - **Query Parameters**:
-    - `tz_offset`: (Optional integer, default: `0`) User timezone offset in minutes, used for milestone tracking.
-- `PATCH /api/v1/rewards/{id}/task/{task_id}/incomplete` - Uncomplete/revert a specific objective task. Deducts the task points and any milestone bonuses earned because of it.
+- `PATCH /api/v1/tasks/{id}/incomplete` - Uncomplete/revert a specific task. Deducts the task points and any milestone bonuses earned because of it.
 
 ### Task Analytics
 - `GET /api/v1/tasks/analytics` - Fetch daily completion counts and metrics aggregated by local timezone offset.

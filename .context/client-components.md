@@ -14,21 +14,17 @@ graph TD
     Sidebar --> NavItems[NAV_ITEMS]
     
     PageContent --> TasksPage[Tasks Dashboard]
-    PageContent --> QuestsPage[Quests Dashboard]
     PageContent --> PrizesPage[Prizes Shop]
     
     TasksPage --> TaskItem[TaskItem]
     TasksPage --> TaskFormDialog[TaskFormDialog]
     
-    QuestsPage --> RewardCard[RewardCard]
-    PrizesPage --> RewardCard[RewardCard]
-    QuestsPage --> DashboardHeader[DashboardHeader]
+    PrizesPage --> PrizeCard[PrizeCard]
     PrizesPage --> DashboardHeader[DashboardHeader]
-    QuestsPage --> PointsDisplay[PointsDisplay]
     PrizesPage --> PointsDisplay[PointsDisplay]
     
-    RewardCard --> Badge[Badge]
-    RewardCard --> Button[Button]
+    PrizeCard --> Badge[Badge]
+    PrizeCard --> Button[Button]
     
     Shared[Shared Components] --> PointsDisplay
     Shared --> DashboardHeader
@@ -53,9 +49,8 @@ graph TD
 ### 2. Feature Components (Rewards)
 | Component | Responsibility | Props |
 | :--- | :--- | :--- |
-| `QuestsDashboard` | Container for Quests. Handles data fetching and sorting. | `none` |
 | `PrizesDashboard` | Container for Prizes. Handles data fetching and redemption. | `none` |
-| `RewardCard` | Displays individual reward details (Quest/Prize). | `reward`, `onClick` |
+| `PrizeCard` | Displays individual prize details. | `reward`, `onClick` |
 | `PointsDisplay` | Shows the user's current point balance. | `none` (fetches balance) |
 
 ### 3. Feature Components (Tasks)
@@ -90,5 +85,5 @@ graph TD
 ## Interaction Patterns
 
 - **Dialogs**: All CRUD operations (Create/Edit Reward, Task) happen inside Dialog components to keep the main view clean.
-- **Confirmations**: Significant actions (Delete Task, Claim Reward) trigger an `AlertDialog` for safety.
+- **Confirmations**: Significant actions (Delete Task) trigger an `AlertDialog` for safety.
 - **Animations**: `framer-motion` (via `motion/react`) is used for sidebar transitions and active link indicators.

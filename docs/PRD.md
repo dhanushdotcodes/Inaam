@@ -2,24 +2,21 @@
 
 ## Inaam
 
-A lightweight Progressive Web Application (PWA) designed for managing bounty-based prize rewards and opening objective-linked quests.
-
+A lightweight Progressive Web Application (PWA) designed for managing bounties and redeeming point-based prizes.
 ## Core Modules
 - Authentication Management - Multi-user signup and password-based access using JWT session tokens and secure bcrypt hashing.
 - Multi-User Data Separation - Strict account isolation gating rewards, tasks, and ledger transactions, ensuring users only access their own data.
-- Reward Management - Add, Edit, Delete Quests (task-based) and Prizes (economy-based).
-- Task Management - Add, Edit, Delete Bounties (independent, with support for daily/weekly recurrence) and Objectives (linked to Quests).
-- Progress Tracking - Track completion percentage and Quest eligibility.
-- Points Tracking - Earn points from Bounties and Objectives, including compounding daily milestone bonuses, to spend on Prizes.
+- Reward Management - Add, Edit, Delete Prizes.
+- Task Management - Add, Edit, Delete Bounties (with support for daily/weekly recurrence).
+- Progress Tracking - Track points progression towards Prizes.
+- Points Tracking - Earn points from Bounties, including compounding daily milestone bonuses, to spend on Prizes.
 - Productivity Analytics - Visualize daily completion stats, daily average metrics, consistency percentages, and transaction logs over 7, 14, and 30-day windows.
 - PWA Support - Installable mobile-friendly application experience.
 
 ## Success Metrics
-- Successfully creating and managing Quests and Prizes.
-- Successfully creating and completing Bounties and Objectives.
+- Successfully creating and managing Prizes.
+- Successfully creating and completing Bounties.
 - Accurate handling of recurring tasks (resetting completion status based on defined days).
-- Correct calculation of Quest progress percentage.
-- Correctly identifying claimable Quests after Objective completion.
 - Complete multi-user data isolation where no account can read or write another account's resources.
 - Awarding compounding daily milestone bonuses correctly upon task completion.
 - Reverting points and milestone bonuses accurately when undoing task completion.
@@ -57,11 +54,10 @@ To help users focus on active goals, the UI enforces the following sorting rules
 ### Core loop
 - User registers a new account or enters credentials to sign in.
 - Application issues a JWT access token for secure session management.
-- User creates a Quest or a Prize.
-- User adds Objectives to a Quest or completes Bounties for points.
-- User completes tasks progressively.
-- Application updates the Quest completion percentage.
-- User unlocks and claims the Quest after completing all Objectives, or buys a Prize with points.
+- User creates a Prize.
+- User completes Bounties for points.
+- Application updates the user's point balance.
+- User buys a Prize with points.
 
 ## Milestones
 

@@ -4,7 +4,7 @@ This document provides a high-level overview of the Inaam client-side applicatio
 
 ## Application Purpose
 
-Inaam is a Progressive Web Application (PWA) designed to help users track and claim rewards by completing associated tasks. It uses a gamified approach with "Quests" (task-linked rewards), "Prizes" (point-based rewards), and "Bounties" (independent tasks).
+Inaam is a Progressive Web Application (PWA) designed to help users track and claim rewards by completing associated tasks. It uses a gamified approach with "Prizes" (point-based rewards) and "Bounties" (independent tasks).
 
 ---
 
@@ -15,19 +15,17 @@ Inaam is a Progressive Web Application (PWA) designed to help users track and cl
 - **Purpose**: Provides the primary layout, sidebar navigation, and global state management (like sidebar collapse).
 - **Key Components**: `Sidebar`, `Navbar`.
 
-### 2. Task Management (Bounties & Objectives)
+### 2. Task Management (Bounties)
 - **Location**: `apps/client/app/(dashboard)/tasks` and `apps/client/components/tasks`
 - **Purpose**: Allows users to view and complete independent "Bounties" to earn points.
 - **Concepts**:
   - **Bounties**: Standalone tasks that grant points upon completion.
-  - **Objectives**: Tasks that are specifically linked to a Quest.
 
-### 3. Reward Management (Quests & Prizes)
-- **Location**: `apps/client/app/(dashboard)/quests`, `apps/client/app/(dashboard)/prizes` and `apps/client/components/rewards`
-- **Purpose**: The core "value" of the app. Users work towards unlocking Quests or saving up for Prizes.
+### 3. Reward Management (Prizes)
+- **Location**: `apps/client/app/(dashboard)/prizes` and `apps/client/components/rewards`
+- **Purpose**: The core "value" of the app. Users work towards saving up for Prizes.
 - **Concepts**:
-  - **Quests**: Rewards that require all linked Objectives to be completed before they can be claimed. Managed in the **Quests** dashboard.
-  - **Prizes**: Rewards that are purchased using points earned from Bounties/Objectives. Managed in the **Prizes** shop.
+  - **Prizes**: Rewards that are purchased using points earned from Bounties. Managed in the **Prizes** shop.
 
 
 ---
@@ -41,15 +39,8 @@ Inaam is a Progressive Web Application (PWA) designed to help users track and cl
 4. User completes the task and marks it as finished.
 5. Points are added to the user's balance.
 
-### Flow 2: Quest Progression
-1. User identifies a **Quest** they want to unlock in the **Quests** dashboard.
-2. User views the **Objectives** linked to that Quest.
-3. User completes Objectives progressively.
-4. The Quest progress bar updates in real-time.
-5. Once 100% complete, the Quest becomes "Ready to Claim".
-
-### Flow 3: Reward Redemption
-1. User navigates to **Quests** to claim a completed Quest OR navigates to **Prizes** to spend points.
+### Flow 2: Reward Redemption
+1. User navigates to **Prizes** to spend points.
 2. The reward is marked as "Claimed".
 
 ---
@@ -87,7 +78,7 @@ To maintain focus on active goals, the application implements specific sorting r
 ## Mental Model for Developers
 
 When working on the Inaam client, think in terms of **Tasks** (effort) and **Rewards** (value).
-- If it's a task: Is it a Bounty (standalone) or an Objective (linked)?
-- If it's a reward: Is it a Quest (effort-based) or a Prize (points-based)?
+- The effort is a **Bounty** (standalone task).
+- The value is a **Prize** (points-based reward).
 
 The UI should always feel "premium" and "clinical," with smooth transitions and clear progress indicators.
