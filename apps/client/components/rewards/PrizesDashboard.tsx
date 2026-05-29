@@ -11,7 +11,7 @@ import RewardFormDialog from "./dialogs/RewardFormDialog";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import PointsDisplay from "../shared/PointsDisplay";
 import type { Reward } from "@/types";
-
+import { useAppStore } from "@/hooks/store";
 
 import { useRewards } from "@/hooks/useRewards";
 import { useRewardActions } from "@/hooks/useRewardActions";
@@ -46,6 +46,9 @@ export default function PrizesDashboard() {
     isDeleting, 
     isClaiming 
   } = useRewardActions();
+
+  const { balance } = useAppStore((state) => state.points);
+  const currentPoints = balance ?? 0;
 
   /* Dialog states */
   const [formDialogOpen, setFormDialogOpen] = useState(false);
@@ -197,13 +200,26 @@ export default function PrizesDashboard() {
           onOpenChange={setDetailsDialogOpen}
           title="Redeem Prize"
           description={
-            selectedReward
-              ? `Are you sure you want to redeem "${selectedReward.title}" for ${selectedReward.cost_points} points?`
-              : ""
+            selectedReward ? (
+              <div className="space-y-3 mt-2">
+                <p>Are you sure you want to redeem &quot;{selectedReward.title}&quot; for {selectedReward.cost_points} points?</p>
+                {selectedReward.description && (
+                  <p className="text-sm text-muted-foreground bg-neutral-50 dark:bg-neutral-900 p-3 rounded-md border border-neutral-100 dark:border-neutral-800">
+                    {selectedReward.description}
+                  </p>
+                )}
+                {currentPoints < selectedReward.cost_points && (
+                  <p className="text-sm font-medium text-destructive">
+                    You don&apos;t have enough points to redeem this prize.
+                  </p>
+                )}
+              </div>
+            ) : ""
           }
           confirmText="Redeem"
           onConfirm={() => selectedReward && handleClaim(selectedReward)}
           isLoading={isClaiming}
+          confirmDisabled={selectedReward ? currentPoints < selectedReward.cost_points : false}
         />
 
         <AlertDialog

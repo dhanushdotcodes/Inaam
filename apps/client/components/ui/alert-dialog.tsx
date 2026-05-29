@@ -15,12 +15,13 @@ interface AlertDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  description: string;
+  description: React.ReactNode;
   cancelText?: string;
   confirmText?: string;
   onConfirm: () => void;
   variant?: "default" | "destructive";
   isLoading?: boolean;
+  confirmDisabled?: boolean;
 }
 
 export function AlertDialog({
@@ -33,6 +34,7 @@ export function AlertDialog({
   onConfirm,
   variant = "default",
   isLoading = false,
+  confirmDisabled = false,
 }: AlertDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -56,7 +58,7 @@ export function AlertDialog({
               // Note: We don't close here automatically if it's loading
               if (!isLoading) onOpenChange(false);
             }}
-            disabled={isLoading}
+            disabled={isLoading || confirmDisabled}
           >
             {confirmText}
           </Button>
