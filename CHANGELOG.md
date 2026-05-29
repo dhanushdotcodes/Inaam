@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Developed a dynamic "Adventurer Profile" modal showcasing lifetime XP, spendable points, perfect weeks, and current streak.
 - Built an interactive, accordion-style **Rank Timeline** displaying past and future ranks with exact brand hex colors and cosmic gradients.
 
+### Changed
+- Refactored the monolithic `UserSection` into highly modular, reusable components (`UserProfileModal`, `RankTimeline`, `UserSidebarTrigger`, `StatRow`) for cleaner frontend architecture.
+- Improved `RankTimeline` layout by making it scrollable with a fixed height, auto-scrolling to the active rank, and perfectly centering the timeline nodes with a reduced width container.
+
 ## [1.1.0] - 2026-05-29
 
 ### Added
