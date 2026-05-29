@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 - Fixed an indentation bug in the backend reward service that prevented point transactions from being created upon reward redemption.
+- Intercept 401 Unauthorized API responses in the frontend client to correctly clear expired auth cookies and redirect to the login page.
 
 ## [1.0.0] - 2026-05-27
 

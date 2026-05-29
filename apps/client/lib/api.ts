@@ -1,4 +1,4 @@
-import { getToken } from "./auth";
+import { getToken, removeToken } from "./auth";
 import type {
   ApiResponse,
   LoginResponse,
@@ -48,6 +48,13 @@ async function apiFetch<T>(
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      removeToken();
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+    }
+
     const errorBody = await response.json().catch(() => null);
     const message =
       errorBody?.detail ||
