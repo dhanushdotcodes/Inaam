@@ -106,17 +106,17 @@ async def claim_reward(db: AsyncSession, reward_id: UUID, user_id: UUID) -> Opti
     if user_points < reward.cost_points:
         raise ValueError(f"Insufficient points to claim reward. Need {reward.cost_points}, have {user_points}")
             
-        # Create SPENT transaction
-        await transaction_service.create_transaction(
-            db,
-            TransactionCreate(
-                type=TransactionType.SPENT,
-                points=reward.cost_points,
-                description=f"Claimed reward: {reward.title}",
-                reward_id=reward.id
-            ),
-            user_id
-        )
+    # Create SPENT transaction
+    await transaction_service.create_transaction(
+        db,
+        TransactionCreate(
+            type=TransactionType.SPENT,
+            points=reward.cost_points,
+            description=f"Claimed reward: {reward.title}",
+            reward_id=reward.id
+        ),
+        user_id
+    )
 
     reward.claimed_at = datetime.now()
     await db.flush()
