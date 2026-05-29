@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### [Unreleased]
 
+### Added
+- Enhanced prize card redemption dialog to show full prize descriptions and a disabled state when the user has insufficient points.
+
+### Fixed
+- Fixed an indentation bug in the backend reward service that prevented point transactions from being created upon reward redemption.
+
 ## [1.0.0] - 2026-05-27
 
 ### Changed
