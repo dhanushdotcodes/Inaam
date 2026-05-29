@@ -62,14 +62,19 @@ export default function Sidebar() {
           className="size-8 object-contain shrink-0"
           priority
         />
-        <span
+        <div
           className={cn(
-            "text-3xl font-brand tracking-tight text-foreground transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] whitespace-nowrap overflow-hidden",
+            "flex flex-col transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] whitespace-nowrap overflow-hidden",
             isOpen ? "opacity-100 max-w-45 translate-x-0" : "opacity-0 max-w-0 -translate-x-4 pointer-events-none"
           )}
         >
-          Inaam
-        </span>
+          <span className="text-3xl font-brand tracking-tight text-foreground leading-none pt-1">
+            Inaam
+          </span>
+          <span className="text-[10px] font-medium text-neutral-500 tracking-wide">
+            v1.1.0
+          </span>
+        </div>
       </div>
 
       <nav className="flex-1 space-y-4">
