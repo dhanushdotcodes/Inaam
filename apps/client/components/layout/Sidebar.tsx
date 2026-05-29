@@ -50,31 +50,36 @@ export default function Sidebar() {
     <div className="flex flex-col h-full px-6 py-9">
       {/* Brand Header: Uses logo.png and font-brand (Boldonse) */}
       {/* Transition padding-left and gap smoothly over 400ms to avoid justify jumps */}
-      <div className={cn(
-        "mb-10 h-10 flex items-center select-none transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)]",
-        isOpen ? "pl-0 gap-2" : "pl-1 gap-0"
-      )}>
-        <Image 
-          src="/logo.png" 
-          alt="Inaam Logo" 
-          width={32} 
-          height={32} 
-          className="size-8 object-contain shrink-0"
-          priority
-        />
-        <div
-          className={cn(
-            "flex flex-col transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] whitespace-nowrap overflow-hidden",
-            isOpen ? "opacity-100 max-w-45 translate-x-0" : "opacity-0 max-w-0 -translate-x-4 pointer-events-none"
-          )}
-        >
-          <span className="text-3xl font-brand tracking-tight text-foreground leading-none pt-1">
+      <div className="mb-10 relative">
+        <div className={cn(
+          "h-10 flex items-center select-none transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)]",
+          isOpen ? "pl-0 gap-2" : "pl-1 gap-0"
+        )}>
+          <Image 
+            src="/logo.png" 
+            alt="Inaam Logo" 
+            width={32} 
+            height={32} 
+            className="size-8 object-contain shrink-0"
+            priority
+          />
+          <span
+            className={cn(
+              "text-3xl font-brand tracking-tight text-foreground transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] whitespace-nowrap overflow-hidden",
+              isOpen ? "opacity-100 max-w-45 translate-x-0" : "opacity-0 max-w-0 -translate-x-4 pointer-events-none"
+            )}
+          >
             Inaam
           </span>
-          <span className="text-[10px] font-medium text-neutral-500 tracking-wide">
-            v1.1.0
-          </span>
         </div>
+        <span
+          className={cn(
+            "absolute -bottom-4 left-10 text-[10px] text-neutral-500 font-bold uppercase tracking-widest transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] whitespace-nowrap overflow-hidden",
+            isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 pointer-events-none"
+          )}
+        >
+          v1.1.0
+        </span>
       </div>
 
       <nav className="flex-1 space-y-4">
