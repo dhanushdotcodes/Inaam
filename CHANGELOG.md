@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### [Unreleased]
 
+## [1.2.0] - 2026-05-29
+
+### Added
+- Implemented **Rank & Progression System** database schema.
+- Added `user_progress` table to track `lifetime_xp`, `spendable_points`, `total_tasks_completed`, `perfect_weeks`, and `current_streak`.
+- Added `user_rank_history` table to keep a chronological ledger of rank achievements.
+- Created `core/ranks.py` containing the unified rank configuration and ladder.
+- Developed `migrate_user_progress.py` script to backfill existing users' progression data by safely replaying their transaction history.
+- Enforced strict database constraints via a multi-stage Alembic migration strategy.
+
 ## [1.1.0] - 2026-05-29
 
 ### Added
