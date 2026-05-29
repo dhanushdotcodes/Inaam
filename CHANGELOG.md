@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### [Unreleased]
 
+## [1.1.0] - 2026-05-29
+
 ### Added
 - Enhanced prize card redemption dialog to show full prize descriptions and a disabled state when the user has insufficient points.
 
 ### Fixed
 - Fixed an indentation bug in the backend reward service that prevented point transactions from being created upon reward redemption.
 - Intercept 401 Unauthorized API responses in the frontend client to correctly clear expired auth cookies and redirect to the login page.
+- Prevented browser caching of API fetches by explicitly setting `cache: "no-store"` on the frontend HTTP client.
+- Fixed an issue where pinned recurring tasks would visually jump to the unpinned section when completed.
+- Fixed a critical backend bug where uncompleting a recurring task erroneously deleted all of its historical earned point transactions instead of just the most recent one.
+- Prevented completed recurring tasks from appearing simultaneously in both the Active and Completed tabs on the dashboard.
 
 ## [1.0.0] - 2026-05-27
 
