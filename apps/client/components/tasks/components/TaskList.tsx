@@ -49,8 +49,8 @@ export default function TaskList({ tasks, onToggle, onDelete, onPin, filter }: T
     return timeB - timeA;
   });
 
-  const pinnedTasks = sortedTasks.filter((t) => t.pinned && !t.completed);
-  const unpinnedTasks = sortedTasks.filter((t) => !(t.pinned && !t.completed));
+  const pinnedTasks = sortedTasks.filter((t) => t.pinned);
+  const unpinnedTasks = sortedTasks.filter((t) => !t.pinned);
 
 
 
