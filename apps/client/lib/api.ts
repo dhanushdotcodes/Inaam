@@ -39,6 +39,7 @@ async function apiFetch<T>(
 
   const response = await fetch(url, {
     credentials: "include",
+    cache: "no-store",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
