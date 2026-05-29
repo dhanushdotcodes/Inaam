@@ -8,10 +8,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.task import Task
 from models.transaction import PointTransaction
+from models.user_progress import UserProgress
+from models.user_rank_history import UserRankHistory
 from models.enums import TransactionType
 from schemas.task import TaskCreate, TaskUpdate
 from schemas.transaction import TransactionCreate
 from services import transaction as transaction_service
+from core.ranks import get_highest_rank, RANKS
 
 
 async def get_tasks(
@@ -214,9 +217,59 @@ async def complete_task(
             user_id=user_id,
             tz_offset=tz_offset
         )
-    
+        
+        # Evaluate Gamification (Streak, Perfect Weeks, Rank)
+        progress_query = select(UserProgress).where(UserProgress.user_id == user_id)
+        res = await db.execute(progress_query)
+        progress = res.scalar_one_or_none()
+        
+        if progress:
+            progress.total_tasks_completed += 1
+            
+            # Evaluate Streak and Perfect Weeks
+            now_utc = datetime.now(timezone.utc)
+            local_tz = timezone(timedelta(minutes=tz_offset))
+            local_today = now_utc.astimezone(local_tz).date()
+            
+            if progress.last_active_date is None:
+                progress.current_streak = 1
+            else:
+                days_diff = (local_today - progress.last_active_date).days
+                if days_diff == 1:
+                    progress.current_streak += 1
+                elif days_diff > 1:
+                    progress.current_streak = 1
+                
+                if progress.current_streak >= 7:
+                    progress.perfect_weeks += 1
+                    progress.current_streak = 0
+            
+            progress.last_active_date = local_today
+            
+            # Rank Unlock Check
+            new_rank = get_highest_rank(
+                progress.lifetime_xp, 
+                progress.total_tasks_completed, 
+                progress.perfect_weeks
+            )
+            
+            if new_rank.name != progress.active_rank:
+                current_idx = next((i for i, r in enumerate(RANKS) if r.name == progress.active_rank), 0)
+                new_idx = next((i for i, r in enumerate(RANKS) if r.name == new_rank.name), 0)
+                
+                if new_idx > current_idx:
+                    for i in range(current_idx + 1, new_idx + 1):
+                        skipped_rank = RANKS[i]
+                        db.add(UserRankHistory(
+                            user_id=user_id,
+                            rank=skipped_rank.name,
+                            achieved_at=now_utc
+                        ))
+                    
+                    progress.active_rank = new_rank.name
+                    
     task.completed = True
-    task.completed_at = datetime.now()
+    task.completed_at = datetime.now(timezone.utc)
     await db.flush()
     await db.refresh(task)
     return task
@@ -247,6 +300,15 @@ async def uncomplete_task(
         latest_tx = result.scalar_one_or_none()
         if latest_tx:
             await db.delete(latest_tx)
+            
+            # Revert points and tasks completed count
+            progress_query = select(UserProgress).where(UserProgress.user_id == user_id)
+            res = await db.execute(progress_query)
+            progress = res.scalar_one_or_none()
+            if progress:
+                progress.spendable_points -= latest_tx.points
+                progress.lifetime_xp -= latest_tx.points
+                progress.total_tasks_completed = max(0, progress.total_tasks_completed - 1)
         
     task.completed = False
     task.completed_at = None

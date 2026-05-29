@@ -3,9 +3,11 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 import jwt
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.config import settings
 from models.user import User
+from models.user_progress import UserProgress
 from schemas.auth import UserSignupRequest
 
 
@@ -48,7 +50,10 @@ async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User
     """
     Get a user by their username.
     """
-    query = select(User).where(User.username == username)
+    query = select(User).where(User.username == username).options(
+        selectinload(User.progress),
+        selectinload(User.rank_history)
+    )
     result = await db.execute(query)
     return result.scalar_one_or_none()
 
@@ -57,7 +62,10 @@ async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
     """
     Get a user by their email address.
     """
-    query = select(User).where(User.email == email)
+    query = select(User).where(User.email == email).options(
+        selectinload(User.progress),
+        selectinload(User.rank_history)
+    )
     result = await db.execute(query)
     return result.scalar_one_or_none()
 
@@ -80,8 +88,22 @@ async def register_user(db: AsyncSession, payload: UserSignupRequest) -> User:
     )
     db.add(user)
     await db.flush()
-    await db.refresh(user)
-    return user
+    
+    # Initialize Gamification Progress
+    progress = UserProgress(
+        user_id=user.id,
+        active_rank="Wanderer I",
+        lifetime_xp=0,
+        spendable_points=0,
+        total_tasks_completed=0,
+        perfect_weeks=0,
+        current_streak=0
+    )
+    db.add(progress)
+    await db.flush()
+    
+    # Reload with relationships
+    return await get_user_by_email(db, user.email)
 
 
 async def authenticate_user(db: AsyncSession, email: str, password: str) -> Optional[User]:

@@ -9,10 +9,15 @@ class UserSignupRequest(BaseModel):
     password: str = Field(..., min_length=6, max_length=100)
 
 
+from typing import Optional, List
+from schemas.progression import UserProgressResponse, UserRankHistoryResponse
+
 class UserResponse(BaseModel):
     id: UUID
     username: str
     email: str
+    progress: Optional[UserProgressResponse] = None
+    rank_history: List[UserRankHistoryResponse] = []
 
     model_config = ConfigDict(from_attributes=True)
 
