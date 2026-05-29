@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 
 import { useAppStore } from "@/hooks/store";
 import { motion, AnimatePresence } from "motion/react";
+import { UserSection } from "./UserSection";
 
 const NAV_ITEMS = [
   {
@@ -134,32 +135,9 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Logout Action Area */}
+      {/* User Section / Logout Action Area */}
       <div className="mt-auto pt-6 border-t border-border">
-        <button
-          onClick={handleLogout}
-          className={cn(
-            "group relative flex items-center transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] h-12 select-none outline-none rounded-xl w-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer",
-            isOpen ? "px-3 gap-3" : "px-0 gap-0"
-          )}
-        >
-          <div className={cn(
-            "flex items-center justify-center transition-colors duration-400 ease-[cubic-bezier(0.25,1,0.5,1)]",
-            !isOpen && "size-10 shrink-0"
-          )}>
-            <LogOut className="size-5 shrink-0" />
-          </div>
-          
-          {/* Logout Text: Collapses and slides left smoothly on closed state */}
-          <span
-            className={cn(
-              "text-sm font-bold tracking-tight transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] whitespace-nowrap overflow-hidden",
-              isOpen ? "opacity-100 max-w-30 translate-x-0" : "opacity-0 max-w-0 -translate-x-4 pointer-events-none"
-            )}
-          >
-            Logout
-          </span>
-        </button>
+        <UserSection />
       </div>
     </div>
   );

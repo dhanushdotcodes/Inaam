@@ -104,10 +104,43 @@ export interface TaskUpdatePayload {
 
 
 
+export interface RankConfigResponse {
+  name: string;
+  lifetime_xp: number;
+  tasks_completed: number;
+  perfect_weeks: number;
+}
+
+export interface UserProgressResponse {
+  active_rank: string;
+  lifetime_xp: number;
+  spendable_points: number;
+  total_tasks_completed: number;
+  perfect_weeks: number;
+  current_streak: number;
+  last_active_date: string | null;
+}
+
+export interface UserRankHistoryResponse {
+  id: string;
+  rank: string;
+  achieved_at: string;
+}
+
 export interface UserResponse {
   id: string;
   username: string;
   email: string;
+  progress?: UserProgressResponse | null;
+  rank_history?: UserRankHistoryResponse[];
+}
+
+export interface UserMeResponse {
+  id: string;
+  username: string;
+  email: string;
+  progress: UserProgressResponse | null;
+  rank_history: UserRankHistoryResponse[];
 }
 
 export interface UserSignupRequest {

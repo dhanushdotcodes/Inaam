@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Created `core/ranks.py` containing the unified rank configuration and ladder.
 - Developed `migrate_user_progress.py` script to backfill existing users' progression data by safely replaying their transaction history.
 - Enforced strict database constraints via a multi-stage Alembic migration strategy.
+- Created `UserSection` component to replace the static logout button in the `Sidebar`.
+- Developed a dynamic "Adventurer Profile" modal showcasing lifetime XP, spendable points, perfect weeks, and current streak.
+- Built an interactive, accordion-style **Rank Timeline** displaying past and future ranks with exact brand hex colors and cosmic gradients.
 
 ## [1.1.0] - 2026-05-29
 

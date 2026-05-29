@@ -14,6 +14,8 @@ import type {
   PointTransaction,
   TransactionCreatePayload,
   TaskAnalyticsResponse,
+  UserMeResponse,
+  RankConfigResponse,
 } from "@/types";
 
 /**
@@ -110,6 +112,20 @@ export async function signupUser(
     method: "POST",
     body: JSON.stringify(payload),
   });
+}
+
+/**
+ * Fetch the current authenticated user along with their progression data.
+ */
+export async function getUserMe(): Promise<UserMeResponse> {
+  return apiFetch<UserMeResponse>("/users/me");
+}
+
+/**
+ * Fetch all static rank configurations.
+ */
+export async function getRanks(): Promise<RankConfigResponse[]> {
+  return apiFetch<RankConfigResponse[]>("/progression/ranks");
 }
 
 /**
