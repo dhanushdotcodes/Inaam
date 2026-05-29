@@ -74,8 +74,8 @@ async def get_tasks(
             
         # Filter logic for main dashboard
         if status == "active":
-            # Show if active today OR if completed today (even if not active today, just in case)
-            if task.active_today or (task.completed and task.completed_at and task.completed_at >= local_start_dt):
+            # Show only active tasks that are NOT completed
+            if task.active_today and not task.completed:
                 final_tasks.append(task)
         else:
             final_tasks.append(task)
@@ -235,14 +235,18 @@ async def uncomplete_task(
     if not task.completed:
         return task
         
-    # Delete the associated EARNED transaction
+    # Delete only the most recent associated EARNED transaction
     if user_id:
-        delete_query = delete(PointTransaction).where(
+        query = select(PointTransaction).where(
             PointTransaction.user_id == user_id,
             PointTransaction.task_id == task_id,
             PointTransaction.type == TransactionType.EARNED
-        )
-        await db.execute(delete_query)
+        ).order_by(PointTransaction.created_at.desc()).limit(1)
+        
+        result = await db.execute(query)
+        latest_tx = result.scalar_one_or_none()
+        if latest_tx:
+            await db.delete(latest_tx)
         
     task.completed = False
     task.completed_at = None
