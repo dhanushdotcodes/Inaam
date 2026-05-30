@@ -10,8 +10,11 @@ from models.user import User
 from models.reward import Reward
 from models.task import Task
 from models.transaction import PointTransaction
+from models.user_progress import UserProgress
+from models.user_rank_history import UserRankHistory
 from models.enums import TaskDifficulty, TransactionType
 from services.auth import hash_password
+from core.ranks import get_highest_rank
 
 fake = Faker()
 
@@ -27,6 +30,8 @@ async def clear_existing_data(db: AsyncSession, user_id: str):
     await db.execute(delete(PointTransaction).where(PointTransaction.user_id == user_id))
     await db.execute(delete(Task).where(Task.user_id == user_id))
     await db.execute(delete(Reward).where(Reward.user_id == user_id))
+    await db.execute(delete(UserRankHistory).where(UserRankHistory.user_id == user_id))
+    await db.execute(delete(UserProgress).where(UserProgress.user_id == user_id))
     await db.commit()
 
 def create_reward(user_id, is_claimed, cost_points=None):
@@ -156,9 +161,37 @@ async def seed():
         db.add_all(transactions)
         await db.commit()
         
+        # 6. Generate Gamification Progress
+        print("Generating gamification progress...")
+        tasks_completed = sum(1 for t in tasks if t.completed)
+        lifetime_xp = total_earned
+        
+        # Determine Rank
+        rank = get_highest_rank(lifetime_xp, tasks_completed, 0)
+        
+        progress = UserProgress(
+            user_id=user.id,
+            active_rank=rank.name,
+            lifetime_xp=lifetime_xp,
+            spendable_points=balance,
+            total_tasks_completed=tasks_completed,
+            perfect_weeks=0,
+            current_streak=0
+        )
+        db.add(progress)
+        
+        history = UserRankHistory(
+            user_id=user.id,
+            rank=rank.name,
+            achieved_at=datetime.now(timezone.utc)
+        )
+        db.add(history)
+        await db.commit()
+        
         print(f"Seed complete!")
         print(f"Stats: 1 User, {len(rewards)} Rewards, {len(tasks)} Tasks, {len(transactions)} Transactions.")
         print(f"Final User Balance: {balance} points")
+        print(f"Achieved Rank: {rank.name}")
 
 if __name__ == "__main__":
     asyncio.run(seed())

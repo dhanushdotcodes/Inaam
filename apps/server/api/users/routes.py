@@ -6,11 +6,12 @@ from sqlalchemy import select
 from core.database import get_db
 from models.user import User
 from schemas.progression import UserMeResponse
-from services.auth import get_current_user
+from schemas.base import ApiResponse
+from core.security import get_current_user
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-@router.get("/me", response_model=UserMeResponse)
+@router.get("/me", response_model=ApiResponse[UserMeResponse])
 async def get_me(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
@@ -33,4 +34,4 @@ async def get_me(
     # Sort rank history by achieved_at desc
     user.rank_history.sort(key=lambda x: x.achieved_at, reverse=True)
     
-    return UserMeResponse.model_validate(user)
+    return ApiResponse.success(data=UserMeResponse.model_validate(user))
