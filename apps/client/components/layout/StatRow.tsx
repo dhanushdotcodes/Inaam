@@ -38,7 +38,7 @@ export function StatRow({ icon: Icon, label, value, theme }: StatRowProps) {
   const classes = THEME_CLASSES[theme];
 
   return (
-    <div className="flex items-center justify-between px-4 sm:px-6 h-[64px] sm:h-[72px] hover:bg-secondary/50 transition-colors border-b border-border group relative overflow-hidden last:border-b-0">
+    <div className="flex items-center justify-between px-4 sm:px-6 h-16 sm:h-18 hover:bg-secondary/50 transition-colors border-b border-border group relative overflow-hidden last:border-b-0 w-full">
       <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none", classes.bgHover)} />
       <div className="flex items-center gap-3 sm:gap-4 relative z-10">
         <div className={cn("size-8 sm:size-10 rounded-full flex items-center justify-center shrink-0", classes.iconBg)}>

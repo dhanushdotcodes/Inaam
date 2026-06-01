@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { useAppStore } from "@/hooks/store";
 import { motion, AnimatePresence } from "motion/react";
 import { UserSection } from "./UserSection";
+import { ThemeToggle } from "../shared/ThemeToggle";
 
 const NAV_ITEMS = [
   {
@@ -168,9 +169,14 @@ export default function Sidebar() {
             </Link>
           );
         })}
+        {/* Theme Toggle in Mobile Sidebar */}
+        <ThemeToggle 
+          className="flex flex-col items-center gap-1 p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-transparent dark:hover:bg-transparent transition-colors cursor-pointer w-auto h-auto"
+          showLabel
+        />
         <button
           onClick={handleLogout}
-          className="flex flex-col items-center gap-1 p-2 rounded-xl text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
+          className="flex flex-col items-center gap-1 p-2 rounded-xl text-red-500 hover:text-red-600 transition-colors cursor-pointer"
         >
           <LogOut className="size-5" />
           <span className="text-[10px] font-bold uppercase tracking-wider">Logout</span>

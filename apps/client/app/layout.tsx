@@ -4,6 +4,7 @@ import "./globals.css";
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import ToastContainer from "@/components/shared/ToastContainer";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const boldonse = localFont({
   src: "../fonts/Boldonse/Boldonse-Regular.ttf",
@@ -45,9 +46,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          <ServiceWorkerRegistrar />
-          <ToastContainer />
-          {children}
+          <TooltipProvider delay={300}>
+            <ServiceWorkerRegistrar />
+            <ToastContainer />
+            {children}
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

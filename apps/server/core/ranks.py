@@ -15,42 +15,42 @@ class RankConfig:
 
 RANKS: List[RankConfig] = [
     RankConfig("Wanderer I", 0, 0, 0),
-    RankConfig("Wanderer II", 300, 5, 0),
-    RankConfig("Wanderer III", 700, 12, 0),
+    RankConfig("Wanderer II", 900, 5, 0),
+    RankConfig("Wanderer III", 2100, 12, 0),
     
-    RankConfig("Initiate I", 1500, 20, 0),
-    RankConfig("Initiate II", 2500, 35, 0),
-    RankConfig("Initiate III", 4000, 50, 0),
+    RankConfig("Initiate I", 4500, 20, 0),
+    RankConfig("Initiate II", 7500, 35, 0),
+    RankConfig("Initiate III", 12000, 50, 0),
     
-    RankConfig("Apprentice I", 6000, 75, 0),
-    RankConfig("Apprentice II", 8500, 110, 0),
-    RankConfig("Apprentice III", 12000, 150, 0),
+    RankConfig("Apprentice I", 18000, 75, 0),
+    RankConfig("Apprentice II", 25500, 110, 0),
+    RankConfig("Apprentice III", 36000, 150, 0),
     
-    RankConfig("Spellbinder I", 16000, 220, 0),
-    RankConfig("Spellbinder II", 20000, 280, 0),
-    RankConfig("Spellbinder III", 26000, 350, 0),
+    RankConfig("Spellbinder I", 48000, 220, 0),
+    RankConfig("Spellbinder II", 60000, 280, 0),
+    RankConfig("Spellbinder III", 78000, 350, 0),
     
-    RankConfig("Wizard I", 35000, 450, 0),
-    RankConfig("Wizard II", 45000, 550, 0),
-    RankConfig("Wizard III", 60000, 700, 3),
+    RankConfig("Wizard I", 105000, 450, 0),
+    RankConfig("Wizard II", 135000, 550, 0),
+    RankConfig("Wizard III", 180000, 700, 3),
     
-    RankConfig("Archmage I", 80000, 900, 0),
-    RankConfig("Archmage II", 110000, 1100, 0),
-    RankConfig("Archmage III", 150000, 1400, 7),
+    RankConfig("Archmage I", 240000, 900, 0),
+    RankConfig("Archmage II", 330000, 1100, 0),
+    RankConfig("Archmage III", 450000, 1400, 7),
     
-    RankConfig("Oracle I", 220000, 1800, 0),
-    RankConfig("Oracle II", 300000, 2300, 0),
-    RankConfig("Oracle III", 400000, 3000, 10),
+    RankConfig("Oracle I", 660000, 1800, 0),
+    RankConfig("Oracle II", 900000, 2300, 0),
+    RankConfig("Oracle III", 1200000, 3000, 10),
     
-    RankConfig("Mythic I", 550000, 4000, 0),
-    RankConfig("Mythic II", 750000, 5500, 0),
-    RankConfig("Mythic III", 1000000, 7000, 14),
+    RankConfig("Mythic I", 1650000, 4000, 0),
+    RankConfig("Mythic II", 2250000, 5500, 0),
+    RankConfig("Mythic III", 3000000, 7000, 14),
     
-    RankConfig("Ascendant I", 1500000, 10000, 0),
-    RankConfig("Ascendant II", 2000000, 14000, 0),
-    RankConfig("Ascendant III", 3000000, 18000, 20),
+    RankConfig("Ascendant I", 4500000, 10000, 0),
+    RankConfig("Ascendant II", 6000000, 14000, 0),
+    RankConfig("Ascendant III", 9000000, 18000, 20),
     
-    RankConfig("Chronomancer", 5000000, 25000, 27),
+    RankConfig("Chronomancer", 15000000, 25000, 27),
 ]
 
 def get_highest_rank(

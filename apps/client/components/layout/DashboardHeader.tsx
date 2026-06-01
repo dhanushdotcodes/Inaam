@@ -38,7 +38,9 @@ export default function DashboardHeader({
 
       <div className="flex items-center gap-2">
         {children}
-        <ThemeToggle />
+        <div className="hidden lg:block">
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   );

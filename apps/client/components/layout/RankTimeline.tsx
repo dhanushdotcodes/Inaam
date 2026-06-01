@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { RankConfigResponse } from "@/types";
 import { getRankColor } from "./rank-utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function RankTimeline({ 
   ranks, 
@@ -49,15 +50,16 @@ export function RankTimeline({
           const isGradient = color.includes('gradient');
           
           return (
-            <motion.div 
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.03, duration: 0.3 }}
-              key={r.name} 
-              data-active={isCurrent}
-              className={cn("flex items-start gap-4 w-full mb-5 relative group", isAchieved ? "opacity-100" : "opacity-50 hover:opacity-100 transition-opacity")}
-            >
-              <div className="flex flex-col items-center z-10 pt-1">
+            <Tooltip key={r.name}>
+              <TooltipTrigger className="w-full text-left">
+                <motion.div 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.03, duration: 0.3 }}
+                  data-active={isCurrent}
+                  className={cn("flex items-start gap-4 w-full mb-5 relative group", isAchieved ? "opacity-100" : "opacity-50 hover:opacity-100 transition-opacity")}
+                >
+                  <div className="flex flex-col items-center z-10 pt-1">
                 {isCurrent ? (
                   <div className="relative flex items-center justify-center size-6 shrink-0">
                      <div className="absolute inset-0 rounded-full animate-ping opacity-40" style={{ background: color.includes('gradient') ? '#06B6D4' : color }} />
@@ -103,6 +105,14 @@ export function RankTimeline({
                 )}
               </div>
             </motion.div>
+          </TooltipTrigger>
+              <TooltipContent side="top" className="bg-popover border-border max-w-55 text-center z-50">
+                <p className="text-xs text-popover-foreground font-medium leading-relaxed">
+                  Requires {r.tasks_completed > 0 ? `${r.tasks_completed} Bounties` : "No Bounties"}
+                  {r.perfect_weeks > 0 && ` & ${r.perfect_weeks} Flawless Weeks`}
+                </p>
+              </TooltipContent>
+            </Tooltip>
           );
         })}
         </div>
