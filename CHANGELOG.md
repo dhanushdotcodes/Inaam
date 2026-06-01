@@ -12,9 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 - Redesigned `UserProfileModal` to match the premium dark theme design with refined circular `StatRow` components, improved modal layout structure, and smoother transitions.
+- Made `UserProfileModal` and `StatRow` responsive for mobile displays with fluid typography, dynamic sizing, and scaled paddings.
 
 ## [1.2.0] - 2026-05-29
-
 ### Added
 - Implemented **Rank & Progression System** database schema.
 - Added `user_progress` table to track `lifetime_xp`, `spendable_points`, `total_tasks_completed`, `perfect_weeks`, and `current_streak`.

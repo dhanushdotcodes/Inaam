@@ -38,15 +38,15 @@ export function StatRow({ icon: Icon, label, value, theme }: StatRowProps) {
   const classes = THEME_CLASSES[theme];
 
   return (
-    <div className="flex items-center justify-between px-6 h-[72px] hover:bg-secondary/50 transition-colors border-b border-border group relative overflow-hidden last:border-b-0">
+    <div className="flex items-center justify-between px-4 sm:px-6 h-[64px] sm:h-[72px] hover:bg-secondary/50 transition-colors border-b border-border group relative overflow-hidden last:border-b-0">
       <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none", classes.bgHover)} />
-      <div className="flex items-center gap-4 relative z-10">
-        <div className={cn("size-10 rounded-full flex items-center justify-center shrink-0", classes.iconBg)}>
-          <Icon className={cn("size-5", classes.iconColor)} />
+      <div className="flex items-center gap-3 sm:gap-4 relative z-10">
+        <div className={cn("size-8 sm:size-10 rounded-full flex items-center justify-center shrink-0", classes.iconBg)}>
+          <Icon className={cn("size-4 sm:size-5", classes.iconColor)} />
         </div>
-        <p className="text-sm font-bold text-foreground tracking-tight">{label}</p>
+        <p className="text-xs sm:text-sm font-bold text-foreground tracking-tight">{label}</p>
       </div>
-      <div className="text-xl font-bold tracking-tighter tabular-nums relative z-10 flex items-center gap-1.5 text-foreground">
+      <div className="text-lg sm:text-xl font-bold tracking-tighter tabular-nums relative z-10 flex items-center gap-1 sm:gap-1.5 text-foreground">
         {value}
       </div>
     </div>

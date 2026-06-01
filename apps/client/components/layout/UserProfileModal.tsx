@@ -57,48 +57,48 @@ export function UserProfileModal({
         onLogout={onLogout} 
       />
 
-      <DialogContent className="sm:max-w-md bg-background border-border shadow-2xl rounded-[24px] overflow-hidden max-h-[90vh] flex flex-col font-sans p-0! gap-0! [&>button]:hidden">
+      <DialogContent className="w-[95vw] sm:w-full sm:max-w-md bg-background border-border shadow-2xl rounded-[24px] overflow-hidden max-h-[90vh] flex flex-col font-sans p-0! gap-0! [&>button]:hidden">
         
-        <DialogHeader className="shrink-0 flex flex-row items-center gap-4 space-y-0 p-6 pb-6 relative z-10">
-          <div className="size-14 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40 shrink-0 relative z-10">
-            <Shield className="size-7 text-primary" />
+        <DialogHeader className="shrink-0 flex flex-row items-center gap-3 sm:gap-4 space-y-0 p-4 pb-4 sm:p-6 sm:pb-6 relative z-10">
+          <div className="size-12 sm:size-14 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40 shrink-0 relative z-10">
+            <Shield className="size-6 sm:size-7 text-primary" />
           </div>
           <div className="flex flex-col items-start flex-1 overflow-hidden">
-            <DialogTitle className="text-2xl font-bold tracking-tight truncate w-full text-left font-sans text-foreground">
+            <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight truncate w-full text-left font-sans text-foreground">
               {user.username}
             </DialogTitle>
-            <p className="text-[11px] text-muted-foreground truncate w-full text-left font-semibold tracking-widest uppercase mt-0.5">
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground truncate w-full text-left font-semibold tracking-widest uppercase mt-0.5">
               {user.email}
             </p>
           </div>
-          <DialogClose className="absolute right-6 top-6 rounded-sm opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground text-foreground">
+          <DialogClose className="absolute right-4 top-4 sm:right-6 sm:top-6 rounded-sm opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground text-foreground">
             <X className="size-5" />
             <span className="sr-only">Close</span>
           </DialogClose>
         </DialogHeader>
 
-        <div className="space-y-4 p-6 pt-0 relative z-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
+        <div className="space-y-3 sm:space-y-4 p-4 pt-0 sm:p-6 sm:pt-0 relative z-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
           {/* Main Rank Card */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
             onClick={() => setIsTimelineOpen(!isTimelineOpen)}
-            className="group flex flex-col p-6 pb-4 rounded-[24px] bg-card border border-border relative overflow-hidden cursor-pointer hover:border-primary/40 transition-colors duration-300 shadow-sm"
+            className="group flex flex-col p-4 pb-3 sm:p-6 sm:pb-4 rounded-[20px] sm:rounded-[24px] bg-card border border-border relative overflow-hidden cursor-pointer hover:border-primary/40 transition-colors duration-300 shadow-sm"
           >
             {/* Top Glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-16 bg-primary/20 blur-2xl rounded-full pointer-events-none" />
             
             <div className="flex justify-between items-start relative z-10 w-full">
                <div className="flex flex-col">
-                  <div className="flex items-center gap-3 mb-2">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  <div className="flex items-center gap-3 mb-1 sm:mb-2">
+                    <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                       Current Rank
                     </p>
                   </div>
                   
                   <p 
-                    className="text-2xl font-bold uppercase tracking-wider flex items-center gap-2 mt-1 font-sans"
+                    className="text-xl sm:text-2xl font-bold uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 mt-1 font-sans"
                     style={{ 
                       color: currentRankColor.includes('gradient') ? 'transparent' : currentRankColor,
                       backgroundImage: currentRankColor.includes('gradient') ? currentRankColor : 'none',
@@ -106,7 +106,7 @@ export function UserProfileModal({
                     }}
                   >
                     <Shield 
-                      className="size-6 drop-shadow-sm" 
+                      className="size-5 sm:size-6 drop-shadow-sm" 
                       style={{ color: currentRankColor.includes('gradient') ? '#06B6D4' : currentRankColor }} 
                     />
                     {user.progress?.active_rank || "Wanderer I"}
@@ -114,8 +114,8 @@ export function UserProfileModal({
                </div>
                
                <div className="text-right flex flex-col items-end">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Lifetime XP</p>
-                  <p className="text-3xl font-bold tracking-tighter tabular-nums text-foreground">
+                  <p className="text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 sm:mb-1.5">Lifetime XP</p>
+                  <p className="text-2xl sm:text-3xl font-bold tracking-tighter tabular-nums text-foreground">
                     {currentXP.toLocaleString()}
                   </p>
                </div>
@@ -148,7 +148,7 @@ export function UserProfileModal({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.4, ease: "easeOut" }}
-            className="flex flex-col bg-card border border-border rounded-[24px] overflow-hidden shadow-sm"
+            className="flex flex-col bg-card border border-border rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-sm"
           >
             <StatRow 
               icon={Coins}
