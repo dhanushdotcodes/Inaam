@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { LogOut, Shield, ChevronDown, Flame, Swords, Coins, Sparkles } from "lucide-react";
+import { Shield, ChevronDown, Flame, Swords, Coins, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserMeResponse, RankConfigResponse } from "@/types";
-import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "motion/react";
 import { getRankColor } from "./rank-utils";
 import { RankTimeline } from "./RankTimeline";
@@ -26,7 +26,7 @@ export function UserProfileModal({
   const currentRankColor = getRankColor(user.progress?.active_rank || "");
 
   // Calculate Progress to Next Rank
-  const { currentXP, nextRankXP, progressPercent } = useMemo(() => {
+  const { currentXP } = useMemo(() => {
     const xp = user.progress?.lifetime_xp || 0;
     if (!ranks.length) return { currentXP: xp, nextRankXP: xp, progressPercent: 100 };
     
@@ -57,53 +57,44 @@ export function UserProfileModal({
         onLogout={onLogout} 
       />
 
-      <DialogContent className="sm:max-w-md bg-background/60 backdrop-blur-2xl border-border/50 shadow-[0_16px_40px_rgba(0,0,0,0.18)] rounded-[24px] overflow-hidden max-h-[90vh] flex flex-col font-sans p-0! gap-0!">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] h-32 bg-primary/10 blur-[50px] -z-10 rounded-full pointer-events-none" />
+      <DialogContent className="sm:max-w-md bg-background border-border shadow-2xl rounded-[24px] overflow-hidden max-h-[90vh] flex flex-col font-sans p-0! gap-0! [&>button]:hidden">
         
-        <DialogHeader className="shrink-0 flex flex-row items-center gap-4 space-y-0 p-6 pb-5 border-b border-border/40 relative z-10">
-          <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 rounded-full blur-md animate-pulse" />
-            <div className="size-14 rounded-full bg-linear-to-b from-primary/20 to-primary/5 flex items-center justify-center border border-primary/30 shrink-0 shadow-inner relative z-10">
-              <Shield className="size-7 text-primary drop-shadow-md" />
-            </div>
+        <DialogHeader className="shrink-0 flex flex-row items-center gap-4 space-y-0 p-6 pb-6 relative z-10">
+          <div className="size-14 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40 shrink-0 relative z-10">
+            <Shield className="size-7 text-primary" />
           </div>
-          <div className="flex flex-col items-start flex-1 overflow-hidden pt-1">
+          <div className="flex flex-col items-start flex-1 overflow-hidden">
             <DialogTitle className="text-2xl font-bold tracking-tight truncate w-full text-left font-sans text-foreground">
               {user.username}
             </DialogTitle>
-            <p className="text-[11px] text-muted-foreground truncate w-full text-left mt-0.5 font-semibold tracking-widest uppercase opacity-80 font-sans">
+            <p className="text-[11px] text-muted-foreground truncate w-full text-left font-semibold tracking-widest uppercase mt-0.5">
               {user.email}
             </p>
           </div>
+          <DialogClose className="absolute right-6 top-6 rounded-sm opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground text-foreground">
+            <X className="size-5" />
+            <span className="sr-only">Close</span>
+          </DialogClose>
         </DialogHeader>
 
-        <div className="space-y-4 p-6 pt-5 relative z-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
+        <div className="space-y-4 p-6 pt-0 relative z-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
           {/* Main Rank Card */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
             onClick={() => setIsTimelineOpen(!isTimelineOpen)}
-            className="group flex flex-col gap-4 p-6 rounded-[24px] bg-linear-to-br from-card/80 to-card/30 border border-border/60 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.1)] backdrop-blur-xl relative overflow-hidden cursor-pointer hover:border-primary/30 transition-all duration-300"
+            className="group flex flex-col p-6 pb-4 rounded-[24px] bg-card border border-border relative overflow-hidden cursor-pointer hover:border-primary/40 transition-colors duration-300 shadow-sm"
           >
-            {/* Shimmer Effect */}
-            <div className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/5 to-transparent group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
+            {/* Top Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-16 bg-primary/20 blur-2xl rounded-full pointer-events-none" />
             
-            <div 
-              className="absolute -top-12 -right-12 w-40 h-40 blur-[50px] rounded-full pointer-events-none opacity-30 transition-opacity group-hover:opacity-50"
-              style={{ background: currentRankColor.includes('gradient') ? '#7C3AED' : currentRankColor }}
-            />
-            
-            <div className="flex items-center w-full relative z-10">
-               <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+            <div className="flex justify-between items-start relative z-10 w-full">
+               <div className="flex flex-col">
+                  <div className="flex items-center gap-3 mb-2">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                       Current Rank
                     </p>
-                    {/* Clear UI indicator that this is clickable */}
-                    <div className="flex items-center text-[10px] text-primary font-bold bg-primary/10 px-2.5 py-0.5 rounded-full opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                      Timeline <ChevronDown className={cn("size-3 ml-1 transition-transform duration-500", isTimelineOpen && "rotate-180")} />
-                    </div>
                   </div>
                   
                   <p 
@@ -120,31 +111,11 @@ export function UserProfileModal({
                     />
                     {user.progress?.active_rank || "Wanderer I"}
                   </p>
-                  
-                  {nextRankXP > currentXP && (
-                    <div className="mt-4 w-full max-w-55">
-                      <div className="flex justify-between text-[10px] text-muted-foreground mb-1.5 font-semibold tracking-wider">
-                        <span className="tabular-nums">{currentXP.toLocaleString()} XP</span>
-                        <span className="tabular-nums">{nextRankXP.toLocaleString()} XP</span>
-                      </div>
-                      <div className="h-2 w-full bg-muted/60 rounded-full overflow-hidden shadow-inner relative">
-                        <motion.div 
-                          initial={{ width: 0 }}
-                          animate={{ width: `${progressPercent}%` }}
-                          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                          className="h-full rounded-full relative overflow-hidden"
-                          style={{ background: currentRankColor.includes('gradient') ? currentRankColor : currentRankColor }}
-                        >
-                          {/* Animated inner gloss */}
-                          <div className="absolute inset-0 bg-white/20 w-full h-full transform -skew-x-12 animate-[shimmer_2s_infinite]" />
-                        </motion.div>
-                      </div>
-                    </div>
-                  )}
                </div>
-               <div className="text-right flex flex-col items-end justify-center">
+               
+               <div className="text-right flex flex-col items-end">
                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">Lifetime XP</p>
-                  <p className="text-3xl font-bold tracking-tighter font-sans tabular-nums bg-linear-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  <p className="text-3xl font-bold tracking-tighter tabular-nums text-foreground">
                     {currentXP.toLocaleString()}
                   </p>
                </div>
@@ -156,7 +127,7 @@ export function UserProfileModal({
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden relative z-10 w-full"
+                  className="overflow-hidden relative z-10 w-full mt-4"
                 >
                   <RankTimeline 
                     ranks={ranks} 
@@ -166,14 +137,18 @@ export function UserProfileModal({
                 </motion.div>
               )}
             </AnimatePresence>
+
+            <div className="w-full flex justify-center mt-5 relative z-10">
+              <ChevronDown className={cn("size-5 text-muted-foreground transition-transform duration-300", isTimelineOpen && "rotate-180")} />
+            </div>
           </motion.div>
 
-          {/* iOS-Style Grouped List for Stats */}
+          {/* Stats Grouped List */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 25 }}
-            className="flex flex-col bg-card/30 border border-border/50 rounded-[24px] overflow-hidden backdrop-blur-xl shadow-[0_4px_24px_-12px_rgba(0,0,0,0.1)] relative"
+            transition={{ delay: 0.1, duration: 0.4, ease: "easeOut" }}
+            className="flex flex-col bg-card border border-border rounded-[24px] overflow-hidden shadow-sm"
           >
             <StatRow 
               icon={Coins}
@@ -197,10 +172,10 @@ export function UserProfileModal({
               icon={Flame}
               label="Day Streak"
               value={
-                <>
-                  {user.progress?.current_streak || 0}
+                <div className="flex items-baseline gap-1">
+                  <span>{user.progress?.current_streak || 0}</span>
                   <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Days</span>
-                </>
+                </div>
               }
               theme="orange"
             />

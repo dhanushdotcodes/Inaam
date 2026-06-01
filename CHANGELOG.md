@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Added
 - Implemented automatic retry mechanism in the frontend API client (`fetchWithRetry`) to retry failed requests up to 2 times for network errors or 5xx server responses.
 
+### Changed
+- Redesigned `UserProfileModal` to match the premium dark theme design with refined circular `StatRow` components, improved modal layout structure, and smoother transitions.
+
 ## [1.2.0] - 2026-05-29
 
 ### Added
