@@ -35,10 +35,12 @@ async def get_tasks(
     if search:
         query = query.where(Task.title.ilike(f"%{search}%"))
 
+    from sqlalchemy import or_
+
     if status == "completed":
         query = query.where(Task.completed == True)
     elif status == "active":
-        query = query.where(Task.completed == False)
+        query = query.where(or_(Task.completed == False, Task.is_recurring == True))
         
     # We order by created_at desc for consistent pagination
     query = query.order_by(Task.created_at.desc())
