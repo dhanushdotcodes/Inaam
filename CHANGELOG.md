@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### [Unreleased]
 
+### Added
+- Implemented automatic retry mechanism in the frontend API client (`fetchWithRetry`) to retry failed requests up to 2 times for network errors or 5xx server responses.
+
 ## [1.2.0] - 2026-05-29
 
 ### Added

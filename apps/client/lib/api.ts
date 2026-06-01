@@ -27,6 +27,34 @@ const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8000";
 const API_PREFIX = "/api/v1";
 
 /**
+ * Custom fetch wrapper to handle retries for 5xx errors and network failures.
+ */
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  retries = 2
+): Promise<Response> {
+  try {
+    const response = await fetch(url, options);
+    // Retry on server errors (5xx)
+    if (!response.ok && response.status >= 500 && retries > 0) {
+      console.warn(`Server error ${response.status}, retrying API call to ${url}. Attempts left: ${retries}`);
+      await new Promise((res) => setTimeout(res, 1000));
+      return fetchWithRetry(url, options, retries - 1);
+    }
+    return response;
+  } catch (error) {
+    // Retry on network errors
+    if (retries > 0) {
+      console.warn(`Network error, retrying API call to ${url}. Attempts left: ${retries}`);
+      await new Promise((res) => setTimeout(res, 1000));
+      return fetchWithRetry(url, options, retries - 1);
+    }
+    throw error;
+  }
+}
+
+/**
  * Generic fetch wrapper that handles JSON parsing and error extraction
  * from the standardized ApiResponse envelope.
  */
@@ -39,7 +67,7 @@ async function apiFetch<T>(
   const url = `${BASE_URL}${API_PREFIX}${normalizedPath}`;
   const token = getToken();
 
-  const response = await fetch(url, {
+  const response = await fetchWithRetry(url, {
     credentials: "include",
     cache: "no-store",
     headers: {
@@ -82,7 +110,7 @@ async function apiFetch<T>(
 export async function loginUser(payload: LoginRequest): Promise<LoginResponse> {
   const url = `${BASE_URL}${API_PREFIX}/auth/login`;
 
-  const response = await fetch(url, {
+  const response = await fetchWithRetry(url, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
