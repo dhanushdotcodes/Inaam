@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 - Implemented automatic retry mechanism in the frontend API client (`fetchWithRetry`) to retry failed requests up to 2 times for network errors or 5xx server responses.
+- Added `teardown` target to the root `Makefile` to quickly stop and remove all Docker containers, images, and volumes.
 
 ### Changed
 - Redesigned `UserProfileModal` to match the premium dark theme design with refined circular `StatRow` components, improved modal layout structure, and smoother transitions.

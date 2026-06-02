@@ -16,6 +16,7 @@ help:
 	@echo "  commit m=\"msg\"         - Commit staged changes with message"
 	@echo "  up                    - Build and start all Docker containers in background"
 	@echo "  down                  - Stop and tear down all Docker containers"
+	@echo "  teardown              - Stop and remove all containers, images, and volumes"
 	@echo "  web-upgrade           - Rebuild and upgrade the client (web) container"
 	@echo "  server-upgrade        - Rebuild and upgrade the FastAPI (server) container"
 	@echo "  db-container-upgrade  - Upgrade/recreate the Postgres database container"
@@ -55,6 +56,9 @@ up:
 
 down:
 	docker compose -f infra/docker-compose.local.yml down
+
+teardown:
+	docker compose -f infra/docker-compose.local.yml down --rmi all --volumes --remove-orphans
 
 web-upgrade:
 	docker compose -f infra/docker-compose.local.yml up --build -d -V web
