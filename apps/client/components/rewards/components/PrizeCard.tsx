@@ -42,14 +42,14 @@ export default function PrizeCard({
   return (
     <Card
       className={cn(
-        "transition-all w-full group overflow-hidden min-w-64 border-neutral-100 dark:border-neutral-800 rounded-[24px]",
+        "flex flex-col h-full transition-all w-full group overflow-hidden min-w-64 border-neutral-100 dark:border-neutral-800 rounded-[24px]",
         isClaimed 
           ? "grayscale opacity-60 cursor-not-allowed bg-neutral-50/50 dark:bg-neutral-900/50" 
           : "hover:shadow-md cursor-pointer hover:border-primary/50 bg-card dark:bg-neutral-900"
       )}
       onClick={isClaimed ? undefined : onClick}
     >
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 flex-1">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 mb-1">
